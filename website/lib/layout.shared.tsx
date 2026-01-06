@@ -18,7 +18,7 @@ export const logo = (
       className="block dark:hidden w-8"
       aria-label="OSP logo"
     />
-    <div className="font-mono pl-2">os://</div>
+    <div className="font-mono pl-2">os://protocol</div>
   </div>
 );
 

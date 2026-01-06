@@ -22,7 +22,7 @@ export default function HomePage() {
             aria-label="OSP logo"
           />
           <h1 className="text-4xl md:text-xl lg:text-5xl font-bold font-mono">
-            Agent OS Protocol
+            Agentic OS Protocol
           </h1>
         </div>
       </div>
