@@ -13,6 +13,7 @@ import { getMDXComponents } from '@/mdx-components';
 import { PageCopy } from '@/components/page-copy';
 import { PageNavigation } from '@/components/page-navigation';
 import { KeyboardNavigation } from '@/components/keyboard-navigation';
+import { cn } from '@/lib/utils';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
@@ -41,7 +42,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       />
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <DocsTitle>{page.data.title}</DocsTitle>
+          <DocsTitle className="font-heading leading-relaxed tracking-wide">{page.data.title}</DocsTitle>
           <DocsDescription>{page.data.description}</DocsDescription>
         </div>
         <PageCopy page={raw} url={markdownUrl} />
@@ -55,6 +56,24 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
           components={getMDXComponents({
             // this allows you to link to other pages with relative file paths
             a: createRelativeLink(source, page),
+            p: ({ className, ...props }: React.ComponentProps<"p">) => (
+              <p
+                className={cn(
+                  "text-muted-foreground leading-relaxed not-first:mt-6",
+                  className,
+                )}
+                {...props}
+              />
+            ),
+            li: ({ className, ...props }: React.ComponentProps<"li">) => (
+              <li
+                className={cn(
+                  "text-muted-foreground leading-relaxed not-first:mt-4",
+                  className,
+                )}
+                {...props}
+              />
+            ),
           })}
         />
       </DocsBody>
