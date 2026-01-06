@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import "tw-animate-css";
-@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/shadcn.css';
 @import 'fumadocs-ui/css/preset.css';
 
 @custom-variant dark (&:is(.dark *));
@@ -123,23 +123,23 @@
   * {
     @apply border-border outline-ring/50;
   }
-  
+
   /* Text selection styles */
   ::selection {
     background-color: oklch(0.145 0 0);
     color: oklch(0.985 0 0);
   }
-  
+
   ::-moz-selection {
     background-color: oklch(0.145 0 0);
     color: oklch(0.985 0 0);
   }
-  
+
   .dark ::selection {
     background-color: oklch(0.985 0 0);
     color: oklch(0.145 0 0);
   }
-  
+
   .dark ::-moz-selection {
     background-color: oklch(0.985 0 0);
     color: oklch(0.145 0 0);
