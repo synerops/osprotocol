@@ -1,0 +1,68 @@
+---
+title: Architecture
+description: High-level architecture of the Agentic OS Protocol
+---
+
+## Overview
+
+The Agentic OS Protocol is built on a modular architecture that separates concerns and enables flexible composition of agent systems.
+
+## Core Layers
+
+### 1. Skills Framework
+The foundation of agent capabilities, providing three core skills:
+
+- **Orchestrator**: Coordinates multiple agents and manages task distribution
+- **Planner**: Breaks down complex objectives into actionable tasks
+- **Executor**: Handles the actual execution of agent tasks
+
+### 2. System Intelligence
+System-level components that provide infrastructure:
+
+- **Registry**: Manages agent registration and discovery
+- **Environment**: Handles configuration and environment management
+- **Filesystem**: Provides file system operations
+- **Settings**: Manages preferences and configurations
+
+### 3. Context Management
+Components for managing and persisting context:
+
+- **Memory**: Persistent memory and knowledge storage
+- **Documents**: Document processing and management
+- **Embeddings**: Vector embeddings for semantic search
+- **Persistence**: Data persistence and retrieval
+
+### 4. Quality Assurance
+Built-in mechanisms for ensuring quality:
+
+- **Audit**: Monitors agent behavior and compliance
+- **Judge**: Evaluates agent performance and output quality
+- **Rules**: Defines behavioral constraints and guidelines
+- **Fallback**: Error handling and recovery mechanisms
+
+## Agent Lifecycle
+
+Agents in the protocol follow a clear lifecycle:
+
+1. **Registration**: Agents register with the system registry
+2. **Discovery**: Agents are discovered based on task requirements
+3. **Execution**: Tasks are assigned and executed
+4. **Evaluation**: Performance is monitored and assessed
+
+## Integration Patterns
+
+The protocol supports several integration patterns:
+
+- **MCP Integration**: Standardized communication via Model Context Protocol
+- **Workflow Orchestration**: Parallel execution with dependency management
+- **Human-in-the-Loop**: Human oversight and intervention mechanisms
+
+## Design Philosophy
+
+The architecture prioritizes:
+
+- **Modularity**: Components can be used independently or together
+- **Extensibility**: Easy to add new components and capabilities
+- **Reliability**: Built-in error handling and recovery mechanisms
+- **Observability**: Comprehensive monitoring and auditing capabilities
+

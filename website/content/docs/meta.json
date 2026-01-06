@@ -5,6 +5,8 @@
   "pages": [
     "---Get Started---",
     "index",
+    "motivation",
+    "architecture",
     "---Actions---",
     "actions/tools",
     "actions/ops",
