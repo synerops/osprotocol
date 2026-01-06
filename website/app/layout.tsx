@@ -1,5 +1,7 @@
+import { baseUrl } from '@/lib/metadata';
 import './global.css';
 import { RootProvider } from 'fumadocs-ui/provider/next';
+import { Metadata } from 'next';
 import {
   Work_Sans,
   JetBrains_Mono,
@@ -20,6 +22,14 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-jetbrains-mono',
 });
+
+export const metadata: Metadata = {
+  title: {
+    template: '%s | OS Protocol',
+    absolute: 'The Agentic Operating System Protocol',
+  },
+  metadataBase: baseUrl,
+};
 
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (

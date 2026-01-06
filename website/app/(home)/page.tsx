@@ -1,7 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import LogoDark from 'public/logo-dark.svg';
-import LogoLight from 'public/logo-light.svg';
 
 export default function HomePage() {
   return (
@@ -9,21 +6,10 @@ export default function HomePage() {
       {/* Left side: Logo + Title */}
       <div className="flex flex-col justify-center items-start px-8 md:px-16 lg:px-24 flex-1 py-12 md:py-0">
         <div className="flex items-center gap-4">
-          <Image
-            alt="OSP logo"
-            src={LogoDark}
-            className="hidden dark:block w-12 h-12"
-            aria-label="OSP logo"
-          />
-          <Image
-            alt="OSP logo"
-            src={LogoLight}
-            className="block dark:hidden w-12 h-12"
-            aria-label="OSP logo"
-          />
           <h1 className="text-4xl md:text-xl lg:text-5xl font-bold font-mono">
-            Agentic OS Protocol
+            OS Protocol
           </h1>
+          <a href="https://synerops.com?utm_source=osp&utm_medium=website" target="_blank" className="text-sm font-heading text-muted-foreground">by SynerOps</a>
         </div>
       </div>
 
@@ -39,7 +25,7 @@ export default function HomePage() {
         </p>
         <Link
           href="/docs"
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors font-mono underline"
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors underline"
         >
           View Documentation →
         </Link>
