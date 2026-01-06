@@ -12,6 +12,7 @@ import { getPageImage, source } from '@/lib/source';
 import { getMDXComponents } from '@/mdx-components';
 import { PageCopy } from '@/components/page-copy';
 import { PageNavigation } from '@/components/page-navigation';
+import { KeyboardNavigation } from '@/components/keyboard-navigation';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
@@ -34,6 +35,10 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       toc={page.data.toc}
       full={page.data.full}
     >
+      <KeyboardNavigation 
+        previousUrl={neighbours.previous?.url ?? null}
+        nextUrl={neighbours.next?.url ?? null}
+      />
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
           <DocsTitle>{page.data.title}</DocsTitle>
