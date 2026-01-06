@@ -1,10 +1,17 @@
-import { getPageImage, source } from '@/lib/source';
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
-import { notFound } from 'next/navigation';
-import { getMDXComponents } from '@/mdx-components';
 import type { Metadata } from 'next';
+import { 
+  DocsBody, 
+  DocsDescription, 
+  DocsPage, 
+  DocsTitle 
+} from 'fumadocs-ui/layouts/docs/page';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
+import { findNeighbour } from 'fumadocs-core/page-tree';
+import { notFound } from 'next/navigation';
+import { getPageImage, source } from '@/lib/source';
+import { getMDXComponents } from '@/mdx-components';
 import { PageCopy } from '@/components/page-copy';
+import { PageNavigation } from '@/components/page-navigation';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
@@ -13,6 +20,8 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 
   const MDX = page.data.body;
   const raw = await page.data.getText("raw");
+
+  const neighbours = findNeighbour(source.pageTree, page.url);
 
   // Build URL for markdown: if it's index (empty slugs), use /docs/index.md
   // Otherwise, use /docs/[slug].md
@@ -31,6 +40,10 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
           <DocsDescription>{page.data.description}</DocsDescription>
         </div>
         <PageCopy page={raw} url={markdownUrl} />
+        <PageNavigation 
+          previous={neighbours.previous ?? null} 
+          next={neighbours.next ?? null} 
+        />
       </div>
       <DocsBody>
         <MDX
