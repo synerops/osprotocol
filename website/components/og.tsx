@@ -34,7 +34,7 @@ export  function OGImage({
       {/* Main content container */}
       <div tw="flex flex-col justify-between h-full w-full px-24 py-16">
         {/* Top section: Site name and icon */}
-        <div tw="flex items-center gap-3">
+        <div tw="flex items-center" style={{ gap: '12px' }}>
           {icon && (
             <div
               tw="flex items-center justify-center w-12 h-12 rounded-lg"
@@ -57,7 +57,7 @@ export  function OGImage({
         </div>
 
         {/* Middle section: Title and description */}
-        <div tw="flex flex-col gap-6 flex-1 justify-center">
+        <div tw="flex flex-col flex-1 justify-center" style={{ gap: '24px' }}>
           <h1
             tw="text-6xl font-bold leading-tight"
             style={{

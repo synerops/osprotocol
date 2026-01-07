@@ -1,6 +1,7 @@
 import { source } from '@/lib/source';
 import { notFound } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = false;
 
 export async function GET(
@@ -24,9 +25,5 @@ export async function GET(
       'Content-Disposition': `inline; filename="${page.data.title}.md"`,
     },
   });
-}
-
-export async function generateStaticParams() {
-  return source.generateParams();
 }
 
