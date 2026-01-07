@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Turborepo
+.turbo/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Next.js
+apps/web/.next/
+apps/web/out/
+apps/web/.swc/
+
+# Testing
+coverage/
+*.log
+
+# Environment variables
+.env
+.env*.local
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Bun lockfile (opcional - si prefieres committearlo, elimina esta línea)
+bun.lockb
+

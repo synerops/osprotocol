@@ -17,6 +17,8 @@
     "incremental": true,
     "paths": {
       "@/*": ["./*"],
+      "@osprotocol/schema": ["../../packages/schema"],
+      "@osprotocol/schema/*": ["../../packages/schema/*"],
       "fumadocs-mdx:collections/*": [".source/*"]
     },
     "plugins": [
@@ -30,7 +32,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "../../packages/schema/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }
