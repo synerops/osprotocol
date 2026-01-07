@@ -3,7 +3,7 @@
 <p align="center">
   <picture>
     <source srcset="./apps/web/public/trademark-dark.png" media="(prefers-color-scheme: dark)">
-    <img src="./apps/web/public/trademark-light.png" alt="syner Logo" width="512" style="background-color: transparent; padding: 10px;"/>
+    <img src="./apps/web/public/trademark-light.png" alt="osp Logo" width="512" style="background-color: transparent; padding: 10px;"/>
   </picture>
 </p>
 
