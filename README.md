@@ -1,14 +1,23 @@
+### Operating System Protocol
+
 <p align="center">
   <picture>
-    <source srcset="./apps/web/public/logo-light.svg" media="(prefers-color-scheme: dark)">
-    <img src="./apps/web/public/logo-dark.svg" alt="syner Logo" width="64" style="background-color: transparent; padding: 10px;"/>
+    <source srcset="./apps/web/public/trademark-dark.png" media="(prefers-color-scheme: dark)">
+    <img src="./apps/web/public/trademark-light.png" alt="syner Logo" width="512" style="background-color: transparent; padding: 10px;"/>
   </picture>
 </p>
 
-<h1 align="center">OSP - The Agentic Operating System</h1>
+<p align="center">
+  <strong>A protocol for orchestrating, managing, and executing AI agents in distributed, scalable environments.</strong>
+</p>
+
+<p align="center">
+  <a href="https://osprotocol.dev/docs">Documentation</a> |
+  <a href="https://osprotocol.dev/docs/spec">Specification</a> |
+  <a href="https://osprotocol.dev/blog">Blog</a>
+</p>
 
 
-A protocol for orchestrating, managing, and executing AI agents in distributed, scalable environments.
+#### About 
 
-Maintained by [@synerops](https://github.com/synerops) (current phase: `documenting`)
-
+The OS Protocol is an open source project mantained by [@synerops](https://github.com/synerops) and open to contributions from the entire community.
