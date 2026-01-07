@@ -1,0 +1,101 @@
+---
+title: Conformance
+description: Understanding OSP implementation requirements
+---
+
+## Overview
+
+Conformance defines what it means to implement the Agentic OS Protocol. The specification uses precise language (MUST/SHOULD/MAY) to distinguish between absolute requirements, strong recommendations, and optional features.
+
+## Implementation Conformance
+
+An implementation conforms to this specification if it:
+
+1. **Implements all MUST-level requirements**
+   - Core execution pattern ([Agent Loop](/docs/concepts/agent-loop))
+   - Registration and discovery interfaces
+   - Essential tool and action interfaces
+   - Required quality assurance mechanisms
+
+2. **Follows all specified interfaces and contracts**
+   - Tool interfaces and schemas
+   - Context management contracts
+   - Error handling protocols
+   - MCP integration standards
+
+3. **Adheres to defined data formats and schemas**
+   - Registration data structures
+   - Tool parameter schemas
+   - Context isolation boundaries
+   - Result formats
+
+4. **Supports required workflow patterns**
+   - System/Control workflows ([Lifecycle](/docs/concepts/lifecycle))
+   - Essential recovery mechanisms
+   - Error handling workflows
+
+Reference: [AGENTS.md Section 7](https://github.com/synerops/osprotocol/blob/main/AGENTS.md#7-conformance)
+
+## Partial Conformance
+
+Implementations MAY implement subsets of this specification, but MUST clearly document:
+
+- **Which components are implemented**
+  Example: "Implements Skills and System Intelligence, but not Vector embeddings"
+
+- **Which components are not implemented**
+  Example: "Does not support Visual Feedback or LLM-as-Judge workflows"
+
+- **Any deviations from the specification**
+  Example: "Uses alternative authentication mechanism instead of specified protocol"
+
+Partial conformance enables incremental adoption while maintaining transparency about capabilities.
+
+## Normative vs Informative
+
+Understanding the distinction is crucial for implementers:
+
+### Normative Sections
+
+Define requirements that MUST be followed for conformance:
+- Interface specifications
+- Required behaviors
+- Data format definitions
+- MUST/SHOULD/MAY requirements
+
+### Informative Sections
+
+Provide guidance, examples, and context (marked as "non-normative" or "informative"):
+- Implementation examples
+- Best practices
+- Rationale explanations
+- Historical context
+
+## Security Considerations
+
+While the specification does not define specific security mechanisms, implementations SHOULD:
+
+- Implement authentication and authorization
+- Secure communication channels
+- Validate all inputs
+- Implement audit logging
+- Handle sensitive data appropriately
+
+Learn more: [Audit](/docs/checks/audit), [AGENTS.md Section 8](https://github.com/synerops/osprotocol/blob/main/AGENTS.md#8-security-considerations)
+
+## Testing Conformance
+
+Implementations should verify conformance by:
+
+1. **Interface compliance**: All required interfaces are implemented correctly
+2. **Behavior verification**: Components behave according to specifications
+3. **Integration testing**: Workflows execute as specified
+4. **Quality checks**: Quality assurance mechanisms function properly
+
+## Next Steps
+
+- Review the [Architecture](/docs/architecture) to understand system design
+- Explore [Skills](/docs/skills/orchestrator) specifications
+- Study [Workflow Patterns](/docs/concepts/workflows-taxonomy)
+- Read the complete specification in [AGENTS.md](https://github.com/synerops/osprotocol/blob/main/AGENTS.md)
+

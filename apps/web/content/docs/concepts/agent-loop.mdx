@@ -1,0 +1,89 @@
+---
+title: Agent Loop
+description: The core execution pattern for AI agents
+---
+
+## Overview
+
+The Agent Loop is the fundamental execution pattern that all agent implementations MUST support. It defines the iterative cycle through which agents gather context, take actions, verify their work, and iterate until completion.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Agent Loop                            │
+│                                                          │
+│  ┌──────────────┐    ┌──────────────┐                  │
+│  │   Gather     │───▶│  Take Action │                  │
+│  │   Context    │    │              │                  │
+│  └──────┬───────┘    └──────┬───────┘                  │
+│         │                   │                           │
+│         │                   │                           │
+│  ┌──────▼───────────────────▼───────┐                  │
+│  │      Verify Work                 │                  │
+│  └──────┬───────────────────────────┘                  │
+│         │                                               │
+│         │ (if not complete)                            │
+│         │                                               │
+│         └─────────────────────────────────┐            │
+│                                           │            │
+│                                           ▼            │
+│                                    ┌──────────────┐    │
+│                                    │   Iterate    │    │
+│                                    └──────────────┘    │
+└─────────────────────────────────────────────────────────┘
+```
+
+## The Four Steps
+
+### 1. Gather Context
+
+Agents collect information needed to complete their task through:
+- **Agentic search**: File systems, grep, tail, structured queries
+- **Semantic search**: Vector embeddings for concept-based queries
+- **Subagents**: Isolated context windows for parallel information gathering
+- **Context compaction**: Summarization for long-running agents
+
+Learn more: [Context Management](/docs/context)
+
+### 2. Take Action
+
+Agents execute operations using:
+- **Tools**: Primary building blocks with clear interfaces
+- **Bash/Scripts**: Command execution and automation
+- **Code Generation**: Dynamic code creation and execution
+- **MCP Integration**: Standardized protocol for external services
+
+Learn more: [Actions](/docs/actions/tools)
+
+### 3. Verify Work
+
+Agents validate outputs through:
+- **Rules-based validation**: Defined criteria and constraints
+- **Visual feedback**: Screenshots and renders for UI tasks
+- **LLM-as-judge**: Model-based evaluation
+
+Learn more: [Checks](/docs/checks/rules)
+
+### 4. Iterate
+
+The loop repeats until:
+- Task completion criteria are met
+- Iteration limits are reached
+- Termination conditions are triggered
+
+## Cognitive Micro-Pattern
+
+The loop maps to an internal cognitive cycle:
+1. **Think/Reason** → Plan next action (Gather Context)
+2. **Act** → Execute tools (Take Action)
+3. **Observe** → Process results (Verify Work)
+4. **Reflect** → Evaluate progress (Verify Work)
+5. **Decide** → Continue or stop (Iterate)
+
+Reference: [Anthropic: Building Agents with Claude Agent SDK](https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk)
+
+## Next Steps
+
+- Understand how the loop fits into the **[Agent Lifecycle](/docs/concepts/lifecycle)**
+- Explore **[Workflow Patterns](/docs/concepts/workflows-taxonomy)** that orchestrate the loop
+- Read the full specification in [AGENTS.md Section 2](https://github.com/synerops/osprotocol/blob/main/AGENTS.md#2-core-execution-pattern-agent-loop)
+

@@ -1,0 +1,80 @@
+---
+title: Agent Lifecycle
+description: System-level agent management workflow
+---
+
+## Overview
+
+The Agent Lifecycle is a System/Control Workflow that defines how agents are managed within the system. Unlike the [Agent Loop](/docs/concepts/agent-loop) (which describes internal execution), the Lifecycle governs system-level responsibilities: registration, discovery, execution management, and evaluation.
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ Registration│───▶│  Discovery  │───▶│  Execution  │───▶│  Evaluation │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+```
+
+## The Four Phases
+
+### 1. Registration
+
+Agents declare their capabilities and constraints to the system:
+- Capability declaration
+- Resource requirements specification
+- Constraint definition
+- Metadata registration
+
+Learn more: [System Registry](/docs/system/registry)
+
+### 2. Discovery
+
+The system exposes agents for selection and routing:
+- Capability-based discovery
+- Dynamic service discovery
+- Load balancing mechanisms
+- Failover protocols
+
+Learn more: [System Registry](/docs/system/registry)
+
+### 3. Execution Management
+
+The OS assigns tasks and monitors progress:
+- Task assignment interfaces
+- Real-time monitoring
+- Error handling
+- State management
+- Policy enforcement
+
+Learn more: [Runs](/docs/runs/cancel), [Actions](/docs/actions/ops)
+
+### 4. Evaluation
+
+Outputs, logs, and performance are reviewed:
+- Performance monitoring
+- Quality assessment
+- Compliance verification
+- Adaptation mechanisms
+
+Learn more: [Audit](/docs/checks/audit), [Judge](/docs/checks/judge)
+
+## Lifecycle vs Loop vs Workflows
+
+Understanding the distinction is crucial:
+
+| Concept | Layer | Purpose | Scope |
+|---------|-------|---------|-------|
+| **Lifecycle** | System | Agent management | OS/Platform governance |
+| **[Loop](/docs/concepts/agent-loop)** | Cognitive | Internal execution | Single agent reasoning |
+| **[Workflows](/docs/concepts/workflows-taxonomy)** | Operational | Task orchestration | Multi-step processes |
+
+- **Lifecycle** exists *outside* any specific workflow—it's the system contract
+- **Loop** executes *inside* workflows—it's the cognitive engine
+- **Workflows** orchestrate *during* Execution/Evaluation phases—they're the macro patterns
+
+Reference: [Anthropic: Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents)
+
+## Next Steps
+
+- Explore [Workflow Taxonomy](/docs/concepts/workflows-taxonomy) to see operational patterns
+- Understand [Conformance](/docs/concepts/conformance) requirements for implementations
+- Read the full specification in [AGENTS.md Section 3.2.1](https://github.com/synerops/osprotocol/blob/main/AGENTS.md#321-agent-lifecycle-workflow)
+

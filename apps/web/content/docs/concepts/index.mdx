@@ -1,0 +1,41 @@
+---
+title: Concepts
+description: Understanding the Agentic OS Protocol specification
+---
+
+## What is a Protocol Specification?
+
+The Agentic OS Protocol (OSP) is a **specification**, not an implementation. Like HTTP (RFC 7230-7235), JSON (RFC 8259), or the Model Context Protocol (MCP), it defines:
+
+- **Interfaces**: How components communicate and interact
+- **Behaviors**: Expected behaviors and state transitions
+- **Data Formats**: Structure, validation rules, and schemas
+- **Requirements**: What implementations must support
+- **Contracts**: Agreements between components and agents
+
+Implementations can be built in any language or technology stack, as long as they adhere to the defined interfaces and behaviors.
+
+## RFC 2119 Terminology
+
+This specification uses precise language to indicate requirement levels:
+
+- **MUST** / **REQUIRED**: Absolute requirement
+- **MUST NOT**: Absolute prohibition
+- **SHOULD** / **RECOMMENDED**: Strong recommendation (may be valid reasons to ignore in particular circumstances)
+- **MAY** / **OPTIONAL**: Truly optional
+
+Reference: [RFC 2119](https://tools.ietf.org/html/rfc2119)
+
+## How to Read This Spec
+
+1. Start with **Concepts** (this section) to understand core mental models
+2. Review **[Architecture](/docs/architecture)** for system-level design
+3. Explore specific modules: **[Operating System](/docs/system/registry)**, **[Skills](/docs/skills/orchestrator)**, **[Workflows](/docs/workflows/routing)**
+4. Refer to the complete specification in [AGENTS.md](https://github.com/synerops/osprotocol/blob/main/AGENTS.md)
+
+## Next Steps
+
+- Understand the **[Agent Loop](/docs/concepts/agent-loop)** - the core execution pattern
+- Learn about the **[Lifecycle](/docs/concepts/lifecycle)** - system-level agent management
+- Explore **[Workflow Taxonomy](/docs/concepts/workflows-taxonomy)** - operational patterns
+
