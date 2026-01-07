@@ -19,6 +19,7 @@ export const siteConfig = {
   ],
   creator: 'synerOps',
   twitterHandle: '@synerops',
+  githubUrl: 'https://github.com/synerops/osprotocol',
 };
 
 /**

@@ -1,11 +1,10 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { BookIcon } from 'lucide-react';
 import Image from "next/image";
 
-import LogoDark from "public/logo-dark.svg";
 import LogoLight from "public/logo-light.svg";
+import { siteConfig } from './metadata';
 
-export const logo = (
+export const osp = (
   <div className="flex items-center">
     <Image
       alt="OSP logo"
@@ -20,7 +19,8 @@ export const logo = (
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: <>{logo}</>,
+      title: <>{osp}</>,
     },
+    githubUrl: siteConfig.githubUrl
   };
 }
