@@ -1,7 +1,7 @@
-import { baseUrl } from '@/lib/metadata';
 import './global.css';
 import { RootProvider } from 'fumadocs-ui/provider/next';
-import { Metadata } from 'next';
+import { Viewport } from 'next';
+import { createBaseMetadata } from '@/lib/metadata';
 import {
   Work_Sans,
   JetBrains_Mono,
@@ -23,14 +23,14 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
 });
 
-export const metadata: Metadata = {
-  title: {
-    template: '%s | OS Protocol',
-    absolute: 'The Agentic Operating System Protocol',
-  },
-  metadataBase: baseUrl,
-};
+export const metadata = createBaseMetadata();
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#0A0A0A' },
+    { media: '(prefers-color-scheme: light)', color: '#fff' },
+  ],
+};
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (
     <html

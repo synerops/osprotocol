@@ -1,4 +1,24 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { createMetadata, siteConfig } from '@/lib/metadata';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const image = {
+    url: '/og',
+    width: 1200,
+    height: 630,
+  };
+
+  return createMetadata({
+    openGraph: {
+      url: '/',
+      images: [image],
+    },
+    twitter: {
+      images: [image],
+    },
+  });
+}
 
 export default function HomePage() {
   return (

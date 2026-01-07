@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
-import { 
-  DocsBody, 
-  DocsDescription, 
-  DocsPage, 
-  DocsTitle 
+import {
+  DocsBody,
+  DocsDescription,
+  DocsPage,
+  DocsTitle
 } from 'fumadocs-ui/layouts/docs/page';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { findNeighbour } from 'fumadocs-core/page-tree';
 import { notFound } from 'next/navigation';
 import { getPageImage, source } from '@/lib/source';
+import { createMetadata, siteConfig } from '@/lib/metadata';
 import { getMDXComponents } from '@/mdx-components';
 import { PageCopy } from '@/components/page-copy';
 import { PageNavigation } from '@/components/page-navigation';
@@ -27,7 +28,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 
   // Build URL for markdown: if it's index (empty slugs), use /docs/index.md
   // Otherwise, use /docs/[slug].md
-  const markdownUrl = page.slugs.length === 0 
+  const markdownUrl = page.slugs.length === 0
     ? '/docs/index.md'
     : `${page.url}.md`;
 
@@ -36,7 +37,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       toc={page.data.toc}
       full={page.data.full}
     >
-      <KeyboardNavigation 
+      <KeyboardNavigation
         previousUrl={neighbours.previous?.url ?? null}
         nextUrl={neighbours.next?.url ?? null}
       />
@@ -46,9 +47,9 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
           <DocsDescription>{page.data.description}</DocsDescription>
         </div>
         <PageCopy page={raw} url={markdownUrl} />
-        <PageNavigation 
-          previous={neighbours.previous ?? null} 
-          next={neighbours.next ?? null} 
+        <PageNavigation
+          previous={neighbours.previous ?? null}
+          next={neighbours.next ?? null}
         />
       </div>
       <DocsBody>
@@ -94,19 +95,17 @@ export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): P
     url: getPageImage(page).url,
     width: 1200,
     height: 630,
-  }
+  };
 
-  return {
+  return createMetadata({
     title: page.data.title,
-    description: page.data.description || 'The Agentic Operating System Protocol',
+    description: page.data.description || siteConfig.description,
     openGraph: {
       url: `https://osprotocol.dev/docs/${page.slugs.join('/')}`,
-      images: [image]
-    },
-    twitter: {
-      card: 'summary_large_image',
-      creator: '@synerops',
       images: [image],
     },
-  };
+    twitter: {
+      images: [image],
+    },
+  });
 }
