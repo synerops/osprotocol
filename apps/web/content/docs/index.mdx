@@ -2,7 +2,8 @@
 title: Introduction
 description: An overview of the Agentic OS Protocol
 ---
-import { Orbit, Boxes, Settings, GitBranch } from 'lucide-react';
+import { Orbit, Boxes, CircuitBoard, GitBranch } from 'lucide-react';
+
 
 ## What is the Agentic OS Protocol?
 
@@ -21,46 +22,16 @@ Think of it as the blueprint you implement: it tells you which modules exist (Sk
 OSP defines the contract for building agent systems that can work together seamlessly, with standardized patterns for coordination, quality assurance, and context management. Below are the key entry points to understand and implement the protocol.
 
 <Cards>
-  <Card icon={<Orbit />} href="/docs/concepts/agent-loop" title="Start here: Agent Loop">
+  <Card icon={<Boxes />} href="/docs/architecture" title="See the big picture">
+    Explore the architecture, how everything fits before you dive into details.
+  </Card>
+  <Card icon={<Orbit />} href="/docs/concepts/agent-loop" title="Agent Loop">
     Gather Context → Take Actions → Verify Results
   </Card>
-  <Card icon={<Boxes />} href="/docs/architecture" title="See the big picture">
-    How everything fits before you dive into details.
-  </Card>
-  <Card icon={<Settings />} href="/docs/system/registry" title="System Intelligence">
+  <Card icon={<CircuitBoard />} href="/docs/system/registry" title="System Intelligence">
     Registry, Environment, Filesystem, Settings—the infrastructure layer.
   </Card>
   <Card icon={<GitBranch />} href="/docs/workflows/routing" title="Explore workflows">
     Routing, parallelization, and evaluator–optimizer patterns.
   </Card>
 </Cards>
-
-## Core Principles
-
-### 1. Modularity
-The protocol is built from modular components that can be combined to create custom agent systems. Each component has a specific responsibility and can work independently or in combination with others.
-
-### 2. Standardization
-By providing standardized patterns and interfaces, the protocol enables interoperability between different agent implementations and systems.
-
-### 3. Quality First
-Quality assurance is built into the protocol, with mechanisms for monitoring, auditing, and ensuring agent behavior meets defined standards.
-
-### 4. Scalability
-The architecture is designed to scale from simple single-agent systems to complex distributed multi-agent environments.
-
-## Key Components
-
-The protocol is organized into several key areas:
-
-- **Skills**: Core agent capabilities (Orchestrator, Planner, Executor)
-- **System**: System-level intelligence (Registry, Environment, Settings)
-- **Context**: Context management (Memory, Documents, Embeddings)
-- **Checks**: Quality assurance (Audit, Judge, Rules)
-- **Actions**: Agent actions and operations
-- **Runs**: Execution management (Retries, Timeouts, Human-in-the-Loop)
-- **Workflows**: Workflow orchestration and optimization
-
-## Getting Started
-
-Ready to dive in? Explore the [Architecture](/docs/architecture) to understand how everything fits together, or jump into specific components to learn more about their capabilities.
