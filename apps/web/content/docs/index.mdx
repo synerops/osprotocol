@@ -2,10 +2,38 @@
 title: Introduction
 description: An overview of the Agentic OS Protocol
 ---
+import { Orbit, Boxes, Settings, GitBranch } from 'lucide-react';
 
 ## What is the Agentic OS Protocol?
 
-The Agentic OS Protocol (OSP) is a comprehensive framework designed to orchestrate, manage, and execute AI agents in distributed, scalable environments. It provides the infrastructure and patterns needed to build robust, multi-agent systems.
+The Agentic OS Protocol (OSP) is a specification—a shared contract that defines the interfaces, behaviors, and data formats for orchestrating AI agents at scale.
+
+Think of it as the blueprint you implement: it tells you which modules exist (Skills, System, Context, Checks, Actions, Runs, Workflows), how they interact, and what “conformant” behavior looks like. It’s not a runtime or framework—you build to it.
+
+```json
+{
+  "$schema": "https://osprotocol.dev/v1/schema.json"
+}
+```
+
+## Getting Started
+
+OSP defines the contract for building agent systems that can work together seamlessly, with standardized patterns for coordination, quality assurance, and context management. Below are the key entry points to understand and implement the protocol.
+
+<Cards>
+  <Card icon={<Orbit />} href="/docs/concepts/agent-loop" title="Start here: Agent Loop">
+    Gather Context → Take Actions → Verify Results
+  </Card>
+  <Card icon={<Boxes />} href="/docs/architecture" title="See the big picture">
+    How everything fits before you dive into details.
+  </Card>
+  <Card icon={<Settings />} href="/docs/system/registry" title="System Intelligence">
+    Registry, Environment, Filesystem, Settings—the infrastructure layer.
+  </Card>
+  <Card icon={<GitBranch />} href="/docs/workflows/routing" title="Explore workflows">
+    Routing, parallelization, and evaluator–optimizer patterns.
+  </Card>
+</Cards>
 
 ## Core Principles
 
