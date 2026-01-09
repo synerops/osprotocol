@@ -1,0 +1,170 @@
+---
+title: Architecture
+description: High-level architecture of the Agentic OS Protocol
+---
+
+## Overview
+
+The Agentic OS Protocol (OSP) is built on a modular architecture that separates concerns and enables flexible composition of agent systems.
+
+## Philosophy and Foundations
+
+OSP doesn't create everything from scratch. Instead, it adapts proven philosophies and patterns that have demonstrated effectiveness in production environments, combined with our own contributions and experience in infrastructure design.
+
+### Influences and Adaptations
+
+OSP draws inspiration from several key sources:
+
+- **[Anthropic: Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents)**: Workflow patterns (Routing, Prompt Chaining, Orchestrator-Workers, Parallelization, Evaluator-Optimizer) form the foundation of our workflow taxonomy.
+- **[Agent Communication Protocol](https://agentcommunicationprotocol.dev/core-concepts/agent-run-lifecycle)**: The concept of **Runs**—essential for multi-agent systems—provides the lifecycle management framework.
+- **[Claude Agent SDK](https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk)**: The **Agent Loop** execution pattern (Gather Context → Take Action → Verify Work → Iterate) defines our core cognitive cycle.
+
+These patterns have been adapted and extended to work together in a unified protocol specification that emphasizes interoperability, scalability, and system-level orchestration.
+
+### The Operating System Concept
+
+Where OSP contributes uniquely is in the **Operating System** abstraction—a layer that provides system intelligence through standardized APIs. This OS layer manages the lifecycle, coordination, and resource management that multi-agent systems require.
+
+> **Understanding the Metaphor**: Just as traditional operating systems abstract hardware resources (CPU, memory, disk), an Agentic OS abstracts cognitive resources (inference, context, knowledge, tools). The [Agentic OS concept](/docs/concepts/agentic-os) defines this paradigm—OSP is the protocol specification that implementations follow.
+
+Just as traditional operating systems provide process management, memory management, and I/O interfaces, OSP's Operating System provides:
+
+- **Agent Registry**: Discovery and capability management
+- **System APIs**: Environment, Filesystem, Settings
+- **Context Management**: Memory, Documents, Persistence
+- **Quality Assurance**: Audit, Rules, Fallback
+
+## Architecture Layers
+
+The protocol architecture is organized into four core layers:
+
+### 1. Skills Framework
+
+The foundation of agent capabilities, defining specialized roles that agents can assume:
+
+- **Orchestrator**: Coordinates multiple agents, manages task distribution, load balancing, and conflict resolution
+- **Planner**: Breaks down complex objectives into actionable tasks with dependency analysis
+- **Executor**: Handles the actual execution of agent tasks using tools, APIs, and scripts
+
+These skills work together: Orchestrators delegate to Planners for decomposition, which then assign tasks to Executors for implementation.
+
+### 2. Operating System (System Intelligence)
+
+The OS layer provides infrastructure services that all agents depend on. Unlike traditional protocols that focus solely on agent-to-agent communication, OSP includes system-level intelligence:
+
+- **Registry**: Manages agent registration, discovery, and capability matching
+- **Environment**: Handles configuration and environment variable management
+- **Filesystem**: Provides standardized file system operation interfaces
+- **Settings**: Manages preferences, configurations, and user-defined parameters
+- **MCP Client**: Integrates with Model Context Protocol for external tool access
+
+### 3. Context Management
+
+Context is what enables agents to maintain state, share information, and build upon previous interactions:
+
+- **Memory**: Persistent storage for agent knowledge and experiences
+- **Documents**: Document processing, ingestion, and retrieval interfaces
+- **Embeddings**: Vector database integration for semantic search (optional)
+- **Apps**: Application-specific context isolation and sharing
+- **Persistence**: State management and checkpointing for long-running agents
+
+### 4. Quality Assurance
+
+Built-in mechanisms for ensuring reliability, compliance, and quality:
+
+- **Audit**: Comprehensive monitoring and logging of agent behavior
+- **Judge**: LLM-based evaluation of agent outputs and decisions (optional)
+- **Rules**: Behavioral constraints and validation frameworks
+- **Screenshot**: Visual validation for UI-related tasks (optional)
+- **Fallback**: Error handling, retry logic, and recovery mechanisms
+
+## Core Execution Model
+
+### The Agent Loop
+
+At the heart of every agent is the **Agent Loop**, the cognitive cycle that drives execution:
+
+```mermaid
+flowchart TD
+    Start([Agent Loop])
+    Gather[Gather Context]
+    Action[Take Action]
+    Verify[Verify Work]
+    Iterate{Complete?}
+    End([End])
+    
+    Start --> Gather
+    Gather --> Action
+    Action --> Verify
+    Verify --> Iterate
+    Iterate -->|No| Gather
+    Iterate -->|Yes| End
+```
+
+This loop executes within workflows and is managed by the Operating System during the Execution phase of the Agent Lifecycle.
+
+Learn more: [Agent Loop](/docs/concepts/agent-loop)
+
+### The Agent Lifecycle
+
+At the system level, agents follow a **Lifecycle** that spans their entire existence:
+
+```mermaid
+flowchart LR
+    Reg[Registration]
+    Disc[Discovery]
+    Exec[Execution]
+    Eval[Evaluation]
+    
+    Reg --> Disc
+    Disc --> Exec
+    Exec --> Eval
+```
+
+- **Registration**: Agents declare capabilities to the Registry
+- **Discovery**: The OS matches agents to tasks based on capabilities
+- **Execution**: The Agent Loop runs within workflows
+- **Evaluation**: Performance, quality, and compliance are assessed
+
+Learn more: [Agent Lifecycle](/docs/concepts/lifecycle)
+
+## Integration Patterns
+
+OSP is designed to integrate with existing protocols and systems:
+
+### MCP Integration
+
+OSP includes native support for the Model Context Protocol, allowing agents to access external tools and resources through standardized MCP servers. The OS provides MCP client functionality that any agent can leverage.
+
+### Workflow Orchestration
+
+The protocol defines workflow patterns that can be composed and combined:
+- **Task Workflows**: Routing, Prompt Chaining, Orchestrator-Workers, Parallelization, Evaluator-Optimizer
+- **Quality Workflows**: Rules Validation, Visual Feedback, LLM-as-Judge
+- **Recovery Workflows**: Retries, Fallback, Timeouts
+- **Human-in-the-Loop**: Approval Workflows, Manual Delegation
+
+Learn more: [Workflow Taxonomy](/docs/concepts/workflows-taxonomy)
+
+### Multi-Agent Coordination
+
+OSP enables agents from different implementations to work together through standardized interfaces. Agents can coordinate tasks, share context (with proper isolation), and participate in distributed workflows.
+
+## Design Philosophy
+
+The architecture prioritizes:
+
+- **Modularity**: Components can be used independently or together
+- **Extensibility**: New components and capabilities can be added without breaking existing implementations
+- **Interoperability**: Different implementations can work together through standardized contracts
+- **Reliability**: Built-in error handling, recovery mechanisms, and quality assurance
+- **Observability**: Comprehensive monitoring, auditing, and evaluation capabilities
+- **Scalability**: Designed to grow from single-agent systems to complex multi-agent environments
+
+## Next Steps
+
+- Explore **[Skills](/docs/skills/orchestrator)** to understand agent capabilities
+- Learn about **[System Intelligence](/docs/system/registry)** for infrastructure services
+- Understand **[Context Management](/docs/context)** for state and persistence
+- Review **[Quality Assurance](/docs/checks/rules)** mechanisms
+- See the complete specification in [AGENTS.md Section 4](https://github.com/synerops/osprotocol/blob/main/AGENTS.md#4-protocol-architecture)

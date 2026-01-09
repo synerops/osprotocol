@@ -1,0 +1,111 @@
+import type { Metadata } from 'next';
+import {
+  DocsBody,
+  DocsDescription,
+  DocsPage,
+  DocsTitle
+} from 'fumadocs-ui/layouts/docs/page';
+import { createRelativeLink } from 'fumadocs-ui/mdx';
+import { findNeighbour } from 'fumadocs-core/page-tree';
+import { notFound } from 'next/navigation';
+import { getPageImage, source } from '@/lib/source';
+import { createMetadata, siteConfig } from '@/lib/metadata';
+import { getMDXComponents } from '@/mdx-components';
+import { PageCopy } from '@/components/page-copy';
+import { PageNavigation } from '@/components/page-navigation';
+import { KeyboardNavigation } from '@/components/keyboard-navigation';
+import { cn } from '@/lib/utils';
+
+export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
+  const params = await props.params;
+  const page = source.getPage(params.slug);
+  if (!page) notFound();
+
+  const MDX = page.data.body;
+  const raw = await page.data.getText("raw");
+
+  const neighbours = findNeighbour(source.pageTree, page.url);
+
+  // Build URL for markdown: if it's index (empty slugs), use /docs/index.md
+  // Otherwise, use /docs/[slug].md
+  const markdownUrl = page.slugs.length === 0
+    ? '/docs/index.md'
+    : `${page.url}.md`;
+
+  return (
+    <DocsPage
+      toc={page.data.toc}
+      full={page.data.full}
+    >
+      <KeyboardNavigation
+        previousUrl={neighbours.previous?.url ?? null}
+        nextUrl={neighbours.next?.url ?? null}
+      />
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1">
+          <DocsTitle className="font-heading leading-relaxed tracking-wide">{page.data.title}</DocsTitle>
+          <DocsDescription>{page.data.description}</DocsDescription>
+        </div>
+        <PageCopy page={raw} url={markdownUrl} />
+        <PageNavigation
+          previous={neighbours.previous ?? null}
+          next={neighbours.next ?? null}
+        />
+      </div>
+      <DocsBody>
+        <MDX
+          components={getMDXComponents({
+            // this allows you to link to other pages with relative file paths
+            a: createRelativeLink(source, page),
+            p: ({ className, ...props }: React.ComponentProps<"p">) => (
+              <p
+                className={cn(
+                  "text-muted-foreground leading-relaxed not-first:mt-6",
+                  className,
+                )}
+                {...props}
+              />
+            ),
+            li: ({ className, ...props }: React.ComponentProps<"li">) => (
+              <li
+                className={cn(
+                  "text-muted-foreground leading-relaxed not-first:mt-4",
+                  className,
+                )}
+                {...props}
+              />
+            ),
+          })}
+        />
+      </DocsBody>
+    </DocsPage>
+  );
+}
+
+export async function generateStaticParams() {
+  return source.generateParams();
+}
+
+export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): Promise<Metadata> {
+  const params = await props.params;
+  const page = source.getPage(params.slug);
+  if (!page) notFound();
+
+  const image = {
+    url: getPageImage(page).url,
+    width: 1200,
+    height: 630,
+  };
+
+  return createMetadata({
+    title: page.data.title,
+    description: page.data.description || siteConfig.description,
+    openGraph: {
+      url: `https://osprotocol.dev/docs/${page.slugs.join('/')}`,
+      images: [image],
+    },
+    twitter: {
+      images: [image],
+    },
+  });
+}
