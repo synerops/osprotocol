@@ -80,29 +80,21 @@ Built-in mechanisms for ensuring reliability, compliance, and quality:
 
 At the heart of every agent is the **Agent Loop**, the cognitive cycle that drives execution:
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Agent Loop                            │
-│                                                          │
-│  ┌──────────────┐    ┌──────────────┐                  │
-│  │   Gather     │───▶│  Take Action │                  │
-│  │   Context    │    │              │                  │
-│  └──────┬───────┘    └──────┬───────┘                  │
-│         │                   │                           │
-│         │                   │                           │
-│  ┌──────▼───────────────────▼───────┐                  │
-│  │      Verify Work                 │                  │
-│  └──────┬───────────────────────────┘                  │
-│         │                                               │
-│         │ (if not complete)                            │
-│         │                                               │
-│         └─────────────────────────────────┐            │
-│                                           │            │
-│                                           ▼            │
-│                                    ┌──────────────┐    │
-│                                    │   Iterate    │    │
-│                                    └──────────────┘    │
-└─────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    Start([Agent Loop])
+    Gather[Gather Context]
+    Action[Take Action]
+    Verify[Verify Work]
+    Iterate{Complete?}
+    End([End])
+    
+    Start --> Gather
+    Gather --> Action
+    Action --> Verify
+    Verify --> Iterate
+    Iterate -->|No| Gather
+    Iterate -->|Yes| End
 ```
 
 This loop executes within workflows and is managed by the Operating System during the Execution phase of the Agent Lifecycle.
@@ -113,10 +105,16 @@ Learn more: [Agent Loop](/docs/concepts/agent-loop)
 
 At the system level, agents follow a **Lifecycle** that spans their entire existence:
 
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│ Registration│───▶│  Discovery  │───▶│  Execution  │───▶│  Evaluation │
-└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+```mermaid
+flowchart LR
+    Reg[Registration]
+    Disc[Discovery]
+    Exec[Execution]
+    Eval[Evaluation]
+    
+    Reg --> Disc
+    Disc --> Exec
+    Exec --> Eval
 ```
 
 - **Registration**: Agents declare capabilities to the Registry
