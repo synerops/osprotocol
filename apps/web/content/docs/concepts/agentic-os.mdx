@@ -9,31 +9,24 @@ An **Agentic OS** is a design paradigm where the **Large Language Model (LLM)** 
 
 This concept is foundational to understanding the Agentic OS Protocol (OSP). OSP defines the standardized interfaces and behaviors that implementations of an Agentic OS must follow—the contract that enables different agent systems to interoperate.
 
-## The Architectural Metaphor
-
-Just as traditional operating systems abstract hardware resources (CPU, memory, disk, devices), an Agentic OS abstracts the cognitive resources of AI systems:
-
-```
-Traditional OS          Agentic OS Equivalent
-─────────────────       ─────────────────────
-CPU Cycles       →      Inference / Tokens
-RAM (Memory)     →      Context Window
-Disk / Filesystem →     Vector Store / RAG
-Device Drivers   →      Tools / MCP
-Process Scheduler →     Agent Orchestrator
-```
-
 ## Resource Abstraction
 
-The Agentic OS manages cognitive resources just as a traditional kernel manages physical hardware:
+Just as traditional operating systems abstract hardware resources (CPU, memory, disk, devices), an Agentic OS abstracts the cognitive resources of AI systems. The Agentic OS manages cognitive resources just as a traditional kernel manages physical hardware:
 
-| Traditional OS Resource | Agentic OS Equivalent | Description |
-|-------------------------|-----------------------|-------------|
-| **CPU Cycles** | **Inference / Tokens** | Managing the compute required for reasoning and generation |
-| **RAM (Memory)** | **Context Window** | Managing the finite amount of information active in the model's immediate attention |
-| **Disk / Filesystem** | **Vector Store / RAG** | Managing long-term retrieval and persistent knowledge |
-| **Device Drivers** | **Tools / MCP** | Standardizing interfaces for external interaction (APIs, browsers, code execution) |
-| **Process Scheduler** | **Agent Orchestrator** | Determining which agent runs when, and for how long |
+```mermaid
+flowchart LR
+    CPU[CPU Cycles] -->|maps to| Inference[Inference / Tokens]
+    RAM[RAM Memory] -->|maps to| Context[Context Window]
+    Disk[Disk / Filesystem] -->|maps to| Vector[Vector Store / RAG]
+    Drivers[Device Drivers] -->|maps to| Tools[Tools / MCP]
+    Scheduler[Process Scheduler] -->|maps to| Orchestrator[Agent Orchestrator]
+```
+
+- **CPU Cycles → Inference / Tokens**: Managing the compute required for reasoning and generation
+- **RAM (Memory) → Context Window**: Managing the finite amount of information active in the model's immediate attention
+- **Disk / Filesystem → Vector Store / RAG**: Managing long-term retrieval and persistent knowledge
+- **Device Drivers → Tools / MCP**: Standardizing interfaces for external interaction (APIs, browsers, code execution)
+- **Process Scheduler → Agent Orchestrator**: Determining which agent runs when, and for how long
 
 Learn more: [System Intelligence](/docs/system/registry)
 
@@ -87,5 +80,4 @@ Learn more: [Architecture](/docs/architecture)
 
 - Understand the **[Agent Loop](/docs/concepts/agent-loop)**—the core execution pattern within agents
 - Explore the **[Agent Lifecycle](/docs/concepts/lifecycle)**—how the OS manages agent resources
-- Review **[Architecture](/docs/architecture)**—how OSP implements the Agentic OS paradigm
-- Read the complete specification in [AGENTS.md Section 4](https://github.com/synerops/osprotocol/blob/main/AGENTS.md#42-core-specifications)
+- Review **[Workflow Patterns](/docs/concepts/workflows-taxonomy)**—operational execution patterns

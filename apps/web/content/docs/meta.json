@@ -9,6 +9,7 @@
     "architecture",
     "concepts",
     "---Operating System---",
+    "system/index",
     "system/registry",
     "system/env",
     "system/fs",

@@ -1,0 +1,77 @@
+---
+title: Introduction
+description: Infrastructure services that provide system-level intelligence for agent orchestration
+---
+import { Database, Settings as SettingsIcon, FolderOpen, Server, Wrench, User, Plug } from 'lucide-react';
+
+## Overview
+
+The System Intelligence layer provides infrastructure services that all agents depend on. Unlike traditional protocols that focus solely on agent-to-agent communication, OSP includes system-level intelligence through the Operating System abstraction.
+
+This layer manages the lifecycle, coordination, and resource management that multi-agent systems require, providing the foundation for reliable, scalable agent orchestration.
+
+## The Operating System Abstraction
+
+Just as traditional operating systems abstract hardware resources (CPU, memory, disk), the System Intelligence layer abstracts cognitive resources (inference, context, knowledge, tools). It provides standardized APIs for:
+
+- **Agent Registry**: Discovery and capability management
+- **System Configuration**: Environment and settings management
+- **File Operations**: Standardized file system interfaces
+- **Protocol Integration**: MCP client and external tool access
+- **Installation & Setup**: System deployment and configuration
+
+Learn more: [Agentic OS Concept](/docs/concepts/agentic-os) | [Architecture](/docs/architecture)
+
+## System Components
+
+<Cards>
+  <Card icon={<Database />} href="/docs/system/registry" title="Registry">
+    Agent registration, discovery, and capability matching for dynamic service allocation.
+  </Card>
+  <Card icon={<FolderOpen />} href="/docs/system/env" title="Environment">
+    Configuration and environment variable management for deployment-specific settings.
+  </Card>
+  <Card icon={<Server />} href="/docs/system/fs" title="Filesystem">
+    Standardized file system operations and management for agent file access.
+  </Card>
+  <Card icon={<SettingsIcon />} href="/docs/system/settings" title="Settings">
+    System and agent settings management for centralized configuration.
+  </Card>
+  <Card icon={<Plug />} href="/docs/system/mcp-client" title="MCP Client">
+    Model Context Protocol client for standardized external tool and resource access.
+  </Card>
+  <Card icon={<Wrench />} href="/docs/system/installer" title="Installer">
+    System installation, setup, and dependency management for deployment.
+  </Card>
+  <Card icon={<User />} href="/docs/system/preferences" title="Preferences">
+    Agent preferences and user settings for customization and personalization.
+  </Card>
+</Cards>
+
+## How System Intelligence Works
+
+The System Intelligence layer operates at the infrastructure level, providing services that agents use rather than defining agent behavior directly:
+
+1. **Registration**: Agents register capabilities with the Registry
+2. **Discovery**: The OS matches agents to tasks based on capabilities
+3. **Configuration**: Environment and settings provide runtime context
+4. **Execution**: Filesystem and MCP enable tool access and file operations
+5. **Management**: Installer and preferences configure the system
+
+These components work together to provide the resource abstraction, process isolation, and inter-process communication that define an Agentic OS.
+
+## Integration with Other Layers
+
+System Intelligence integrates with:
+
+- **[Skills Framework](/docs/skills/orchestrator)**: Orchestrators use Registry for agent discovery
+- **[Context Management](/docs/context)**: Filesystem and Environment provide context storage
+- **[Quality Assurance](/docs/checks/audit)**: Settings and Preferences configure audit behavior
+- **[Actions](/docs/actions/tools)**: MCP Client enables standardized tool access
+
+## Next Steps
+
+- Explore **[Registry](/docs/system/registry)** to understand agent discovery and matching
+- Learn about **[Environment](/docs/system/env)** for configuration management
+- Review **[MCP Client](/docs/system/mcp-client)** for external protocol integration
+- Understand how System Intelligence fits into the **[Architecture](/docs/architecture)**
