@@ -35,16 +35,17 @@ export function PageCopy({ page, url }: PageCopyProps) {
         variant="outline"
         size="sm"
         onClick={copyToClipboard}
+        className="md:px-3"
       >
         {copied ? (
           <>
-            <Check className="mr-2 size-4" />
-            Copied
+            <Check className="size-4 md:mr-2" />
+            <span className="hidden md:inline">Copied</span>
           </>
         ) : (
           <>
-            <Copy className="mr-2 size-4" />
-            Copy page
+            <Copy className="size-4 md:mr-2" />
+            <span className="hidden md:inline">Copy page</span>
           </>
         )}
       </Button>
