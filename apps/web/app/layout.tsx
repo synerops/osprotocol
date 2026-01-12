@@ -3,21 +3,23 @@ import { RootProvider } from 'fumadocs-ui/provider/next';
 import { Viewport } from 'next';
 import { createBaseMetadata } from '@/lib/metadata';
 import {
-  Work_Sans,
+  Lexend,
   JetBrains_Mono,
   Plus_Jakarta_Sans,
+  Zain,
 } from 'next/font/google';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/next';
 
-const workSans = Work_Sans({
+const lexend = Lexend({
   subsets: ['latin'],
-  variable: '--font-work-sans',
+  variable: '--font-lexend',
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const zain = Zain({
   subsets: ['latin'],
-  variable: '--font-plus-jakarta-sans',
+  variable: '--font-zain',
+  weight: '400',
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -37,7 +39,7 @@ export default function Layout({ children }: LayoutProps<'/'>) {
   return (
     <html
       lang="en"
-      className={`${workSans.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable}`}
+      className={`${zain.variable} ${jetbrainsMono.variable} ${lexend.variable}`}
       suppressHydrationWarning
     >
       <body className="flex flex-col min-h-screen font-sans">

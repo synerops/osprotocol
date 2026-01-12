@@ -6,8 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: var(--font-work-sans);
-  --font-heading: var(--font-plus-jakarta-sans);
+  --font-sans: var(--font-lexend);
+  --font-heading: var(--font-zain);
   --font-mono: var(--font-jetbrains-mono);
 
   --radius-sm: calc(var(--radius) - 4px);

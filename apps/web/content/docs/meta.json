@@ -3,6 +3,7 @@
   "description": "A protocol for orchestrating, managing, and executing AI agents in distributed, scalable environments.",
   "root": true,
   "pages": [
+    "[ExternalLink][llms-full.txt](/llms.txt)",
     "---Get Started---",
     "index",
     "motivation",
