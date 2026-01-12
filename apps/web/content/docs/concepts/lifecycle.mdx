@@ -7,10 +7,16 @@ description: System-level agent management workflow
 
 The Agent Lifecycle is a System/Control Workflow that defines how agents are managed within the system. Unlike the [Agent Loop](/docs/concepts/agent-loop) (which describes internal execution), the Lifecycle governs system-level responsibilities: registration, discovery, execution management, and evaluation.
 
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│ Registration│───▶│  Discovery  │───▶│  Execution  │───▶│  Evaluation │
-└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+```mermaid
+flowchart LR
+    Reg[Registration]
+    Disc[Discovery]
+    Exec[Execution]
+    Eval[Evaluation]
+    
+    Reg --> Disc
+    Disc --> Exec
+    Exec --> Eval
 ```
 
 ## The Four Phases

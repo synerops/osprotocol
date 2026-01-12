@@ -7,50 +7,31 @@ description: Understanding the six categories of workflow patterns
 
 Workflows are operational execution patterns that define how tasks are executed during the Execution/Evaluation phases of the [Agent Lifecycle](/docs/concepts/lifecycle). They are macro-level orchestration patterns, distinct from the [Agent Loop](/docs/concepts/agent-loop) (micro-execution) and the Lifecycle (system layer).
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                  Workflow Categories                     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  System/Control Workflows                     │     │
-│  │  (Agent Lifecycle)                           │     │
-│  └──────────────────────────────────────────────┘     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  Task Workflows                              │     │
-│  │  - Routing                                    │     │
-│  │  - Prompt Chaining                            │     │
-│  │  - Orchestrator-Workers                       │     │
-│  │  - Parallelization                            │     │
-│  │  - Evaluator-Optimizer                        │     │
-│  └──────────────────────────────────────────────┘     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  Quality Workflows                            │     │
-│  │  - Rules Validation                           │     │
-│  │  - Visual Checks                              │     │
-│  │  - LLM-as-Judge                               │     │
-│  └──────────────────────────────────────────────┘     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  Recovery Workflows                           │     │
-│  │  - Retries                                    │     │
-│  │  - Fallback                                   │     │
-│  │  - Timeouts                                   │     │
-│  └──────────────────────────────────────────────┘     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  Human-in-the-Loop Workflows                  │     │
-│  │  - Approval Workflows                         │     │
-│  │  - Manual Delegation                          │     │
-│  └──────────────────────────────────────────────┘     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  Multi-Agent Workflows                        │     │
-│  │  - Agent Coordination                         │     │
-│  │  - Distributed Execution                      │     │
-│  └──────────────────────────────────────────────┘     │
-└─────────────────────────────────────────────────────────┘
+```mermaid
+mindmap
+  root((Workflow Categories))
+    SystemControl["System/Control Workflows"]
+      Lifecycle["Agent Lifecycle"]
+    TaskWorkflows["Task Workflows"]
+      Routing["Routing"]
+      PromptChaining["Prompt Chaining"]
+      OrchestratorWorkers["Orchestrator-Workers"]
+      Parallelization["Parallelization"]
+      EvaluatorOptimizer["Evaluator-Optimizer"]
+    QualityWorkflows["Quality Workflows"]
+      RulesValidation["Rules Validation"]
+      VisualChecks["Visual Checks"]
+      LLMJudge["LLM-as-Judge"]
+    RecoveryWorkflows["Recovery Workflows"]
+      Retries["Retries"]
+      Fallback["Fallback"]
+      Timeouts["Timeouts"]
+    HumanInLoop["Human-in-the-Loop Workflows"]
+      ApprovalWorkflows["Approval Workflows"]
+      ManualDelegation["Manual Delegation"]
+    MultiAgent["Multi-Agent Workflows"]
+      AgentCoordination["Agent Coordination"]
+      DistributedExecution["Distributed Execution"]
 ```
 
 ## The Six Categories

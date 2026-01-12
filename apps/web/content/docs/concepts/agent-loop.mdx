@@ -7,29 +7,18 @@ description: The core execution pattern for AI agents
 
 The Agent Loop is the fundamental execution pattern that all agent implementations MUST support. It defines the iterative cycle through which agents gather context, take actions, verify their work, and iterate until completion.
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Agent Loop                            │
-│                                                          │
-│  ┌──────────────┐    ┌──────────────┐                  │
-│  │   Gather     │───▶│  Take Action │                  │
-│  │   Context    │    │              │                  │
-│  └──────┬───────┘    └──────┬───────┘                  │
-│         │                   │                           │
-│         │                   │                           │
-│  ┌──────▼───────────────────▼───────┐                  │
-│  │      Verify Work                 │                  │
-│  └──────┬───────────────────────────┘                  │
-│         │                                               │
-│         │ (if not complete)                            │
-│         │                                               │
-│         └─────────────────────────────────┐            │
-│                                           │            │
-│                                           ▼            │
-│                                    ┌──────────────┐    │
-│                                    │   Iterate    │    │
-│                                    └──────────────┘    │
-└─────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    Gather[Gather Context]
+    Action[Take Action]
+    Verify[Verify Work]
+    Iterate{Complete?}
+    
+    Gather --> Action
+    Action --> Verify
+    Verify --> Iterate
+    Iterate -->|No| Gather
+    Iterate -->|Yes| End([End])
 ```
 
 ## The Four Steps
