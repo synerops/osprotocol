@@ -51,7 +51,7 @@ export function PageCopy({ page, url }: PageCopyProps) {
       </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="!pl-2">
+          <Button variant="outline" size="sm" className="pl-2!">
             <ChevronDown className="size-4" />
             <span className="sr-only">More options</span>
           </Button>
