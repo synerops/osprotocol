@@ -1,32 +1,22 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { isMarkdownPreferred, rewritePath } from 'fumadocs-core/negotiation';
 
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+// Rewrite /docs/*path to /api/docs/markdown/*path when markdown is preferred
+const { rewrite: rewriteMarkdown } = rewritePath('/docs/*path', '/api/docs/markdown/*path');
 
-  // Intercept URLs ending in .md within /docs
-  if (pathname.startsWith('/docs') && pathname.endsWith('.md')) {
-    let slugArray: string[] = [];
-    
-    if (pathname === '/docs.md' || pathname === '/docs/index.md') {
-      // Special case: index page - use 'index' as slug
-      slugArray = ['index'];
-    } else if (pathname.startsWith('/docs/')) {
-      // Remove /docs/ and .md to get the slug
-      const slug = pathname.replace('/docs/', '').replace('.md', '');
-      slugArray = slug ? slug.split('/') : [];
+export default function proxy(request: NextRequest) {
+  if (isMarkdownPreferred(request)) {
+    const result = rewriteMarkdown(request.nextUrl.pathname);
+
+    if (result) {
+      return NextResponse.rewrite(new URL(result, request.nextUrl));
     }
-    
-    // Rewrite to the API route that will handle the markdown
-    const url = request.nextUrl.clone();
-    url.pathname = `/api/docs/markdown/${slugArray.join('/')}`;
-    return NextResponse.rewrite(url);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/docs.md', '/docs/:path*.md'],
+  matcher: ['/docs/:path*'],
 };
 

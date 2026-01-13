@@ -26,11 +26,11 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 
   const neighbours = findNeighbour(source.pageTree, page.url);
 
-  // Build URL for markdown: if it's index (empty slugs), use /docs/index.md
-  // Otherwise, use /docs/[slug].md
+  // Build URL for markdown: if it's index (empty slugs), use /docs/index.mdx
+  // Otherwise, use /docs/[slug].mdx
   const markdownUrl = page.slugs.length === 0
-    ? '/docs/index.md'
-    : `${page.url}.md`;
+    ? '/docs/index.mdx'
+    : `${page.url}.mdx`;
 
   return (
     <DocsPage
