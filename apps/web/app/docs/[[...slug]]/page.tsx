@@ -49,17 +49,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
           <DocsDescription>{page.data.description}</DocsDescription>
         </div>
         {/* Actions section: hidden on mobile (shown in fixed bar), visible on desktop */}
-        <div className="hidden md:flex items-center gap-4 flex-shrink-0">
-          <PageCopy page={raw} url={markdownUrl} />
-          <PageNavigation
-            previous={neighbours.previous ?? null}
-            next={neighbours.next ?? null}
-          />
-        </div>
-      </div>
-      {/* Fixed mobile actions bar - only visible on mobile */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 shadow-lg">
-        <div className="flex items-center justify-center gap-2 max-w-screen-xl mx-auto px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+        <div className="hidden md:flex items-center gap-4 shrink-0">
           <PageCopy page={raw} url={markdownUrl} />
           <PageNavigation
             previous={neighbours.previous ?? null}
@@ -93,6 +83,16 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
           })}
         />
       </DocsBody>
+      {/* Fixed mobile actions bar - only visible on mobile */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 shadow-lg">
+        <div className="flex items-center justify-center gap-2 max-w-screen-xl mx-auto px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+          <PageCopy page={raw} url={markdownUrl} />
+          <PageNavigation
+            previous={neighbours.previous ?? null}
+            next={neighbours.next ?? null}
+          />
+        </div>
+      </div>
     </DocsPage>
   );
 }
