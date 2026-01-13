@@ -8,13 +8,17 @@ import { siteConfig } from '@/lib/metadata';
 export const revalidate = false;
 
 async function loadFonts() {
-  const [ jetbrainsMono, workSans ] = await Promise.all([
+  const [ jetbrainsMono, lexend, zain ] = await Promise.all([
     readFile(
       join(process.cwd(), 'public', 'fonts', 'JetBrainsMono-Regular.ttf')
     ).then((buffer) => buffer.buffer),
 
     readFile(
-      join(process.cwd(), 'public', 'fonts', 'WorkSans-Regular.ttf')
+      join(process.cwd(), 'public', 'fonts', 'Lexend-Regular.ttf')
+    ).then((buffer) => buffer.buffer),
+
+    readFile(
+      join(process.cwd(), 'public', 'fonts', 'Zain-Regular.ttf')
     ).then((buffer) => buffer.buffer),
   ]);
 
@@ -26,8 +30,14 @@ async function loadFonts() {
       weight: 400 as const,
     },
     {
-      name: 'Work Sans',
-      data: workSans,
+      name: 'Lexend',
+      data: lexend,
+      style: 'normal' as const,
+      weight: 400 as const,
+    },
+    {
+      name: 'Zain',
+      data: zain,
       style: 'normal' as const,
       weight: 400 as const,
     },
