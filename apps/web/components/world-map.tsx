@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useEffect, useState } from "react"
 import { motion } from "motion/react"
 import DottedMap from "dotted-map"
 
@@ -16,16 +16,26 @@ interface MapProps {
 
 export default function WorldMap({ dots = [], lineColor = "#0ea5e9" }: MapProps) {
   const svgRef = useRef<SVGSVGElement>(null)
+  const [mounted, setMounted] = useState(false)
+  const { theme, systemTheme } = useTheme()
+
+  // Use consistent default theme for SSR and initial client render
+  // Default to 'light' to ensure server and client match initially
+  const effectiveTheme = mounted && theme !== 'system' 
+    ? theme 
+    : (mounted && theme === 'system' ? systemTheme : 'light')
+
   const map = new DottedMap({ height: 100, grid: "diagonal" })
-
-  const { theme } = useTheme()
-
   const svgMap = map.getSVG({
     radius: 0.22,
-    color: theme === "dark" ? "#FFFFFF" : "#000000",
+    color: effectiveTheme === "dark" ? "#FFFFFF" : "#000000",
     shape: "circle",
-    backgroundColor: theme === "dark" ? "black" : "white",
+    backgroundColor: effectiveTheme === "dark" ? "black" : "white",
   })
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const projectPoint = (lat: number, lng: number) => {
     const x = (lng + 180) * (800 / 360)
