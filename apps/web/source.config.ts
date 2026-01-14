@@ -1,9 +1,11 @@
 import {
   defineConfig,
   defineDocs,
+  defineCollections,
   frontmatterSchema,
   metaSchema
 } from 'fumadocs-mdx/config';
+import { z } from 'zod';
 import { remarkMdxMermaid } from 'fumadocs-core/mdx-plugins';
 
 // You can customise Zod schemas for frontmatter and `meta.json` here
@@ -19,6 +21,15 @@ export const docs = defineDocs({
   meta: {
     schema: metaSchema,
   },
+});
+
+export const blogPosts = defineCollections({
+  type: 'doc',
+  dir: 'content/blog',
+  schema: frontmatterSchema.extend({
+    author: z.string(),
+    date: z.string().date().or(z.date()),
+  }),
 });
 
 export default defineConfig({

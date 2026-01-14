@@ -12,6 +12,10 @@ const config = {
         source: '/docs/:path*.mdx',
         destination: '/api/docs/markdown/:path*',
       },
+      {
+        source: '/blog/:path*.mdx',
+        destination: '/api/blog/markdown/:path*',
+      },
     ];
   },
 };

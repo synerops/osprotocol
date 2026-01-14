@@ -1,6 +1,7 @@
-import { docs } from 'fumadocs-mdx:collections/server';
+import { docs, blogPosts } from 'fumadocs-mdx:collections/server';
 import { type InferPageType, loader } from 'fumadocs-core/source';
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
+import { toFumadocsSource } from 'fumadocs-mdx/runtime/server';
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const source = loader({
@@ -9,6 +10,11 @@ export const source = loader({
   plugins: [lucideIconsPlugin()],
 });
 
+
+export const blog = loader({
+  source: toFumadocsSource(blogPosts, []),
+  baseUrl: '/blog',
+});
 export function getPageImage(page: InferPageType<typeof source>) {
   const segments = [...page.slugs, 'image.png'];
 
@@ -19,6 +25,23 @@ export function getPageImage(page: InferPageType<typeof source>) {
 }
 
 export async function getLLMText(page: InferPageType<typeof source>) {
+  const processed = await page.data.getText('processed');
+
+  return `# ${page.data.title}
+
+${processed}`;
+}
+
+export function getBlogPageImage(page: InferPageType<typeof blog>) {
+  const segments = [...page.slugs, 'image.png'];
+
+  return {
+    segments,
+    url: `/og/blog/${segments.join('/')}`,
+  };
+}
+
+export async function getBlogLLMText(page: InferPageType<typeof blog>) {
   const processed = await page.data.getText('processed');
 
   return `# ${page.data.title}

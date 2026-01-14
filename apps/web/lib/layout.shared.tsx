@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import LogoLight from "public/logo-light.svg";
 import { siteConfig } from './metadata';
+import { BookIcon } from 'lucide-react';
 
 export const osp = (
   <div className="flex items-center">
@@ -21,6 +22,18 @@ export function baseOptions(): BaseLayoutProps {
     nav: {
       title: <>{osp}</>,
     },
+    links: [
+      {
+        icon: <BookIcon />,
+        text: 'Blog',
+        url: '/blog',
+      },
+      {
+        icon: <BookIcon />,
+        text: 'Docs',
+        url: '/docs',
+      },
+    ],
     githubUrl: siteConfig.githubUrl
   };
 }
