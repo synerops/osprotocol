@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import LogoLight from "public/logo-light.svg";
 import { siteConfig } from './metadata';
-import { BookIcon } from 'lucide-react';
+import { BookOpen, Newspaper } from 'lucide-react';
 
 export const osp = (
   <div className="flex items-center">
@@ -24,12 +24,12 @@ export function baseOptions(): BaseLayoutProps {
     },
     links: [
       {
-        icon: <BookIcon />,
+        icon: <Newspaper />,
         text: 'Blog',
         url: '/blog',
       },
       {
-        icon: <BookIcon />,
+        icon: <BookOpen />,
         text: 'Docs',
         url: '/docs',
       },
