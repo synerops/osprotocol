@@ -16,7 +16,7 @@ import { PageNavigation } from '@/components/page-navigation';
 import { KeyboardNavigation } from '@/components/keyboard-navigation';
 import { cn } from '@/lib/utils';
 
-export default async function Page(props: PageProps<'/blog/[[...slug]]'>) {
+export default async function Page(props: PageProps<'/blog/[...slug]'>) {
   const params = await props.params;
   const page = blog.getPage(params.slug);
   if (!page) notFound();
@@ -116,7 +116,7 @@ export async function generateStaticParams() {
   return blog.generateParams();
 }
 
-export async function generateMetadata(props: PageProps<'/blog/[[...slug]]'>): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<'/blog/[...slug]'>): Promise<Metadata> {
   const params = await props.params;
   const page = blog.getPage(params.slug);
   if (!page) notFound();
