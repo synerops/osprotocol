@@ -52,8 +52,8 @@ export default function HomePage() {
       {/* Right side: Description + Link */}
       <div className="relative z-10 flex flex-col justify-center items-start px-8 md:px-16 lg:px-24 flex-1 pb-12 md:pb-0">
         <p className="text-lg md:text-xl text-muted-foreground max-w-md leading-relaxed mb-8">
-          A protocol for orchestrating, managing, and executing <span className="text-primary">AI agents</span> in
-          distributed, scalable environments.
+          The standard for <span className="text-primary">multi-agent systems</span>. Define agents, coordinate
+          workflows, and build systems where agents work together.
         </p>
         <Link href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors underline">
           View Documentation →

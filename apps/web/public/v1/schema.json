@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/schema.json",
+  "title": "OS Protocol v1",
+  "description": "JSON Schema index for the Agentic OS Protocol",
+  "type": "object",
+  "$defs": {
+    "Agent": {
+      "$ref": "agent.md.json"
+    },
+    "Skill": {
+      "$ref": "skill.md.json"
+    },
+    "Workflows": {
+      "type": "object",
+      "properties": {
+        "routing": {
+          "$ref": "workflows/routing.json"
+        },
+        "orchestrator-workers": {
+          "$ref": "workflows/orchestrator-workers.json"
+        },
+        "parallelization": {
+          "$ref": "workflows/parallelization.json"
+        },
+        "evaluator-optimizer": {
+          "$ref": "workflows/evaluator-optimizer.json"
+        }
+      }
+    },
+    "Runs": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "$ref": "runs/run.json"
+        },
+        "timeout": {
+          "$ref": "runs/timeout.json"
+        },
+        "retry": {
+          "$ref": "runs/retry.json"
+        },
+        "cancel": {
+          "$ref": "runs/cancel.json"
+        },
+        "approval": {
+          "$ref": "runs/approval.json"
+        }
+      }
+    }
+  },
+  "$comment": "System, Context, Actions, Checks - coming in future versions"
+}

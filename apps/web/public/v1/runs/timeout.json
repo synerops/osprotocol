@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/runs/timeout.json",
+  "title": "Timeout Schema",
+  "description": "Timeout configuration for workflow runs",
+  "type": "object",
+  "properties": {
+    "ms": {
+      "type": "number",
+      "description": "Timeout duration in milliseconds"
+    },
+    "onTimeout": {
+      "$ref": "#/definitions/TimeoutAction",
+      "description": "Action to take when timeout occurs (default: 'fail')"
+    }
+  },
+  "required": [
+    "ms"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "TimeoutAction": {
+      "type": "string",
+      "enum": [
+        "fail",
+        "cancel",
+        "continue"
+      ],
+      "description": "Action to take when a timeout occurs"
+    }
+  }
+}

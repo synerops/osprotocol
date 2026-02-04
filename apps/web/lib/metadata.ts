@@ -8,9 +8,29 @@ export const baseUrl =
 
 export const siteConfig = {
   name: 'OS Protocol',
-  absoluteTitle: 'The Agentic Operating System Protocol',
-  description: 'A protocol for orchestrating, managing, and executing AI agents in distributed, scalable environments.',
-  keywords: ['AI', 'agents', 'orchestration', 'typescript', 'aisdk', 'agentic', 'os', 'agentic os', 'multi-agentic systems'],
+  absoluteTitle: 'OS Protocol - The Agentic Operating System Protocol',
+  description: 'The standard for multi-agent systems. Define agents, coordinate workflows, and build systems where agents work together.',
+  keywords: [
+    // Brand
+    'OS Protocol',
+    'OSP',
+    'Agentic OS',
+    // Core value
+    'AI agent interoperability',
+    'multi-agent systems',
+    'agent protocol',
+    // What it does
+    'agent orchestration',
+    'agent coordination',
+    'agent specification',
+    // Technical
+    'standardized interfaces',
+    'agent workflows',
+    'LLM orchestration',
+    'typescript',
+    'AI SDK',
+    'aisdk',
+  ],
   authors: [
     {
       name: 'synerops',

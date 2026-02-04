@@ -7,7 +7,10 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**"]
+      "outputs": [".next/**", "dist/**", "public/v1/**"]
+    },
+    "@osprotocol/schema#build": {
+      "outputs": ["../../apps/web/public/v1/**"]
     },
     "typecheck": {
       "dependsOn": ["^typecheck"],

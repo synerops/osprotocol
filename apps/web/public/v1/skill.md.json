@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/skill.md.json",
+  "title": "SKILL.md Schema",
+  "description": "Skill metadata (YAML frontmatter in SKILL.md)",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique identifier for the skill"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description"
+    },
+    "protocol": {
+      "$ref": "#/definitions/ProtocolReference",
+      "description": "Protocol reference"
+    },
+    "extends": {
+      "type": "string",
+      "description": "Parent skill to extend from (optional)"
+    }
+  },
+  "required": [
+    "name",
+    "description",
+    "protocol"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "ProtocolReference": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "$ref": "#/definitions/ProtocolDomain",
+          "description": "The protocol domain"
+        },
+        "api": {
+          "type": "string",
+          "description": "The API name within the domain"
+        }
+      },
+      "required": [
+        "domain",
+        "api"
+      ],
+      "additionalProperties": false,
+      "description": "Protocol reference (domain + API)"
+    },
+    "ProtocolDomain": {
+      "type": "string",
+      "enum": [
+        "system",
+        "context",
+        "actions",
+        "checks",
+        "skills",
+        "workflows",
+        "runs"
+      ],
+      "description": "Protocol domain categories"
+    }
+  }
+}

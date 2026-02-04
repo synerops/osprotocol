@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/workflows/evaluator-optimizer.json",
+  "title": "Evaluator-Optimizer Workflow Schema",
+  "description": "Configuration for evaluator-optimizer workflow",
+  "type": "object",
+  "properties": {
+    "threshold": {
+      "type": "number",
+      "description": "Minimum overall score to accept output (0.0 to 1.0)"
+    },
+    "maxIterations": {
+      "type": "number",
+      "description": "Maximum optimization iterations before giving up"
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/EvaluationCriterion"
+      },
+      "description": "Evaluation criteria to apply"
+    },
+    "generatorModel": {
+      "type": "string",
+      "description": "Model for generation"
+    },
+    "evaluatorModel": {
+      "type": "string",
+      "description": "Model for evaluation (often a different model)"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "EvaluationCriterion": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the criterion"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of what this criterion evaluates"
+        },
+        "threshold": {
+          "type": "number",
+          "description": "Minimum score required to pass (0.0 to 1.0)"
+        },
+        "weight": {
+          "type": "number",
+          "description": "Weight of this criterion in overall score"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "threshold"
+      ],
+      "additionalProperties": false,
+      "description": "Configuration for an evaluation criterion"
+    }
+  }
+}
