@@ -1,716 +1,154 @@
-# AGENTS.md
+# Agentic OS Protocol: Knowledge Base
 
-## Status of This Document
+## Protocol Nature (1-10)
+1. OSP is a specification, not a framework or library.
+2. The protocol defines interfaces, behaviors, and data formats for orchestrating agents.
+3. OSP is the contract you implement, not the code you run.
+4. Like HTTP enables browsers to talk to servers, OSP enables agents to collaborate.
+5. The protocol defines what must be supported, not how you must build it.
+6. Different teams can implement OSP in different languages and maintain compatibility.
+7. The protocol uses RFC 2119 terminology: MUST, SHOULD, MAY to define conformance.
+8. OSP allows partial conformance: implement the modules you need.
+9. The specification is modular: Skills, System, Context, Actions, Checks, Runs, Workflows.
+10. The protocol is a "metaverse" where any agent can participate by following the rules.
 
-This document specifies the Agentic OS Protocol (OSP), a protocol specification for orchestrating, managing, and executing AI agents in distributed, scalable environments. This specification defines interfaces, behaviors, requirements, and integration patterns that implementations MUST follow.
+## The Agentic OS Concept (11-20)
+11. An Agentic OS is backend infrastructure for agents, not just a graphical interface for humans.
+12. The LLM functions conceptually as the system's Kernel.
+13. In an Agentic OS, the operating system user is the agent, not just the human.
+14. Agents request resources from the OS: file reading, memory storage, tool execution.
+15. The OS manages cognitive resources: inference, context window, vector stores, tools.
+16. Context Window is the equivalent of RAM in traditional systems.
+17. Vector stores and RAG are the equivalent of disk and filesystem.
+18. Tools and MCP are the device drivers of the Agentic OS.
+19. The filesystem is the default infrastructure; no database required to start.
+20. An Agentic OS solves orchestration complexity, not just user experience.
 
-This is a working specification and may be updated based on implementation experience and community feedback.
+## Plan: Structured Intent (21-30)
+21. Plan is the first-class concept that represents user intent.
+22. A Plan is a structured intent that generates Runs.
+23. Plan defines the "what" (goal), Run defines the "how it executes".
+24. A Plan can have multiple Runs (long-running executions that mutate).
+25. Both Plan and Runs persist; this enables resuming work after interruptions.
+26. Plan contains metadata: owner, goal, context, constraints.
+27. The cycle is: user expresses intent → system generates Plan → Plan generates Runs.
+28. A Plan can be paused, cancelled, or modified without losing history.
+29. Persisted state of Plans and Runs enables auditing and post-mortem debugging.
+30. The Plan is a primary entry point for significant work in the OS.
 
-## 1. Introduction
-
-### 1.1. Purpose
-
-The Agentic OS Protocol (OSP) is a protocol specification that defines how AI agents SHOULD orchestrate, manage, and execute in distributed, scalable environments. This specification outlines interfaces, behaviors, requirements, and integration patterns that implementations MUST adhere to.
-
-This document describes the specification itself, not any particular implementation. The spec defines the "contract" that all implementations MUST follow.
-
-### 1.2. What is a Protocol Specification?
-
-The Agentic OS Protocol is a **specification**, not an implementation. Like HTTP (RFC 7230-7235), JSON (RFC 8259), OpenAPI, or MCP, it defines:
-
-- **Interfaces**: How components communicate and interact
-- **Behaviors**: Expected behaviors and state transitions
-- **Data Formats**: Structure, validation rules, and schemas
-- **Requirements**: What implementations MUST support
-- **Contracts**: Agreements between components and agents
-- **Integration Patterns**: Standardized ways components work together
-
-Implementations of this spec MAY be built in any language, using any technology stack, as long as they adhere to the defined interfaces and behaviors.
-
-### 1.3. Scope
-
-This specification covers:
-
-- Core execution patterns (Agent Loop)
-- Workflow definitions and patterns
-- System management interfaces
-- Context management specifications
-- Quality assurance mechanisms
-- Integration patterns
-
-This specification does NOT prescribe:
-
-- Specific implementation technologies
-- Runtime environments
-- Programming languages
-- Deployment architectures
-
-## 2. Core Execution Pattern: Agent Loop
-
-### 2.1. Overview
-
-The Agent Loop is the fundamental execution pattern that all agent implementations MUST support. It defines the iterative cycle through which agents gather context, take actions, verify their work, and iterate until completion.
+## Runs: Execution Unit (31-40)
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Agent Loop                            │
-│                                                          │
-│  ┌──────────────┐    ┌──────────────┐                  │
-│  │   Gather     │───▶│  Take Action │                  │
-│  │   Context    │    │              │                  │
-│  └──────┬───────┘    └──────┬───────┘                  │
-│         │                   │                           │
-│         │                   │                           │
-│  ┌──────▼───────────────────▼───────┐                  │
-│  │      Verify Work                 │                  │
-│  └──────┬───────────────────────────┘                  │
-│         │                                               │
-│         │ (if not complete)                            │
-│         │                                               │
-│         └─────────────────────────────────┐            │
-│                                           │            │
-│                                           ▼            │
-│                                    ┌──────────────┐    │
-│                                    │   Iterate    │    │
-│                                    └──────────────┘    │
-└─────────────────────────────────────────────────────────┘
+Plan (intent)
+ └── Run (controllable execution)
+      └── Workflow (execution pattern)
+           └── Agent Loop (gather → action → verify → iterate)
 ```
 
-### 2.2. Gather Context
+31. Run is the primary controllable unit of execution in the protocol.
+32. A Run represents a long-running execution that can mutate its state.
+33. Each Run has controls: pause, cancel, timeout, approval.
+34. A Run can belong to a Plan, or exist independently for simple tasks.
+35. Runs persist their state to enable recovery from failures.
+36. Each Run uses a Workflow as its execution pattern.
+37. Run Controls define how the system responds to external events.
+38. Timeout defines how long a Run can last before automatic termination.
+39. Approval enables human-in-the-loop before critical actions.
+40. The hierarchy is clear: Plan → Runs → Workflows.
 
-#### 2.2.1. Specification
+## Workflows: Execution Patterns (41-55)
+41. Workflows are proven patterns for coordinating agent execution.
+42. OSP adapts Anthropic's workflow patterns: Routing, Parallelization, Orchestrator-Workers, Evaluator-Optimizer.
+43. Routing classifies inputs and directs them to specialized agents.
+44. Parallelization executes independent tasks simultaneously.
+45. Orchestrator-Workers delegates subtasks to specialized agents and synthesizes results.
+46. Evaluator-Optimizer iterates on outputs until quality criteria are met.
+47. Workflows are composable: you can combine them for complex tasks.
+48. Each Run selects a Workflow based on the task's nature.
+49. Workflows can span multiple systems and platforms.
+50. Recovery Workflows handle Retries, Fallback, and Timeouts automatically.
+51. Human-in-the-Loop workflows enable Approval and Manual Delegation.
+52. Multi-Agent Workflows coordinate distributed agents across different environments.
+53. The Agent Loop (Gather Context → Take Action → Verify Work → Iterate) operates within Workflows.
+54. Quality Workflows include Rules Validation, Visual Feedback, and LLM-as-Judge.
+55. Workflows are patterns first; implementations materialize them as code.
 
-Implementations MUST provide interfaces for context gathering. The specification defines the following context gathering mechanisms:
-
-#### 2.2.2. Agentic Search
-
-Implementations MUST support agentic search capabilities that allow agents to:
-- Search file systems using standard tools (grep, tail, find, etc.)
-- Query structured data sources
-- Filter and process large datasets incrementally
-
-**Interface Requirements:**
-- Agents MUST be able to specify search queries
-- Search results MUST be streamable or chunkable
-- Search operations MUST support filtering and transformation
-
-#### 2.2.3. Semantic Search
-
-Implementations MAY support semantic search through vector embeddings. When supported:
-- Embeddings MUST be generated according to specified schemas
-- Vector queries MUST follow defined interfaces
-- Semantic search SHOULD be used for concept-based queries
-
-#### 2.2.4. Subagent Context Isolation
-
-Implementations MUST support subagent creation with isolated context windows:
-- Subagents MUST have independent context from parent agents
-- Subagents MUST return only relevant information to orchestrators
-- Context isolation boundaries MUST be clearly defined
-
-#### 2.2.5. Context Compaction
-
-For long-running agents, implementations MUST support context compaction:
-- When context limits approach, previous messages MUST be summarized
-- Compaction MUST preserve critical information
-- Compaction interfaces MUST be defined
-
-### 2.3. Take Action
-
-#### 2.3.1. Specification
-
-Implementations MUST provide interfaces for action execution. The specification defines the following action mechanisms:
-
-#### 2.3.2. Tools
-
-Tools are the primary building blocks of execution. Implementations MUST:
-- Define tool interfaces according to specified schemas
-- Support tool discovery and registration
-- Provide tool execution interfaces
-- Support tool result validation
-
-**Tool Interface Requirements:**
-- Tools MUST have clear descriptions and parameter schemas
-- Tools MUST return structured results
-- Tool errors MUST be handled according to specified contracts
-
-#### 2.3.3. Bash and Scripts
-
-Implementations MUST support execution of bash commands and scripts:
-- Script execution interfaces MUST be defined
-- Script results MUST be captured and returned
-- Script errors MUST be handled according to error handling specifications
-
-#### 2.3.4. Code Generation
-
-Implementations MUST support code generation and execution:
-- Generated code MUST be validated before execution
-- Code execution environments MUST be isolated
-- Code execution results MUST be captured and returned
-
-#### 2.3.5. MCP Integration
-
-Implementations MUST support Model Context Protocol (MCP) integration:
-- MCP client interfaces MUST be implemented
-- MCP server discovery MUST be supported
-- MCP tool invocation MUST follow MCP specifications
-
-### 2.4. Verify Work
-
-#### 2.4.1. Specification
-
-Implementations MUST provide interfaces for work verification. The specification defines the following verification mechanisms:
-
-#### 2.4.2. Rules-Based Validation
-
-Implementations MUST support rules-based validation:
-- Rules MUST be defined according to specified schemas
-- Rule evaluation interfaces MUST be provided
-- Rule violations MUST be reported with clear error messages
-
-#### 2.4.3. Visual Feedback
-
-Implementations MAY support visual feedback mechanisms:
-- Screenshot interfaces MUST be defined when supported
-- Visual validation contracts MUST be specified
-- Visual feedback SHOULD be used for UI-related tasks
-
-#### 2.4.4. LLM-as-Judge
-
-Implementations MAY support LLM-based evaluation:
-- Judge interfaces MUST be defined when supported
-- Judge evaluation criteria MUST be specified
-- Judge results MUST be structured according to schemas
-
-### 2.5. Iterate
-
-#### 2.5.1. Specification
-
-The iteration mechanism MUST:
-- Control loop repetition based on completion criteria
-- Update context based on verification results
-- Support termination conditions
-- Handle iteration limits
-
-## 3. Workflow Patterns
-
-### 3.1. Overview
-
-Workflows define structured processes that agents follow to accomplish complex tasks. The specification defines multiple workflow patterns that implementations MAY support.
+## Semantic Filesystem (56-72)
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                  Workflow Categories                     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  System/Control Workflows                     │     │
-│  │  (Agent Lifecycle)                           │     │
-│  └──────────────────────────────────────────────┘     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  Task Workflows                              │     │
-│  │  - Routing                                    │     │
-│  │  - Prompt Chaining                            │     │
-│  │  - Orchestrator-Workers                       │     │
-│  │  - Parallelization                            │     │
-│  │  - Evaluator-Optimizer                        │     │
-│  └──────────────────────────────────────────────┘     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  Quality Workflows                            │     │
-│  │  - Rules Validation                           │     │
-│  │  - Visual Checks                              │     │
-│  │  - LLM-as-Judge                               │     │
-│  └──────────────────────────────────────────────┘     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  Recovery Workflows                           │     │
-│  │  - Retries                                    │     │
-│  │  - Fallback                                   │     │
-│  │  - Timeouts                                   │     │
-│  └──────────────────────────────────────────────┘     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  Human-in-the-Loop Workflows                  │     │
-│  │  - Approval Workflows                         │     │
-│  │  - Manual Delegation                          │     │
-│  └──────────────────────────────────────────────┘     │
-│                                                          │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  Multi-Agent Workflows                        │     │
-│  │  - Agent Coordination                         │     │
-│  │  - Distributed Execution                      │     │
-│  └──────────────────────────────────────────────┘     │
-└─────────────────────────────────────────────────────────┘
+.agents/
+├── system/          # OS intelligence (env, fs, preferences, registry)
+├── context/         # Read data (memory, documents, vectors)
+├── actions/         # Executable operations
+├── checks/          # Verification (rules, audit)
+├── skills/          # Meta-agents (orchestrator, planner, executor)
+├── workflows/       # Execution pattern definitions
+└── runs/            # Execution state
 ```
 
-### 3.2. System/Control Workflows
+56. `.agents/` is the semantic OS root in any project.
+57. The filesystem is the universal interface; every agent understands files.
+58. The `.agents/` structure reflects the protocol domains.
+59. `system/` contains OS intelligence: env, fs, preferences, registry.
+60. `context/` stores read data: memory, documents, vectors.
+61. `actions/` defines operations that agents can execute.
+62. `checks/` contains verification: rules, audit logs.
+63. `skills/` defines meta-agents: orchestrator, planner, executor.
+64. `workflows/` stores execution pattern definitions.
+65. `runs/` persists active and completed execution state.
+66. Any agent can read `.agents/` to understand the environment.
+67. File conventions enable discovery without central coordination.
+68. `AGENT.md` defines an agent; `SKILL.md` defines a capability.
+69. YAML frontmatter in `.md` files enables structured metadata.
+70. The filesystem eliminates the need for databases in simple cases.
+71. Agents can add context by writing to appropriate folders.
+72. The semantic filesystem is a deliberately simple API.
 
-#### 3.2.1. Agent Lifecycle Workflow
+## Skills Framework (73-82)
+73. Skills Framework defines specialized roles: Orchestrator, Planner, Executor.
+74. Orchestrators coordinate multiple agents and distribute tasks.
+75. Planners decompose complex goals into tasks with dependency analysis.
+76. Executors handle actual execution using tools, APIs, and scripts.
+77. Skills belong to protocol domains: system, context, actions, checks, skills, workflows, runs.
+78. A Skill can expose tools that other agents invoke.
+79. Skills are discoverable through the system Registry.
+80. Skill composition enables building complex agents from simple blocks.
+81. Skills define contracts: what they receive, what they produce, what they guarantee.
+82. Skill design prioritizes reusability over excessive specialization.
 
-The Agent Lifecycle is a System/Control Workflow that defines how agents are managed within the system. This workflow consists of four phases:
-
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│ Registration│───▶│  Discovery  │───▶│  Execution  │───▶│  Evaluation │
-└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
-```
-
-**3.2.1.1. Registration Phase**
-
-Implementations MUST support agent registration:
-- Registration interfaces MUST be defined
-- Agents MUST declare capabilities and constraints
-- Resource requirements MUST be specified
-- Registration data MUST conform to specified schemas
-
-**3.2.1.2. Discovery Phase**
-
-Implementations MUST support agent discovery:
-- Discovery interfaces MUST be provided
-- Dynamic service discovery based on task requirements MUST be supported
-- Load balancing and failover mechanisms MUST be defined
-- Discovery protocols MUST be specified
-
-**3.2.1.3. Execution Management Phase**
-
-Implementations MUST support execution management:
-- Task assignment interfaces MUST be defined
-- Real-time monitoring interfaces MUST be provided
-- Error handling contracts MUST be specified
-- Execution state management MUST be supported
-
-**3.2.1.4. Evaluation Phase**
-
-Implementations MUST support agent evaluation:
-- Performance monitoring interfaces MUST be defined
-- Quality assessment contracts MUST be specified
-- Adaptation mechanisms MAY be supported
-- Evaluation results MUST conform to specified schemas
-
-### 3.3. Task Workflows
-
-#### 3.3.1. Routing Workflow
-
-**Specification:** The routing workflow classifies inputs and directs them to specialized follow-up tasks.
+## Agent Lifecycle (83-92)
 
 ```
-Input ──▶ Classifier ──▶ Route A ──▶ Task A
-                    │
-                    └──▶ Route B ──▶ Task B
+Registration → Discovery → Execution → Evaluation
+                              ↓
+                    ┌─────────────────┐
+                    │   Agent Loop    │
+                    │ gather context  │
+                    │ take action     │
+                    │ verify work     │
+                    │ iterate         │
+                    └─────────────────┘
 ```
 
-**Requirements:**
-- Routing interfaces MUST be defined
-- Classification mechanisms MUST be specified
-- Route selection logic MUST be documented
-- Routing contracts MUST be specified
-
-#### 3.3.2. Prompt Chaining Workflow
-
-**Specification:** Prompt chaining decomposes tasks into sequential steps where each step processes the output of the previous one.
-
-```
-Step 1 ──▶ Step 2 ──▶ Step 3 ──▶ ... ──▶ Final Output
-   │          │          │
-   └─Gate────┴─Gate─────┘
-```
-
-**Requirements:**
-- Chaining interfaces MUST be defined
-- Gate/validation mechanisms MUST be specified
-- Step transition contracts MUST be defined
-
-#### 3.3.3. Orchestrator-Workers Workflow
-
-**Specification:** A central orchestrator dynamically breaks down tasks, delegates to worker agents, and synthesizes results.
-
-```
-         ┌──────────────┐
-         │ Orchestrator  │
-         └───────┬───────┘
-                 │
-    ┌────────────┼────────────┐
-    │            │            │
-┌───▼───┐   ┌───▼───┐   ┌───▼───┐
-│Worker1│   │Worker2│   │Worker3│
-└───┬───┘   └───┬───┘   └───┬───┘
-    └────────────┼────────────┘
-                 │
-         ┌───────▼───────┐
-         │  Synthesis    │
-         └───────────────┘
-```
-
-**Requirements:**
-- Orchestrator interfaces MUST be defined
-- Worker delegation contracts MUST be specified
-- Result synthesis interfaces MUST be provided
-- Coordination protocols MUST be defined
-
-#### 3.3.4. Parallelization Workflow
-
-**Specification:** Parallelization enables simultaneous execution of independent tasks with result aggregation.
-
-**Variations:**
-
-**Sectioning:**
-```
-Task ──▶ [Subtask1] ──┐
-      │ [Subtask2] ──┼──▶ Aggregate ──▶ Result
-      └ [Subtask3] ──┘
-```
-
-**Voting:**
-```
-Input ──▶ [Judge1] ──┐
-      │ [Judge2] ──┼──▶ Consensus ──▶ Decision
-      └ [Judge3] ──┘
-```
-
-**Requirements:**
-- Parallel execution interfaces MUST be defined
-- Dependency management MUST be specified
-- Aggregation mechanisms MUST be provided
-- Concurrency control contracts MUST be defined
-
-#### 3.3.5. Evaluator-Optimizer Workflow
-
-**Specification:** One component generates responses while another provides evaluation and feedback in a loop.
-
-```
-Generator ──▶ Output ──▶ Evaluator ──▶ Feedback ──┐
-                                                    │
-                                                    └──▶ (iterate)
-```
-
-**Requirements:**
-- Generator interfaces MUST be defined
-- Evaluator contracts MUST be specified
-- Feedback loop mechanisms MUST be provided
-- Iteration control MUST be specified
-
-### 3.4. Quality Workflows
-
-#### 3.4.1. Rules Validation Workflow
-
-**Specification:** Rules-based validation ensures outputs meet defined criteria.
-
-**Requirements:**
-- Rule definition schemas MUST be specified
-- Rule evaluation interfaces MUST be defined
-- Violation reporting contracts MUST be specified
-
-#### 3.4.2. Visual Feedback Workflow
-
-**Specification:** Visual validation through screenshots or renders.
-
-**Requirements:**
-- Screenshot interfaces MUST be defined when supported
-- Visual comparison contracts MUST be specified
-- Feedback mechanisms MUST be provided
-
-#### 3.4.3. LLM-as-Judge Workflow
-
-**Specification:** LLM-based evaluation of agent outputs.
-
-**Requirements:**
-- Judge interfaces MUST be defined when supported
-- Evaluation criteria schemas MUST be specified
-- Judge result formats MUST be defined
-
-### 3.5. Recovery Workflows
-
-#### 3.5.1. Retries Workflow
-
-**Specification:** Automatic retry mechanisms for failed operations.
-
-**Requirements:**
-- Retry policy interfaces MUST be defined
-- Retry strategies MUST be specified
-- Retry limits MUST be configurable
-
-#### 3.5.2. Fallback Workflow
-
-**Specification:** Fallback mechanisms when primary operations fail.
-
-**Requirements:**
-- Fallback interfaces MUST be defined
-- Fallback strategies MUST be specified
-- Fallback chains MAY be supported
-
-#### 3.5.3. Timeout Workflow
-
-**Specification:** Timeout handling for long-running operations.
-
-**Requirements:**
-- Timeout interfaces MUST be defined
-- Timeout policies MUST be specified
-- Timeout handling contracts MUST be defined
-
-### 3.6. Human-in-the-Loop Workflows
-
-#### 3.6.1. Approval Workflows
-
-**Specification:** Human approval required before proceeding.
-
-**Requirements:**
-- Approval interfaces MUST be defined
-- Approval state management MUST be specified
-- Approval timeout handling MUST be defined
-
-#### 3.6.2. Manual Delegation
-
-**Specification:** Manual task assignment and delegation.
-
-**Requirements:**
-- Delegation interfaces MUST be defined
-- Delegation protocols MUST be specified
-
-### 3.7. Multi-Agent Workflows
-
-#### 3.7.1. Agent Coordination
-
-**Specification:** Coordination patterns for multiple agents.
-
-**Requirements:**
-- Coordination interfaces MUST be defined
-- Coordination protocols MUST be specified
-- Conflict resolution mechanisms MUST be defined
-
-#### 3.7.2. Distributed Execution
-
-**Specification:** Distributed execution across multiple agents.
-
-**Requirements:**
-- Distribution interfaces MUST be defined
-- Distribution strategies MUST be specified
-- Result aggregation MUST be supported
-
-## 4. Protocol Architecture
-
-### 4.1. Overview
-
-The protocol specification is organized into core areas that define different aspects of agent orchestration.
-
-### 4.2. Core Specifications
-
-#### 4.2.1. Skills Specification
-
-Defines the core agent capabilities and their interfaces:
-
-**Orchestrator:**
-- Specifies interfaces and behaviors for coordinating multiple agents
-- Defines contracts for task routing, load balancing, and conflict resolution
-- Orchestrator interfaces MUST be implemented
-
-**Planner:**
-- Defines how complex objectives are broken down into actionable tasks
-- Specifies interfaces for task decomposition, dependency analysis, and resource estimation
-- Planner interfaces MUST be implemented
-
-**Executor:**
-- Specifies the contract for executing agent tasks
-- Defines interfaces for tool usage, API interactions, and data processing
-- Executor interfaces MUST be implemented
-
-#### 4.2.2. System Intelligence Specification
-
-Defines system-level components and their interfaces:
-
-**Registry:**
-- Specifies how agents register and are discovered
-- Defines contracts for agent registration, capability declaration, and service discovery
-- Registry interfaces MUST be implemented
-
-**Environment:**
-- Defines configuration and environment management interfaces
-- Specifies how environment variables, settings, and configurations are handled
-- Environment interfaces MUST be implemented
-
-**Filesystem:**
-- Specifies file system operation interfaces
-- Defines contracts for file operations, directory management, and file system abstractions
-- Filesystem interfaces MUST be implemented
-
-**Settings:**
-- Defines interfaces for managing agent preferences and configurations
-- Specifies how settings are stored, retrieved, and validated
-- Settings interfaces MUST be implemented
-
-#### 4.2.3. Context Management Specification
-
-Defines how context is managed and persisted:
-
-**Apps:**
-- Specifies interfaces for application-specific context and data
-- Defines how context is isolated per application and shared between related applications
-- Apps context interfaces MUST be implemented
-
-**Documents:**
-- Defines document processing and management interfaces
-- Specifies how documents are ingested, processed, and retrieved
-- Document interfaces MUST be implemented
-
-**Memory:**
-- Specifies interfaces for persistent memory and knowledge storage
-- Defines contracts for storing and retrieving agent memories
-- Memory interfaces MUST be implemented
-
-**Vector:**
-- Defines interfaces for vector database integration and semantic search
-- Specifies how embeddings are stored, indexed, and queried
-- Vector interfaces MAY be implemented
-
-**Persistence:**
-- Specifies data persistence and retrieval interfaces
-- Defines contracts for saving and loading agent state
-- Persistence interfaces MUST be implemented
-
-#### 4.2.4. Quality Assurance Specification
-
-Defines quality assurance mechanisms and their interfaces:
-
-**Audit:**
-- Specifies interfaces for monitoring agent behavior and compliance
-- Defines what MUST be logged and how audit trails are maintained
-- Audit interfaces MUST be implemented
-
-**Judge:**
-- Defines interfaces for evaluating agent performance and output quality
-- Specifies contracts for quality assessment and scoring
-- Judge interfaces MAY be implemented
-
-**Rules:**
-- Specifies how behavioral constraints and guidelines are defined and enforced
-- Defines rule evaluation interfaces
-- Rules interfaces MUST be implemented
-
-**Screenshot:**
-- Defines interfaces for visual validation and monitoring
-- Specifies how visual state is captured and validated
-- Screenshot interfaces MAY be implemented
-
-**Fallback:**
-- Specifies error handling and recovery mechanisms
-- Defines contracts for fallback behaviors when errors occur
-- Fallback interfaces MUST be implemented
-
-## 5. Agent Types
-
-### 5.1. Overview
-
-The specification defines several agent types and their required behaviors.
-
-### 5.2. Orchestrator Agents
-
-**Purpose:** Coordinate multiple agents and manage complex workflows
-
-**Required Behaviors:**
-- Task distribution MUST be supported
-- Load balancing MUST be implemented
-- Conflict resolution mechanisms MUST be provided
-
-**Integration Contract:**
-- MUST work with planner and executor agents according to defined interfaces
-- MUST implement orchestrator interfaces as specified
-
-### 5.3. Planner Agents
-
-**Purpose:** Break down high-level objectives into actionable tasks
-
-**Required Behaviors:**
-- Task decomposition MUST be supported
-- Dependency analysis MUST be implemented
-- Resource estimation MUST be provided
-
-**Integration Contract:**
-- MUST receive objectives from orchestrators via specified interfaces
-- MUST provide plans to executors via specified interfaces
-
-### 5.4. Executor Agents
-
-**Purpose:** Execute specific tasks and operations
-
-**Required Behaviors:**
-- Tool usage MUST be supported
-- API interactions MUST be implemented
-- Data processing capabilities MUST be provided
-
-**Integration Contract:**
-- MUST receive tasks from planners via specified interfaces
-- MUST report back to orchestrators via specified interfaces
-
-### 5.5. Specialized Agents
-
-**Context Agents:**
-- MUST manage and provide contextual information according to context management interfaces
-
-**Quality Agents:**
-- MUST monitor and ensure output quality according to quality assurance interfaces
-
-**Workflow Agents:**
-- MUST handle specific workflow patterns and parallelization according to workflow interfaces
-
-## 6. Integration Patterns
-
-### 6.1. MCP (Model Context Protocol) Integration
-
-**Specification:** Defines how agents communicate using MCP.
-
-**Requirements:**
-- Standardized communication interfaces MUST be implemented
-- Tool and resource sharing contracts MUST be specified
-- Context propagation and synchronization protocols MUST be defined
-- MCP client interfaces MUST be implemented
-
-### 6.2. Workflow Orchestration
-
-**Specification:** Defines patterns for workflow execution.
-
-**Requirements:**
-- Parallel task execution interfaces MUST be defined
-- Dependency management contracts MUST be specified
-- Resource optimization behaviors MUST be defined
-
-### 6.3. Human-in-the-Loop
-
-**Specification:** Defines human interaction patterns.
-
-**Requirements:**
-- Human oversight interfaces MUST be defined
-- Approval workflow contracts MUST be specified
-- Manual task delegation behaviors MUST be defined
-
-## 7. Conformance
-
-### 7.1. Implementation Conformance
-
-An implementation conforms to this specification if it:
-- Implements all MUST-level requirements
-- Follows all specified interfaces and contracts
-- Adheres to defined data formats and schemas
-- Supports required workflow patterns
-
-### 7.2. Partial Conformance
-
-Implementations MAY implement subsets of this specification, but MUST clearly document:
-- Which components are implemented
-- Which components are not implemented
-- Any deviations from the specification
-
-## 8. Security Considerations
-
-This specification does not define security mechanisms, but implementations SHOULD:
-- Implement authentication and authorization
-- Secure communication channels
-- Validate all inputs
-- Implement audit logging
-- Handle sensitive data appropriately
-
-## 9. References
-
-- [RFC 2119](https://tools.ietf.org/html/rfc2119): Key words for use in RFCs to Indicate Requirement Levels
-- [Model Context Protocol](https://modelcontextprotocol.io/): MCP Specification
-- [Anthropic: Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents)
-- [Anthropic: Building Agents with Claude Agent SDK](https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk)
+83. The Agent Lifecycle has four phases: Registration, Discovery, Execution, Evaluation.
+84. In Registration, agents declare capabilities to the Registry.
+85. In Discovery, the OS matches agents to tasks based on capabilities.
+86. In Execution, the Agent Loop runs within Workflows.
+87. In Evaluation, performance, quality, and compliance are assessed.
+88. The Agent Loop is micro-level (cognitive), the Lifecycle is macro-level (system).
+89. Gather Context uses semantic search and agentic search to obtain information.
+90. Take Action executes tools, bash scripts, and generates code.
+91. Verify Work validates results through rules, visual feedback, or LLM-as-Judge.
+92. The OS manages the Lifecycle; Workflows manage task coordination.
+
+## Integration and Ecosystem (93-102)
+93. OSP includes native support for Model Context Protocol (MCP).
+94. MCP enables agents to access standardized external tools and resources.
+95. OSP allows agents from different implementations to work together.
+96. Interoperability between implementations is a core goal.
+97. The ecosystem becomes composable: combine agents from different sources.
+98. Workflows can span different organizations and platforms.
+99. Context Hygiene prevents contamination and manages finite context windows.
+100. Process Isolation ensures agents operate without interfering with each other.
+101. The architecture favors horizontal scalability over vertical scalability.
+102. OSP creates the foundation for agent collaboration at scale.
