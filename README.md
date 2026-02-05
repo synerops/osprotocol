@@ -8,13 +8,12 @@
 </p>
 
 <p align="center">
-  <strong>A protocol for orchestrating, managing, and executing AI agents in distributed, scalable environments.</strong>
+  <strong>The standard for multi-agent systems. Define agents, coordinate workflows, and build systems where agents work together.</strong>
 </p>
 
 <p align="center">
   <a href="https://osprotocol.dev/docs">Documentation</a> |
-  <a href="https://osprotocol.dev/docs/spec">Specification</a> |
-  <a href="https://osprotocol.dev/blog">Blog</a>
+  <a href="https://osprotocol.dev/docs/architecture">Architecture</a>
 </p>
 
 
