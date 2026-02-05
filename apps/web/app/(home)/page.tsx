@@ -32,7 +32,7 @@ export default function HomePage() {
       {/* Left side: Logo + Title */}
       <div className="relative z-10 flex flex-col justify-center items-start px-8 md:px-16 lg:px-24 flex-1 py-12 md:py-0">
         <div className="flex items-center gap-4">
-          <h1 className="text-4xl md:text-xl lg:text-5xl font-bold font-mono">OS Protocol</h1>
+          <h1 className="text-4xl md:text-xl lg:text-5xl font-bold font-mono">The Agentic OS Protocol</h1>
           <a
             href="https://synerops.com?utm_source=osp&utm_medium=website"
             target="_blank"

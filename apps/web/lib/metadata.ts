@@ -7,8 +7,8 @@ export const baseUrl =
     : new URL(`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`);
 
 export const siteConfig = {
-  name: 'OS Protocol',
-  absoluteTitle: 'OS Protocol - The Agentic Operating System Protocol',
+  name: 'The Agentic OS Protocol',
+  absoluteTitle: 'The Agentic OS Protocol',
   description: 'The standard for multi-agent systems. Define agents, coordinate workflows, and build systems where agents work together.',
   keywords: [
     // Brand
@@ -48,7 +48,7 @@ export const siteConfig = {
 export function createBaseMetadata(): Metadata {
   return {
     title: {
-      template: '%s | OS Protocol',
+      template: '%s | The Agentic OS Protocol',
       absolute: siteConfig.absoluteTitle,
     },
     metadataBase: baseUrl,

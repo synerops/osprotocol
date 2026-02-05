@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://osprotocol.dev/v1/schema.json",
-  "title": "OS Protocol v1",
-  "description": "JSON Schema index for the Agentic OS Protocol",
+  "title": "The Agentic OS Protocol v1",
+  "description": "JSON Schema index for The Agentic OS Protocol",
   "type": "object",
   "$defs": {
     "Agent": {
