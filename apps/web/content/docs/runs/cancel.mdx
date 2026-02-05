@@ -1,27 +1,132 @@
 ---
 title: Cancel
-description: Task and run cancellation mechanisms
+description: Workflow cancellation mechanisms
 ---
 
 ## Overview
 
-The cancel module provides mechanisms to cancel running tasks and agent runs. It enables graceful cancellation and cleanup of in-progress operations.
+The cancel system provides mechanisms to cancel running workflows gracefully. It supports cancellation hooks, cleanup operations, and configurable grace periods for in-progress work.
 
-## Features
+## TypeScript API
 
-- **Task Cancellation**: Cancel individual tasks
-- **Run Cancellation**: Cancel entire agent runs
-- **Graceful Shutdown**: Gracefully shutdown operations
-- **Cleanup**: Clean up resources after cancellation
+```ts
+import type { Cancel } from '@osprotocol/schema/runs/cancel'
+```
 
-## Usage
+### Cancel
 
-Cancellation enables users and systems to stop agent operations when needed, ensuring resource efficiency and user control.
+Cancel configuration for workflow runs.
+
+```ts
+interface Cancel {
+  /**
+   * Called before cancellation proceeds
+   * Return false to prevent cancellation
+   */
+  beforeCancel?: () => boolean | Promise<boolean>
+
+  /**
+   * Called after cancellation completes
+   */
+  afterCancel?: () => void
+
+  /**
+   * Optional reason for cancellation
+   */
+  reason?: string
+
+  /**
+   * Whether to wait for cleanup before resolving
+   */
+  graceful?: boolean
+
+  /**
+   * Timeout for graceful cancellation in milliseconds
+   */
+  gracefulTimeoutMs?: number
+}
+```
+
+## Usage Examples
+
+### Simple Cancellation
+
+```ts
+// Cancel an execution
+await execution.cancel('User requested stop')
+```
+
+### Cancellation with Cleanup
+
+```ts
+const cancel: Cancel = {
+  graceful: true,
+  gracefulTimeoutMs: 5000,
+  beforeCancel: async () => {
+    // Check if safe to cancel
+    const canCancel = await checkSafeToCancel()
+    return canCancel
+  },
+  afterCancel: () => {
+    // Cleanup resources
+    cleanupTempFiles()
+    closeConnections()
+  }
+}
+```
+
+### Preventing Cancellation
+
+```ts
+const cancel: Cancel = {
+  beforeCancel: () => {
+    if (criticalOperationInProgress) {
+      console.log('Cannot cancel during critical operation')
+      return false // Prevent cancellation
+    }
+    return true
+  }
+}
+```
+
+### Graceful Shutdown
+
+```ts
+const cancel: Cancel = {
+  graceful: true,
+  gracefulTimeoutMs: 10000, // 10 second grace period
+  reason: 'System shutdown',
+  afterCancel: () => {
+    notifyDependentSystems()
+  }
+}
+// Waits up to 10 seconds for graceful cleanup
+// Forces cancellation if cleanup exceeds timeout
+```
+
+## Cancellation Flow
+
+```mermaid
+flowchart TD
+    Start([cancel called]) --> Before{beforeCancel?}
+    Before -->|returns false| Prevented([Cancel prevented])
+    Before -->|returns true| Graceful{graceful?}
+    Before -->|not defined| Graceful
+    Graceful -->|no| Stop[Immediate stop]
+    Graceful -->|yes| Wait[Wait for cleanup]
+    Wait --> Timeout{timeout?}
+    Timeout -->|no| After[afterCancel]
+    Timeout -->|yes| Force[Force stop]
+    Force --> After
+    Stop --> After
+    After --> Done([Status: cancelled])
+```
 
 ## Integration
 
 Cancel integrates with:
-- **Timeout**: Works with timeout mechanisms
-- **Executor**: Cancels executing tasks
-- **Orchestrator**: Coordinates cancellation across agents
 
+- **RunOptions**: Configure cancel behavior for runs
+- **Timeout**: Timeouts can trigger cancellation
+- **Execution**: Cancel is called via execution.cancel()
+- **Approval**: Rejected approvals may trigger cancellation

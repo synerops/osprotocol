@@ -1,27 +1,102 @@
 ---
 title: Timeout
-description: Timeout management for agent operations
+description: Timeout management for workflow execution
 ---
 
 ## Overview
 
-The timeout module manages timeouts for agent operations. It ensures operations complete within specified time limits and handles timeout scenarios gracefully.
+The timeout system manages time limits for workflow execution. It ensures operations complete within specified durations and provides configurable actions for timeout scenarios.
 
-## Features
+```mermaid
+flowchart LR
+    Start([Start execution]) --> Timer[Start timer]
+    Timer --> Running{Running}
+    Running -->|completes| Done([Complete])
+    Running -->|timeout| Action{onTimeout}
+    Action -->|fail| Failed([Status: failed])
+    Action -->|cancel| Cancel([Trigger cancel flow])
+    Action -->|continue| Continue([Log & continue])
+```
 
-- **Timeout Configuration**: Configure timeouts for operations
-- **Timeout Enforcement**: Enforce timeout limits
-- **Timeout Handling**: Handle timeout scenarios
-- **Timeout Notifications**: Notify about timeout events
+## Timeout Actions
 
-## Usage
+| Action | Description |
+|--------|-------------|
+| `fail` | Mark the run as failed on timeout (default) |
+| `cancel` | Trigger graceful cancellation on timeout |
+| `continue` | Log timeout but allow execution to continue |
 
-Timeouts prevent operations from running indefinitely, ensuring system responsiveness and resource efficiency.
+## TypeScript API
+
+```ts
+import type { Timeout, TimeoutAction } from '@osprotocol/schema/runs/timeout'
+```
+
+### TimeoutAction
+
+Action to take when a timeout occurs.
+
+```ts
+type TimeoutAction = 'fail' | 'cancel' | 'continue'
+```
+
+### Timeout
+
+Timeout configuration for workflow runs.
+
+```ts
+interface Timeout {
+  /** Timeout duration in milliseconds */
+  ms: number
+  /** Action to take when timeout occurs (default: 'fail') */
+  onTimeout?: TimeoutAction
+  /** Callback function when timeout occurs */
+  onTimeoutCallback?: () => void
+}
+```
+
+## Usage Examples
+
+### Simple Timeout
+
+```ts
+const timeout: Timeout = {
+  ms: 30000 // 30 seconds
+}
+// Fails the run if not complete within 30 seconds
+```
+
+### Graceful Cancellation
+
+```ts
+const timeout: Timeout = {
+  ms: 60000, // 1 minute
+  onTimeout: 'cancel',
+  onTimeoutCallback: () => {
+    console.log('Timeout reached, initiating graceful shutdown')
+  }
+}
+// Triggers cancellation flow instead of immediate failure
+```
+
+### Warning Without Failure
+
+```ts
+const timeout: Timeout = {
+  ms: 120000, // 2 minutes
+  onTimeout: 'continue',
+  onTimeoutCallback: () => {
+    sendAlert('Operation exceeding expected duration')
+  }
+}
+// Logs warning but allows execution to continue
+```
 
 ## Integration
 
 Timeout integrates with:
-- **Executor**: Enforces timeouts on task execution
-- **Cancel**: Cancels operations on timeout
-- **Retries**: Works with retry mechanisms
 
+- **RunOptions**: Configure timeout for workflow runs
+- **Cancel**: Timeout can trigger cancellation flow
+- **Retry**: Retries reset the timeout clock
+- **Execution**: Status changes to failed/cancelled on timeout
