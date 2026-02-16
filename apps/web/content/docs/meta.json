@@ -22,6 +22,7 @@
     "system/mcp-client",
     "system/preferences",
     "system/settings",
+    "system/data",
     "apps",
     "---Feedback Loop---",
     "context",

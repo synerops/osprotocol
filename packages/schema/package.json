@@ -10,7 +10,8 @@
     "./workflows": "./workflows/index.ts",
     "./runs": "./runs/index.ts",
     "./agent": "./agent.ts",
-    "./skill": "./skill.ts"
+    "./skill": "./skill.ts",
+    "./system/data": "./system/data/index.ts"
   },
   "scripts": {
     "build": "bun run scripts/generate-schemas.ts",
