@@ -26,7 +26,25 @@ bun run --cwd packages/schema typecheck  # Check only schema types
 
 # Clean
 bun run clean        # Clean all build artifacts
+
+# Release (Changesets)
+bun run changeset    # Create a new changeset (describe your change)
+bun run version      # Apply changesets and bump versions
+bun run release      # Publish to npm
 ```
+
+## Release Workflow
+
+This project uses [Changesets](https://github.com/changesets/changesets) for versioning and npm publishing.
+
+1. Make changes to `packages/schema`
+2. Run `bun run changeset` and describe the change (patch/minor/major)
+3. Commit the changeset file with your changes
+4. Push and create a PR
+5. On merge to `main`, GitHub Actions creates a "Version Packages" PR
+6. On merge of that PR, GitHub Actions publishes to npm automatically
+
+The `@osprotocol/schema` package is published as a **types-only package** (`.ts` files directly, no compiled `.d.ts`). The `apps/web` package is excluded from publishing.
 
 ## Architecture
 
