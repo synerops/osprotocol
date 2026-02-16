@@ -42,6 +42,7 @@ protocol/
 └── packages/schema/    # @osprotocol/schema - Protocol type definitions
     ├── workflows/      # Workflow pattern types (routing, parallelization, etc.)
     ├── runs/           # Run control types (timeout, retry, cancel, approval)
+    ├── system/data/    # System data types (Cache, Storage)
     ├── agent.ts        # Agent schema (AGENT.md structure)
     └── skill.ts        # Skill schema (SKILL.md structure)
 ```
@@ -55,6 +56,7 @@ The `@osprotocol/schema` package provides TypeScript types for the protocol:
 - `@osprotocol/schema/runs` - Run control (Timeout, Retry, Cancel, Approval)
 - `@osprotocol/schema/agent` - Agent definition types
 - `@osprotocol/schema/skill` - Skill definition types
+- `@osprotocol/schema/system/data` - System data types (Cache, Storage)
 
 ### Documentation Site
 

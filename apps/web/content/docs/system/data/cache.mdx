@@ -1,0 +1,108 @@
+---
+title: Cache
+description: Temporary optimization layer with TTL and HTTP caching semantics
+---
+
+## Overview
+
+The Cache capability provides temporary, evictable storage designed to optimize data access patterns. Unlike storage, cache entries are derived data — they can always be reconstructed from the source of truth.
+
+Cache supports HTTP caching semantics (ETag, Last-Modified) natively, making it well-suited for integrating with rate-limited external APIs.
+
+## Interface
+
+```typescript
+interface Cache {
+  get<T>(key: string): Promise<CacheEntry<T> | null>
+  set<T>(key: string, entry: Omit<CacheEntry<T>, 'cachedAt'>, ttl?: number): Promise<void>
+  delete(key: string): Promise<boolean>
+  has(key: string): Promise<boolean>
+  invalidate(pattern: string): Promise<number>
+  stats(): Promise<CacheStats>
+}
+```
+
+### CacheEntry
+
+Each cache entry carries its data alongside optional HTTP caching metadata:
+
+```typescript
+interface CacheEntry<T = unknown> {
+  data: T                              // The cached data
+  cachedAt: number                     // When this entry was cached (Unix ms)
+  expiresAt?: number                   // When this entry expires (Unix ms)
+  etag?: string                        // HTTP ETag for conditional requests
+  lastModified?: string                // HTTP Last-Modified header
+  metadata?: Record<string, unknown>   // Provider-specific metadata
+}
+```
+
+### CacheStats
+
+Observable metrics for monitoring cache performance:
+
+```typescript
+interface CacheStats {
+  hits: number    // Total cache hits
+  misses: number  // Total cache misses
+  size: number    // Number of entries in cache
+  bytes?: number  // Total bytes used (if known)
+}
+```
+
+## Use Case: GitHub API Integration
+
+GitHub has a rate limit of 5,000 requests/hour and supports conditional requests with ETags. Cache handles this transparently:
+
+```typescript
+// Key structure
+const key = `github:${repoId}:${ref}:${path}`
+
+// On first request — cache miss
+const entry = await cache.get(key)
+// entry === null → fetch from GitHub API
+
+// Store with ETag and TTL
+await cache.set(key, {
+  data: fileContent,
+  etag: response.headers['etag'],
+  lastModified: response.headers['last-modified'],
+  metadata: { owner: 'synerops', repo: 'syner', ref: 'main' }
+}, 30 * 24 * 60 * 60) // 30 days TTL
+
+// On subsequent request — cache hit
+const cached = await cache.get(key)
+// Use cached.etag for conditional request:
+// GET /repos/owner/repo/contents/file.md
+// If-None-Match: "abc123"
+// Response: 304 Not Modified (doesn't count against rate limit)
+```
+
+### Webhook-Driven Invalidation
+
+When a push event arrives via webhook, invalidate all cached content for that repository:
+
+```typescript
+await cache.invalidate(`github:${repoId}:*`)
+```
+
+## Observability
+
+Monitor cache effectiveness:
+
+```typescript
+const stats = await cache.stats()
+const hitRate = stats.hits / (stats.hits + stats.misses)
+
+if (hitRate < 0.5) {
+  // Cache hit rate below 50% — investigate TTL or key strategy
+}
+```
+
+## Integration
+
+Cache integrates with:
+
+- **[Storage](/docs/system/data/storage)**: Cache MAY be backed by storage internally (implementation detail)
+- **[Actions](/docs/actions/tools)**: Actions use cache transparently to optimize external API calls
+- **[System](/docs/system)**: Cache is part of the system infrastructure layer
