@@ -10,9 +10,13 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "changeset publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "turbo": "^2.0.0",
     "typescript": "^5.9.3"
   },
@@ -22,4 +26,3 @@
     "bun": ">=1.0.0"
   }
 }
-

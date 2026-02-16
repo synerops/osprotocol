@@ -1,7 +1,8 @@
 {
   "name": "@osprotocol/schema",
   "version": "0.0.1",
-  "private": true,
+  "description": "TypeScript type definitions for the Agentic OS Protocol",
+  "license": "MIT",
   "type": "module",
   "main": "./index.ts",
   "types": "./index.ts",
@@ -12,6 +13,20 @@
     "./agent": "./agent.ts",
     "./skill": "./skill.ts",
     "./system/data": "./system/data/index.ts"
+  },
+  "files": [
+    "**/*.ts",
+    "!**/*.test.ts",
+    "!**/*.spec.ts",
+    "!scripts/**"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/synerops/osprotocol.git",
+    "directory": "packages/schema"
   },
   "scripts": {
     "build": "bun run scripts/generate-schemas.ts",
