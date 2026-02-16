@@ -5,7 +5,6 @@ import { createBaseMetadata } from '@/lib/metadata';
 import {
   Lexend,
   JetBrains_Mono,
-  Plus_Jakarta_Sans,
   Zain,
 } from 'next/font/google';
 import { SpeedInsights } from '@vercel/speed-insights/next';

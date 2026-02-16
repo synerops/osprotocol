@@ -146,10 +146,6 @@
     color: oklch(0.145 0 0);
   }
 
-  /* body {
-    @apply bg-background text-foreground;
-  } */
-
   /* Mermaid diagram minimal styling */
   .mermaid-diagram {
     @apply w-full;
