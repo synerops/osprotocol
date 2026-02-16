@@ -6,6 +6,11 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
 jobs:
   release:
     name: Release
@@ -16,6 +21,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          registry-url: "https://registry.npmjs.org"
+
+      - run: npm install -g npm@latest
 
       - uses: oven-sh/setup-bun@v2
 
@@ -24,12 +32,17 @@ jobs:
       - run: bun run typecheck
 
       - name: Create Release PR or Publish
+        id: changesets
         uses: changesets/action@v1
         with:
-          publish: bun run release
           version: bun run version
           title: "chore: version packages"
           commit: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to npm
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: |
+          cd packages/schema
+          npm publish --provenance --access public
