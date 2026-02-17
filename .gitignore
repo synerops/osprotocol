@@ -45,3 +45,10 @@ Thumbs.db
 # Bun lockfile (opcional - si prefieres committearlo, elimina esta línea)
 bun.lockb
 
+# Internal markdown files (plans, notes, etc.)
+# Only ignore .md files at project root, whitelist existing ones
+/*.md
+!/README.md
+!/CLAUDE.md
+!/AGENTS.md
+
