@@ -29,7 +29,8 @@ jobs:
 
       - run: bun install
 
-      - run: bun run typecheck
+      - name: Typecheck Schema Package
+        run: cd packages/schema && bun run typecheck
 
       - name: Create Release PR or Publish
         id: changesets
