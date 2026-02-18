@@ -7,34 +7,6 @@ description: "Workflow patterns for AI agent coordination — routing, paralleli
 
 Workflows define execution patterns for agent tasks. All workflow types extend the base `Workflow` interface. The OS Protocol implements patterns based on [Anthropic's building blocks for agentic systems](https://www.anthropic.com/engineering/building-effective-agents).
 
-```mermaid
-flowchart TB
-    subgraph Routing
-        R1[Input] --> R2{Classify}
-        R2 --> R3[Delegate]
-    end
-
-    subgraph Orchestrator-Workers
-        O1[Input] --> O2[Plan]
-        O2 --> O3[Delegate to Workers]
-        O3 --> O4[Synthesize]
-    end
-
-    subgraph Parallelization
-        P1[Input] --> P2[Split]
-        P2 --> P3[Parallel Execute]
-        P3 --> P4[Merge]
-    end
-
-    subgraph Evaluator-Optimizer
-        E1[Input] --> E2[Generate]
-        E2 --> E3{Evaluate}
-        E3 -->|pass| E4[Output]
-        E3 -->|fail| E5[Optimize]
-        E5 --> E2
-    end
-```
-
 ## Available Patterns
 
 | Pattern | Description | When to Use |

@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useId, useState } from 'react';
+import { use, useEffect, useId, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 
 // Direct hex color palette for Mermaid diagrams
@@ -64,7 +64,16 @@ function MermaidContent({ chart }: { chart: string }) {
   const id = useId();
   const { resolvedTheme, theme: themeValue } = useTheme();
   const { default: mermaid } = use(cachePromise('mermaid', () => import('mermaid')));
-  
+
+  // Zoom state and SVG dimensions
+  const [zoom, setZoom] = useState(1);
+  const [svgSize, setSvgSize] = useState<{ width: number; height: number } | null>(null);
+  const diagramRef = useRef<HTMLDivElement>(null);
+
+  const zoomIn = () => setZoom((z) => Math.min(z + 0.25, 3));
+  const zoomOut = () => setZoom((z) => Math.max(z - 0.25, 0.5));
+  const zoomReset = () => setZoom(1);
+
   // State to force re-render when theme changes via CSS class
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window === 'undefined') return 'light';
@@ -263,17 +272,82 @@ function MermaidContent({ chart }: { chart: string }) {
     }),
   );
 
+  // Measure SVG dimensions after render (must be after svg is defined)
+  useEffect(() => {
+    if (diagramRef.current) {
+      const svgElement = diagramRef.current.querySelector('svg');
+      if (svgElement) {
+        const rect = svgElement.getBoundingClientRect();
+        setSvgSize({ width: rect.width, height: rect.height });
+      }
+    }
+  }, [svg]);
+
   return (
-    <div
-      ref={(container) => {
-        if (container) bindFunctions?.(container);
-      }}
-      dangerouslySetInnerHTML={{ __html: svg }}
-      className="mermaid-diagram"
-      style={{
-        // Additional container styling for minimalism
-        opacity: 1,
-      }}
-    />
+    <div className="mermaid-container group relative">
+      {/* Zoom controls */}
+      <div
+        className="absolute right-2 top-2 z-10 flex gap-1 rounded-md border border-neutral-200 bg-white/90 p-0.5 opacity-0 shadow-sm backdrop-blur transition-opacity group-hover:opacity-100 dark:border-neutral-700 dark:bg-neutral-900/90"
+        style={{ opacity: zoom !== 1 ? 1 : undefined }}
+      >
+        <button
+          onClick={zoomOut}
+          className="flex h-6 w-6 items-center justify-center rounded text-sm text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+          title="Zoom out"
+          aria-label="Zoom out"
+        >
+          −
+        </button>
+        <button
+          onClick={zoomReset}
+          className="flex h-6 min-w-[2rem] items-center justify-center rounded px-1 text-xs text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+          title="Reset zoom"
+          aria-label="Reset zoom"
+        >
+          {Math.round(zoom * 100)}%
+        </button>
+        <button
+          onClick={zoomIn}
+          className="flex h-6 w-6 items-center justify-center rounded text-sm text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+          title="Zoom in"
+          aria-label="Zoom in"
+        >
+          +
+        </button>
+      </div>
+
+      {/* Scrollable container for zoomed diagram */}
+      <div
+        className="overflow-auto"
+        style={{
+          maxHeight: zoom > 1 ? '70vh' : undefined,
+        }}
+      >
+        {/* Wrapper sized to scaled dimensions for proper scrolling */}
+        <div
+          style={
+            svgSize && zoom !== 1
+              ? {
+                  width: svgSize.width * zoom,
+                  height: svgSize.height * zoom,
+                }
+              : undefined
+          }
+        >
+          <div
+            ref={(container) => {
+              diagramRef.current = container;
+              if (container) bindFunctions?.(container);
+            }}
+            dangerouslySetInnerHTML={{ __html: svg }}
+            className="mermaid-diagram"
+            style={{
+              transform: `scale(${zoom})`,
+              transformOrigin: 'top left',
+            }}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
