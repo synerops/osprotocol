@@ -1,154 +1,131 @@
-# Agentic OS Protocol: Knowledge Base
+# OS Protocol: Knowledge Base
 
 ## Protocol Nature (1-10)
 1. OSP is a specification, not a framework or library.
-2. The protocol defines interfaces, behaviors, and data formats for orchestrating agents.
+2. The protocol defines TypeScript interfaces for orchestrating agents.
 3. OSP is the contract you implement, not the code you run.
 4. Like HTTP enables browsers to talk to servers, OSP enables agents to collaborate.
 5. The protocol defines what must be supported, not how you must build it.
 6. Different teams can implement OSP in different languages and maintain compatibility.
-7. The protocol uses RFC 2119 terminology: MUST, SHOULD, MAY to define conformance.
-8. OSP allows partial conformance: implement the modules you need.
-9. The specification is modular: Skills, System, Context, Actions, Checks, Runs, Workflows.
-10. The protocol is a "metaverse" where any agent can participate by following the rules.
+7. OSP allows partial conformance: implement the domains you need.
+8. The specification is modular: System, Context, Actions, Checks, Workflows, Runs.
+9. All post-initial interfaces are marked `@experimental` — the API surface may change.
+10. The `@osprotocol/schema` package publishes `.ts` files directly (types-only, no compiled output).
 
 ## The Agentic OS Concept (11-20)
-11. An Agentic OS is backend infrastructure for agents, not just a graphical interface for humans.
+11. An Agentic OS is backend infrastructure for agents, not a graphical interface for humans.
 12. The LLM functions conceptually as the system's Kernel.
 13. In an Agentic OS, the operating system user is the agent, not just the human.
-14. Agents request resources from the OS: file reading, memory storage, tool execution.
+14. Agents request resources from the OS: environment variables, files, tools, sandboxes.
 15. The OS manages cognitive resources: inference, context window, vector stores, tools.
 16. Context Window is the equivalent of RAM in traditional systems.
-17. Vector stores and RAG are the equivalent of disk and filesystem.
+17. Vector stores (Embeddings) are the semantic search layer.
 18. Tools and MCP are the device drivers of the Agentic OS.
-19. The filesystem is the default infrastructure; no database required to start.
-20. An Agentic OS solves orchestration complexity, not just user experience.
+19. An Agentic OS solves orchestration complexity, not just user experience.
+20. The protocol focuses on what agents need — infrastructure concerns like caching are left to providers.
 
-## Plan: Structured Intent (21-30)
-21. Plan is the first-class concept that represents user intent.
-22. A Plan is a structured intent that generates Runs.
-23. Plan defines the "what" (goal), Run defines the "how it executes".
-24. A Plan can have multiple Runs (long-running executions that mutate).
-25. Both Plan and Runs persist; this enables resuming work after interruptions.
-26. Plan contains metadata: owner, goal, context, constraints.
-27. The cycle is: user expresses intent → system generates Plan → Plan generates Runs.
-28. A Plan can be paused, cancelled, or modified without losing history.
-29. Persisted state of Plans and Runs enables auditing and post-mortem debugging.
-30. The Plan is a primary entry point for significant work in the OS.
-
-## Runs: Execution Unit (31-40)
+## System Domain (21-30)
 
 ```
-Plan (intent)
- └── Run (controllable execution)
-      └── Workflow (execution pattern)
-           └── Agent Loop (gather → action → verify → iterate)
+packages/schema/system/
+├── env.ts          # Environment variables (Vercel, Cloudflare Workers, Railway)
+├── fs.ts           # File system (local disk, S3, Vercel Blob, Cloudflare R2)
+├── sandbox.ts      # Isolated execution (Vercel Sandbox, E2B, Docker)
+├── settings.ts     # Global platform settings (Vercel Project Settings, AWS SSM)
+├── preferences.ts  # Scoped per-agent/per-user config (VS Code Settings, Claude Code Config)
+├── registry.ts     # Resource registration and discovery (A2A Agent Cards, npm Registry)
+├── installer.ts    # Package management (npm, pip, Claude Code Skills, Homebrew)
+└── mcp-client.ts   # MCP server connections (Claude Code MCP, Cursor MCP)
 ```
 
-31. Run is the primary controllable unit of execution in the protocol.
-32. A Run represents a long-running execution that can mutate its state.
-33. Each Run has controls: pause, cancel, timeout, approval.
-34. A Run can belong to a Plan, or exist independently for simple tasks.
-35. Runs persist their state to enable recovery from failures.
-36. Each Run uses a Workflow as its execution pattern.
-37. Run Controls define how the system responds to external events.
-38. Timeout defines how long a Run can last before automatic termination.
-39. Approval enables human-in-the-loop before critical actions.
-40. The hierarchy is clear: Plan → Runs → Workflows.
+21. System interfaces are the kernel — infrastructure that all agents depend on.
+22. Each interface follows a consistent pattern: Entry type, Context, Actions, full interface.
+23. Entry types carry `metadata?: Record<string, unknown>` for provider-specific data.
+24. Settings are system-wide (all agents). Preferences are scoped (agent > user > system cascade).
+25. Registry is generic (`Registry<T>`) — works for agents, skills, MCP servers, or any resource.
+26. RegistryContext/Actions use named registries (e.g., `get("agents", "my-agent")`).
+27. Sandbox manages isolated execution environments with their own filesystem and commands.
+28. MCP Client is infrastructure-level (connections). Agent-facing MCP access is in actions/mcp-servers.
+29. Installer is the kernel's package manager — installs capabilities at runtime.
+30. Filesystem operates on the host platform. Sandbox has its own internal filesystem.
 
-## Workflows: Execution Patterns (41-55)
-41. Workflows are proven patterns for coordinating agent execution.
-42. OSP adapts Anthropic's workflow patterns: Routing, Parallelization, Orchestrator-Workers, Evaluator-Optimizer.
-43. Routing classifies inputs and directs them to specialized agents.
-44. Parallelization executes independent tasks simultaneously.
-45. Orchestrator-Workers delegates subtasks to specialized agents and synthesizes results.
-46. Evaluator-Optimizer iterates on outputs until quality criteria are met.
-47. Workflows are composable: you can combine them for complex tasks.
-48. Each Run selects a Workflow based on the task's nature.
-49. Workflows can span multiple systems and platforms.
-50. Recovery Workflows handle Retries, Fallback, and Timeouts automatically.
-51. Human-in-the-Loop workflows enable Approval and Manual Delegation.
-52. Multi-Agent Workflows coordinate distributed agents across different environments.
-53. The Agent Loop (Gather Context → Take Action → Verify Work → Iterate) operates within Workflows.
-54. Quality Workflows include Rules Validation, Visual Feedback, and LLM-as-Judge.
-55. Workflows are patterns first; implementations materialize them as code.
-
-## Semantic Filesystem (56-72)
+## Context and Actions: The Agent Loop Split (31-40)
 
 ```
-.agents/
-├── system/          # OS intelligence (env, fs, preferences, registry)
-├── context/         # Read data (memory, documents, vectors)
-├── actions/         # Executable operations
-├── checks/          # Verification (rules, audit)
-├── skills/          # Meta-agents (orchestrator, planner, executor)
-├── workflows/       # Execution pattern definitions
-└── runs/            # Execution state
+Agent Loop:
+  1. Context phase (gather) — read-only observation
+  2. Actions phase (act)   — write operations
+  3. Checks phase (verify) — quality verification
+  4. Iterate
 ```
 
-56. `.agents/` is the semantic OS root in any project.
-57. The filesystem is the universal interface; every agent understands files.
-58. The `.agents/` structure reflects the protocol domains.
-59. `system/` contains OS intelligence: env, fs, preferences, registry.
-60. `context/` stores read data: memory, documents, vectors.
-61. `actions/` defines operations that agents can execute.
-62. `checks/` contains verification: rules, audit logs.
-63. `skills/` defines meta-agents: orchestrator, planner, executor.
-64. `workflows/` stores execution pattern definitions.
-65. `runs/` persists active and completed execution state.
-66. Any agent can read `.agents/` to understand the environment.
-67. File conventions enable discovery without central coordination.
-68. `AGENT.md` defines an agent; `SKILL.md` defines a capability.
-69. YAML frontmatter in `.md` files enables structured metadata.
-70. The filesystem eliminates the need for databases in simple cases.
-71. Agents can add context by writing to appropriate folders.
-72. The semantic filesystem is a deliberately simple API.
+31. Every system interface splits into a read-only Context and a write Actions facade.
+32. SystemContext composes all Context interfaces into a single read entry point.
+33. SystemActions composes all Actions interfaces into a single write entry point.
+34. The split enforces zero-trust: agents observe before mutating.
+35. Context interfaces: EnvContext, FsContext, SettingsContext, PreferencesContext, RegistryContext, SandboxContext, InstallerContext, McpContext.
+36. Actions interfaces: EnvActions, FsActions, SettingsActions, PreferencesActions, RegistryActions, SandboxActions, InstallerActions, McpActions.
+37. Embeddings (context/embeddings) provides semantic search — search by meaning, not keywords.
+38. KV (context/kv) provides key-value persistence for the agent loop.
+39. Tools (actions/tools) is the unified interface for invoking tools from any source.
+40. McpServers (actions/mcp-servers) provides agent-facing access to MCP resources and prompts.
 
-## Skills Framework (73-82)
-73. Skills Framework defines specialized roles: Orchestrator, Planner, Executor.
-74. Orchestrators coordinate multiple agents and distribute tasks.
-75. Planners decompose complex goals into tasks with dependency analysis.
-76. Executors handle actual execution using tools, APIs, and scripts.
-77. Skills belong to protocol domains: system, context, actions, checks, skills, workflows, runs.
-78. A Skill can expose tools that other agents invoke.
-79. Skills are discoverable through the system Registry.
-80. Skill composition enables building complex agents from simple blocks.
-81. Skills define contracts: what they receive, what they produce, what they guarantee.
-82. Skill design prioritizes reusability over excessive specialization.
+## Checks Domain (41-50)
+41. Checks verify agent output quality before acceptance.
+42. Rules are declarative verification criteria (like ESLint, GitHub Checks, OpenAI Guardrails).
+43. Rules have severity levels: error (blocks), warning (flags), info (notes).
+44. Judge is LLM-as-judge evaluation — scores output 0-1 with reasoning.
+45. Judge can use a different model than the generator (evaluatorModel vs generatorModel).
+46. Screenshot captures visual state and compares against baselines for regression detection.
+47. ComparisonResult follows the same passed/message pattern as RuleResult.
+48. Audit logs every verification result for compliance, debugging, and trust scoring.
+49. AuditEntry aggregates RuleResult[] and JudgeResult for a complete check record.
+50. Check results can trigger Approval (human-in-the-loop) when below threshold.
 
-## Agent Lifecycle (83-92)
+## Workflows: Execution Patterns (51-60)
+51. Workflows are proven patterns for coordinating agent execution.
+52. All workflow types extend `Workflow<Output>` which has a single method: `run(prompt, options?)`.
+53. `run()` returns a `Run<Output>` — configured but not yet executing.
+54. OSP adapts Anthropic's patterns: Routing, Orchestrator-Workers, Parallelization, Evaluator-Optimizer.
+55. Routing classifies input and delegates to a single specialized workflow.
+56. Orchestrator-Workers plans, delegates to workers, and synthesizes results.
+57. Parallelization splits into independent subtasks, runs them concurrently, merges results.
+58. Evaluator-Optimizer generates, evaluates, and iteratively refines until quality criteria are met.
+59. Workflows are composable: a worker in Orchestrator-Workers can itself be a Routing workflow.
+60. Workflows are patterns first; implementations materialize them with specific providers.
 
-```
-Registration → Discovery → Execution → Evaluation
-                              ↓
-                    ┌─────────────────┐
-                    │   Agent Loop    │
-                    │ gather context  │
-                    │ take action     │
-                    │ verify work     │
-                    │ iterate         │
-                    └─────────────────┘
-```
+## Runs: Execution Control (61-70)
+61. Run is the primary controllable unit of execution in the protocol.
+62. A Run wraps a Workflow execution with lifecycle controls.
+63. Run has states: pending, running, paused, completed, failed, cancelled.
+64. Timeout controls execution duration with configurable actions: fail, cancel, or continue.
+65. Retry defines automatic retry behavior: maxAttempts, delay, backoff strategy, retryable conditions.
+66. Cancel provides graceful cancellation with cleanup callbacks.
+67. Approval enables human-in-the-loop: pause execution and wait for explicit approval.
+68. RunOptions combines timeout, retry, cancel, and approval configuration.
+69. Runs persist their state to enable recovery from failures.
+70. The hierarchy: Workflow.run() → Run → start/pause/cancel/resume.
 
-83. The Agent Lifecycle has four phases: Registration, Discovery, Execution, Evaluation.
-84. In Registration, agents declare capabilities to the Registry.
-85. In Discovery, the OS matches agents to tasks based on capabilities.
-86. In Execution, the Agent Loop runs within Workflows.
-87. In Evaluation, performance, quality, and compliance are assessed.
-88. The Agent Loop is micro-level (cognitive), the Lifecycle is macro-level (system).
-89. Gather Context uses semantic search and agentic search to obtain information.
-90. Take Action executes tools, bash scripts, and generates code.
-91. Verify Work validates results through rules, visual feedback, or LLM-as-Judge.
-92. The OS manages the Lifecycle; Workflows manage task coordination.
+## Apps: Distribution Manifests (71-80)
+71. An App is a distribution of the Agentic OS — a complete system configuration.
+72. Apps declare which vendors implement which protocol interfaces.
+73. The manifest format is YAML frontmatter + free-form markdown body.
+74. The filename is author's choice (SYNER.md, APP.md, etc.) — the format is what matters.
+75. ProviderMap maps protocol domains to concrete provider packages per interface.
+76. Granularity is per individual interface, not per domain.
+77. AppMetadata includes name, version, description, minimum protocol version, and providers.
+78. The markdown body is free-form documentation: instructions, architecture notes, onboarding.
+79. Cross-references: package.json, Docker Compose, Helm Chart.yaml, vercel.json.
+80. Apps enable comparing and sharing complete agentic system configurations.
 
-## Integration and Ecosystem (93-102)
-93. OSP includes native support for Model Context Protocol (MCP).
-94. MCP enables agents to access standardized external tools and resources.
-95. OSP allows agents from different implementations to work together.
-96. Interoperability between implementations is a core goal.
-97. The ecosystem becomes composable: combine agents from different sources.
-98. Workflows can span different organizations and platforms.
-99. Context Hygiene prevents contamination and manages finite context windows.
-100. Process Isolation ensures agents operate without interfering with each other.
-101. The architecture favors horizontal scalability over vertical scalability.
-102. OSP creates the foundation for agent collaboration at scale.
+## Design Principles (81-90)
+81. If the protocol doesn't define a type for it, the protocol doesn't standardize it.
+82. Agent/skill definition (AGENT.md, SKILL.md) is a platform concern, not protocol concern.
+83. Infrastructure concerns (caching, storage) are left to providers, not the protocol.
+84. Every interface should have a clear real-world analogue (provider examples in JSDoc).
+85. The Context/Actions split is non-negotiable — read before write.
+86. Composition over inheritance: SystemContext composes interfaces, not extends them.
+87. Generic types (`Registry<T>`, `EnvEntry<T>`) enable type-safe provider implementations.
+88. `metadata?: Record<string, unknown>` on every Entry type enables provider extensibility.
+89. Evaluate elimination before rewriting — ask "should this exist?" before "how to improve?"
+90. The protocol is the floor, not the ceiling — providers can add capabilities beyond what OSP defines.
