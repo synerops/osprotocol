@@ -115,6 +115,9 @@ export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): P
   return createMetadata({
     title: page.data.title,
     description: page.data.description || siteConfig.description,
+    alternates: {
+      canonical: `https://osprotocol.dev/docs/${page.slugs.join('/')}`,
+    },
     openGraph: {
       url: `https://osprotocol.dev/docs/${page.slugs.join('/')}`,
       images: [image],

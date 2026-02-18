@@ -63,13 +63,13 @@ export function createBaseMetadata(): Metadata {
       title: siteConfig.name,
       description: siteConfig.description,
       siteName: siteConfig.name,
-      images: [],
+      images: [{ url: '/og', width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
       title: siteConfig.name,
       description: siteConfig.description,
-      images: [],
+      images: [{ url: '/og', width: 1200, height: 630 }],
       creator: siteConfig.twitterHandle,
     },
   };
