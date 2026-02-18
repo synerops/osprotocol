@@ -11,7 +11,6 @@
     "./workflows": "./workflows/index.ts",
     "./runs": "./runs/index.ts",
     "./agent": "./agent.ts",
-    "./system/data": "./system/data/index.ts",
     "./system/env": "./system/env.ts",
     "./system/fs": "./system/fs.ts",
     "./system/sandbox": "./system/sandbox.ts",

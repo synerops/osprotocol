@@ -46,9 +46,6 @@ export * from './workflows'
 // Run control
 export * from './runs'
 
-// System data
-export * from './system/data'
-
 // ---------------------------------------------------------------------------
 // System interfaces (@experimental)
 // ---------------------------------------------------------------------------
