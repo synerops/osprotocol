@@ -37,7 +37,7 @@ jobs:
         uses: changesets/action@v1
         with:
           version: bun run version
-          publish: bun run release
+          publish: changeset publish
           title: "chore: version packages"
           commit: "chore: version packages"
           createGithubReleases: true
