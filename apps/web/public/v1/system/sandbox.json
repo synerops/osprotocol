@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/system/sandbox.json",
+  "title": "Sandbox Entry Schema",
+  "description": "Sandbox summary for listing",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique sandbox identifier"
+    },
+    "status": {
+      "$ref": "#/definitions/SandboxStatus",
+      "description": "Current lifecycle status"
+    },
+    "createdAt": {
+      "type": "number",
+      "description": "When the sandbox was created (Unix ms)"
+    },
+    "timeout": {
+      "type": "number",
+      "description": "Remaining time before auto-stop (ms)"
+    },
+    "metadata": {
+      "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+      "description": "Extensible metadata for provider-specific data"
+    }
+  },
+  "required": [
+    "id",
+    "status",
+    "createdAt"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "SandboxStatus": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "running",
+        "stopping",
+        "stopped",
+        "failed"
+      ],
+      "description": "Sandbox status lifecycle"
+    },
+    "Record<string,unknown>": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  }
+}

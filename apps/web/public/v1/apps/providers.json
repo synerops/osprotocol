@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/apps/providers.json",
+  "title": "Provider Map Schema",
+  "description": "Provider bindings organized by protocol domain\n\nMaps each protocol domain's interfaces to their concrete vendor implementations. Granularity is per individual interface, not per domain.\n\n```yaml providers:   system:     env: { provider: '@vercel/env' }     fs: { provider: '@vercel/blob' }     sandbox: { provider: '@vercel/sandbox' }   context:     embeddings: { provider: '@upstash/vector' }   checks:     screenshot: { provider: 'playwright' }     judge: { provider: '@braintrust/judge' } ```",
+  "type": "object",
+  "properties": {
+    "system": {
+      "$ref": "#/definitions/Record%3Cstring%2CProviderEntry%3E",
+      "description": "System-level interface providers"
+    },
+    "context": {
+      "$ref": "#/definitions/Record%3Cstring%2CProviderEntry%3E",
+      "description": "Context-level interface providers"
+    },
+    "actions": {
+      "$ref": "#/definitions/Record%3Cstring%2CProviderEntry%3E",
+      "description": "Actions-level interface providers"
+    },
+    "checks": {
+      "$ref": "#/definitions/Record%3Cstring%2CProviderEntry%3E",
+      "description": "Checks-level interface providers"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "Record<string,ProviderEntry>": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/ProviderEntry"
+      }
+    },
+    "ProviderEntry": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "Provider package or identifier"
+        },
+        "version": {
+          "type": "string",
+          "description": "Provider version (SemVer range)"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this provider is enabled"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+          "description": "Extensible metadata for provider-specific config"
+        }
+      },
+      "required": [
+        "provider"
+      ],
+      "additionalProperties": false,
+      "description": "A provider binding\n\nMaps an abstract protocol interface to a concrete vendor implementation. Each entry in the providers map declares who implements what.\n\n```yaml providers:   system:     env:       provider: '@vercel/env'     sandbox:       provider: '@vercel/sandbox'       version: '^1.0.0' ```"
+    },
+    "Record<string,unknown>": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  }
+}

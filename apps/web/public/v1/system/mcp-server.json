@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/system/mcp-server.json",
+  "title": "MCP Server Entry Schema",
+  "description": "An MCP server connection entry",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique identifier for this connection"
+    },
+    "uri": {
+      "type": "string",
+      "description": "Server transport URI (stdio, SSE, streamable HTTP)"
+    },
+    "status": {
+      "$ref": "#/definitions/McpServerStatus",
+      "description": "Current connection status"
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tools exposed by this server"
+    },
+    "metadata": {
+      "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+      "description": "Extensible metadata for provider-specific data"
+    }
+  },
+  "required": [
+    "name",
+    "uri",
+    "status"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "McpServerStatus": {
+      "type": "string",
+      "enum": [
+        "connected",
+        "disconnected",
+        "error"
+      ],
+      "description": "MCP server connection status"
+    },
+    "Record<string,unknown>": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  }
+}

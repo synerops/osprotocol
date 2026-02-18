@@ -5,9 +5,6 @@
   "description": "JSON Schema index for the Agentic OS Protocol",
   "type": "object",
   "$defs": {
-    "Agent": {
-      "$ref": "agent.md.json"
-    },
     "Workflows": {
       "type": "object",
       "properties": {
@@ -44,7 +41,100 @@
           "$ref": "runs/approval.json"
         }
       }
+    },
+    "System": {
+      "type": "object",
+      "properties": {
+        "env": {
+          "$ref": "system/env.json"
+        },
+        "fs": {
+          "$ref": "system/fs.json"
+        },
+        "sandbox": {
+          "$ref": "system/sandbox.json"
+        },
+        "sandbox-config": {
+          "$ref": "system/sandbox-config.json"
+        },
+        "settings": {
+          "$ref": "system/settings.json"
+        },
+        "preferences": {
+          "$ref": "system/preferences.json"
+        },
+        "registry": {
+          "$ref": "system/registry.json"
+        },
+        "mcp-server": {
+          "$ref": "system/mcp-server.json"
+        },
+        "installer": {
+          "$ref": "system/installer.json"
+        }
+      }
+    },
+    "Context": {
+      "type": "object",
+      "properties": {
+        "embeddings": {
+          "$ref": "context/embeddings.json"
+        },
+        "kv": {
+          "$ref": "context/kv.json"
+        }
+      }
+    },
+    "Actions": {
+      "type": "object",
+      "properties": {
+        "tool-result": {
+          "$ref": "actions/tool-result.json"
+        },
+        "mcp-resource": {
+          "$ref": "actions/mcp-resource.json"
+        },
+        "mcp-prompt": {
+          "$ref": "actions/mcp-prompt.json"
+        }
+      }
+    },
+    "Checks": {
+      "type": "object",
+      "properties": {
+        "rule-result": {
+          "$ref": "checks/rule-result.json"
+        },
+        "judge-config": {
+          "$ref": "checks/judge-config.json"
+        },
+        "judge-result": {
+          "$ref": "checks/judge-result.json"
+        },
+        "audit": {
+          "$ref": "checks/audit.json"
+        },
+        "screenshot-options": {
+          "$ref": "checks/screenshot-options.json"
+        },
+        "screenshot": {
+          "$ref": "checks/screenshot.json"
+        },
+        "screenshot-comparison": {
+          "$ref": "checks/screenshot-comparison.json"
+        }
+      }
+    },
+    "Apps": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "$ref": "apps/app.json"
+        },
+        "providers": {
+          "$ref": "apps/providers.json"
+        }
+      }
     }
-  },
-  "$comment": "System, Context, Actions, Checks - coming in future versions"
+  }
 }

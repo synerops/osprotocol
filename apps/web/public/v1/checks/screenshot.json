@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/checks/screenshot.json",
+  "title": "Screenshot Entry Schema",
+  "description": "A captured screenshot",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier"
+    },
+    "data": {
+      "type": "string",
+      "description": "Base64-encoded image data"
+    },
+    "format": {
+      "$ref": "#/definitions/ImageFormat",
+      "description": "Image format"
+    },
+    "width": {
+      "type": "number",
+      "description": "Image width in pixels"
+    },
+    "height": {
+      "type": "number",
+      "description": "Image height in pixels"
+    },
+    "createdAt": {
+      "type": "number",
+      "description": "When this screenshot was taken (Unix ms)"
+    },
+    "metadata": {
+      "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+      "description": "Extensible metadata for provider-specific data"
+    }
+  },
+  "required": [
+    "id",
+    "data",
+    "format",
+    "width",
+    "height",
+    "createdAt"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "ImageFormat": {
+      "type": "string",
+      "enum": [
+        "png",
+        "jpeg",
+        "webp"
+      ],
+      "description": "Image format for screenshots\n\nUniversal across all providers. PNG for lossless (best for diff), JPEG/WebP for smaller payloads."
+    },
+    "Record<string,unknown>": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  }
+}

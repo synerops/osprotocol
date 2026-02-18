@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/checks/audit.json",
+  "title": "Audit Entry Schema",
+  "description": "An audit log entry",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier"
+    },
+    "createdAt": {
+      "type": "number",
+      "description": "When this entry was created (Unix ms)"
+    },
+    "agentId": {
+      "type": "string",
+      "description": "Agent that produced the verified content"
+    },
+    "executionId": {
+      "type": "string",
+      "description": "Execution or run ID this audit belongs to"
+    },
+    "ruleResults": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/RuleResult"
+      },
+      "description": "Rule evaluation results"
+    },
+    "judgeResult": {
+      "$ref": "#/definitions/JudgeResult",
+      "description": "Judge evaluation result"
+    },
+    "passed": {
+      "type": "boolean",
+      "description": "Whether all checks passed"
+    },
+    "metadata": {
+      "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+      "description": "Extensible metadata for provider-specific data"
+    }
+  },
+  "required": [
+    "id",
+    "createdAt",
+    "passed"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "RuleResult": {
+      "type": "object",
+      "properties": {
+        "ruleName": {
+          "type": "string",
+          "description": "Rule that was evaluated"
+        },
+        "passed": {
+          "type": "boolean",
+          "description": "Whether the rule passed"
+        },
+        "severity": {
+          "$ref": "#/definitions/RuleSeverity",
+          "description": "Severity of this rule"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable message explaining the result"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+          "description": "Extensible metadata for provider-specific data"
+        }
+      },
+      "required": [
+        "ruleName",
+        "passed",
+        "severity",
+        "message"
+      ],
+      "additionalProperties": false,
+      "description": "Rule evaluation result"
+    },
+    "RuleSeverity": {
+      "type": "string",
+      "enum": [
+        "error",
+        "warning",
+        "info"
+      ],
+      "description": "Rule severity level"
+    },
+    "Record<string,unknown>": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "JudgeResult": {
+      "type": "object",
+      "properties": {
+        "score": {
+          "type": "number",
+          "description": "Score between 0 and 1"
+        },
+        "passed": {
+          "type": "boolean",
+          "description": "Whether the evaluation passed the threshold"
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "LLM reasoning for the score"
+        },
+        "ruleResults": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleResult"
+          },
+          "description": "Optional breakdown by criteria"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+          "description": "Extensible metadata for provider-specific data"
+        }
+      },
+      "required": [
+        "score",
+        "passed",
+        "reasoning"
+      ],
+      "additionalProperties": false,
+      "description": "Judge evaluation result"
+    }
+  }
+}

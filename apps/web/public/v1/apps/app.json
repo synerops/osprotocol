@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/apps/app.json",
+  "title": "App Metadata Schema",
+  "description": "App metadata (YAML frontmatter in the distribution file)\n\nFollows the same pattern as AgentMetadata and SkillMetadata — structured data in YAML frontmatter, free-form markdown body.\n\n```yaml\n--- name: '@synerops/syner-os' version: '1.0.0' description: 'Syner OS — AI-powered development platform' protocol: '0.1.0' providers:   system:     sandbox: { provider: '@vercel/sandbox' }     fs: { provider: '@vercel/blob' }   context:     embeddings: { provider: '@upstash/vector' }\n---\n\n# Syner OS\n\nSyner OS is an AI-powered development platform... ```",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Distribution name (scoped, e.g. '@org/my-os')"
+    },
+    "version": {
+      "type": "string",
+      "description": "SemVer version"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description"
+    },
+    "protocol": {
+      "type": "string",
+      "description": "Minimum OS Protocol version required"
+    },
+    "providers": {
+      "$ref": "#/definitions/ProviderMap",
+      "description": "Provider bindings per protocol domain"
+    },
+    "metadata": {
+      "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+      "description": "Extensible metadata for distribution-specific data"
+    }
+  },
+  "required": [
+    "name",
+    "version"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "ProviderMap": {
+      "type": "object",
+      "properties": {
+        "system": {
+          "$ref": "#/definitions/Record%3Cstring%2CProviderEntry%3E",
+          "description": "System-level interface providers"
+        },
+        "context": {
+          "$ref": "#/definitions/Record%3Cstring%2CProviderEntry%3E",
+          "description": "Context-level interface providers"
+        },
+        "actions": {
+          "$ref": "#/definitions/Record%3Cstring%2CProviderEntry%3E",
+          "description": "Actions-level interface providers"
+        },
+        "checks": {
+          "$ref": "#/definitions/Record%3Cstring%2CProviderEntry%3E",
+          "description": "Checks-level interface providers"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Provider bindings organized by protocol domain\n\nMaps each protocol domain's interfaces to their concrete vendor implementations. Granularity is per individual interface, not per domain.\n\n```yaml providers:   system:     env: { provider: '@vercel/env' }     fs: { provider: '@vercel/blob' }     sandbox: { provider: '@vercel/sandbox' }   context:     embeddings: { provider: '@upstash/vector' }   checks:     screenshot: { provider: 'playwright' }     judge: { provider: '@braintrust/judge' } ```"
+    },
+    "Record<string,ProviderEntry>": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/ProviderEntry"
+      }
+    },
+    "ProviderEntry": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "Provider package or identifier"
+        },
+        "version": {
+          "type": "string",
+          "description": "Provider version (SemVer range)"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this provider is enabled"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+          "description": "Extensible metadata for provider-specific config"
+        }
+      },
+      "required": [
+        "provider"
+      ],
+      "additionalProperties": false,
+      "description": "A provider binding\n\nMaps an abstract protocol interface to a concrete vendor implementation. Each entry in the providers map declares who implements what.\n\n```yaml providers:   system:     env:       provider: '@vercel/env'     sandbox:       provider: '@vercel/sandbox'       version: '^1.0.0' ```"
+    },
+    "Record<string,unknown>": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  }
+}

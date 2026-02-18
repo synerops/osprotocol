@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/actions/mcp-prompt.json",
+  "title": "MCP Prompt Schema",
+  "description": "An MCP prompt",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Prompt name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description"
+    },
+    "arguments": {
+      "type": "object",
+      "description": "Arguments the prompt accepts"
+    },
+    "metadata": {
+      "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+      "description": "Extensible metadata for provider-specific data"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "Record<string,unknown>": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  }
+}

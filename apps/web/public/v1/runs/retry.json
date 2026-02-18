@@ -36,6 +36,25 @@
         "exponential"
       ],
       "description": "Backoff strategy for retries"
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "stack": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "message"
+      ],
+      "additionalProperties": false
     }
   }
 }

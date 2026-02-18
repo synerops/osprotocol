@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/system/installer.json",
+  "title": "Install Entry Schema",
+  "description": "An installed package entry",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Package identifier"
+    },
+    "version": {
+      "type": "string",
+      "description": "Installed version"
+    },
+    "status": {
+      "$ref": "#/definitions/InstallStatus",
+      "description": "Current status"
+    },
+    "installedAt": {
+      "type": "number",
+      "description": "When this package was installed (Unix ms)"
+    },
+    "metadata": {
+      "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+      "description": "Extensible metadata for provider-specific data"
+    }
+  },
+  "required": [
+    "name",
+    "version",
+    "status",
+    "installedAt"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "InstallStatus": {
+      "type": "string",
+      "enum": [
+        "installed",
+        "updating",
+        "failed"
+      ],
+      "description": "Installation status"
+    },
+    "Record<string,unknown>": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  }
+}

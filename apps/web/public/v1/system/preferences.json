@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osprotocol.dev/v1/system/preferences.json",
+  "title": "Preference Entry Schema",
+  "description": "User/agent/system preference entry with scope",
+  "$ref": "#/definitions/PreferenceEntry%3Cunknown%3E",
+  "definitions": {
+    "PreferenceEntry<unknown>": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Preference key"
+        },
+        "value": {
+          "description": "Preference value"
+        },
+        "scope": {
+          "$ref": "#/definitions/PreferenceScope",
+          "description": "Scope this preference applies to"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
+          "description": "Extensible metadata for provider-specific data"
+        }
+      },
+      "required": [
+        "key",
+        "value",
+        "scope"
+      ],
+      "additionalProperties": false,
+      "description": "A preference entry"
+    },
+    "PreferenceScope": {
+      "type": "string",
+      "enum": [
+        "agent",
+        "user",
+        "system"
+      ],
+      "description": "Preference scope\n\nResolution cascades: agent > user > system. The 'system' scope is a passthrough to system settings."
+    },
+    "Record<string,unknown>": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  }
+}

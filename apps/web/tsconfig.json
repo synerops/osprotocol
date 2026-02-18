@@ -35,5 +35,5 @@
     ".next/dev/types/**/*.ts",
     "../../packages/schema/**/*.ts"
   ],
-  "exclude": ["node_modules", "../../packages/schema/scripts"]
+  "exclude": ["node_modules", "scripts"]
 }
