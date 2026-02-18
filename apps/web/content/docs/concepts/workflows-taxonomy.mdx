@@ -24,8 +24,8 @@ mindmap
       LLMJudge["LLM-as-Judge"]
     RecoveryWorkflows["Recovery Workflows"]
       Retries["Retries"]
-      Fallback["Fallback"]
       Timeouts["Timeouts"]
+      Cancellation["Cancellation"]
     HumanInLoop["Human-in-the-Loop Workflows"]
       ApprovalWorkflows["Approval Workflows"]
       ManualDelegation["Manual Delegation"]
@@ -61,14 +61,14 @@ Ensure outputs meet standards:
 ### 4. Recovery Workflows
 
 Handle failures and errors:
-- **[Retries](/docs/runs/retries)**: Automatic retry mechanisms
-- **[Fallback](/docs/checks/fallback)**: Alternative paths when primary fails
+- **[Retries](/docs/runs/retry)**: Automatic retry mechanisms
 - **[Timeouts](/docs/runs/timeout)**: Long-running operation handling
+- **[Cancellation](/docs/runs/cancel)**: Graceful termination of running operations
 
 ### 5. Human-in-the-Loop Workflows
 
 Integrate human oversight:
-- **[Approval Workflows](/docs/runs/human-in-the-loop)**: Human approval before proceeding
+- **[Approval Workflows](/docs/runs/approval)**: Human approval before proceeding
 - **Manual Delegation**: Human task assignment
 
 ### 6. Multi-Agent Workflows
@@ -87,6 +87,6 @@ Coordinate multiple agents:
 
 - Explore specific [Task Workflows](/docs/workflows/routing)
 - Understand [Quality Assurance](/docs/checks/audit) mechanisms
-- Learn about [Recovery Patterns](/docs/runs/retries)
+- Learn about [Recovery Patterns](/docs/runs/retry)
 - Read the full specification in [AGENTS.md Section 3](https://github.com/synerops/osprotocol/blob/main/AGENTS.md#3-workflow-patterns)
 

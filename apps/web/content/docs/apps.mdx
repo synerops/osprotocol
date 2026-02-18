@@ -1,0 +1,246 @@
+---
+title: Apps
+description: Distribution manifests for the Agentic OS — declare which vendors implement which protocol interfaces in a complete agentic system configuration.
+---
+
+<Callout type="warn">
+  This feature is experimental. The App schema and distribution manifest format
+  have no real implementation yet and are subject to change.
+</Callout>
+
+## Overview
+
+An app is a distribution of the Agentic OS — a manifest that declares which vendors implement which protocol interfaces, forming a complete agentic system configuration. Think of it like `package.json` for Node.js, `docker-compose.yml` for containers, or `vercel.json` for deployments: a single file that describes how all the pieces fit together.
+
+The format is YAML frontmatter for the structured, machine-readable manifest, combined with a free-form markdown body for human-readable documentation. The filename is up to the author — `SYNER.md`, `APP.md`, `ACADEMY.md`, or anything else. The format is what matters.
+
+## Distribution File
+
+An app file combines a YAML frontmatter manifest with a markdown documentation body:
+
+```yaml
+---
+name: '@synerops/syner-os'
+version: '1.0.0'
+description: 'Syner OS — AI-powered development platform'
+protocol: '0.1.0'
+providers:
+  system:
+    sandbox: { provider: '@vercel/sandbox' }
+    fs: { provider: '@vercel/blob' }
+  context:
+    embeddings: { provider: '@upstash/vector' }
+---
+
+# Syner OS
+
+Syner OS is an AI-powered development platform...
+```
+
+The frontmatter declares the distribution metadata and provider bindings. The markdown body is free-form — documentation, usage instructions, architecture notes, or anything else relevant to the distribution.
+
+## TypeScript API
+
+Import types from `@osprotocol/schema/apps`:
+
+```ts
+import type { App, AppMetadata, ProviderMap, ProviderEntry } from '@osprotocol/schema/apps'
+```
+
+### ProviderEntry
+
+A single vendor binding for a protocol interface:
+
+```ts
+interface ProviderEntry {
+  provider: string
+  version?: string
+  enabled?: boolean
+  metadata?: Record<string, unknown>
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `provider` | `string` | Package name or identifier of the vendor implementation |
+| `version` | `string` | Optional semver range for the provider |
+| `enabled` | `boolean` | Whether this binding is active. Defaults to true if omitted |
+| `metadata` | `Record<string, unknown>` | Arbitrary provider-specific configuration |
+
+### ProviderMap
+
+Maps protocol domains to their provider bindings, one entry per interface:
+
+```ts
+interface ProviderMap {
+  system?: Record<string, ProviderEntry>
+  context?: Record<string, ProviderEntry>
+  actions?: Record<string, ProviderEntry>
+  checks?: Record<string, ProviderEntry>
+}
+```
+
+Each key within a domain corresponds to a specific protocol interface (e.g., `sandbox`, `fs`, `embeddings`), not the domain as a whole. Granularity is per interface.
+
+### AppMetadata
+
+The structured frontmatter of a distribution file:
+
+```ts
+interface AppMetadata {
+  name: string
+  version: string
+  description?: string
+  protocol?: string
+  providers?: ProviderMap
+  metadata?: Record<string, unknown>
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | Distribution name, typically a scoped package identifier |
+| `version` | `string` | Semver version of this distribution |
+| `description` | `string` | Human-readable description |
+| `protocol` | `string` | OS Protocol spec version this distribution targets |
+| `providers` | `ProviderMap` | Vendor bindings per domain and interface |
+| `metadata` | `Record<string, unknown>` | Arbitrary additional metadata |
+
+### App
+
+The parsed representation of a full distribution file:
+
+```ts
+interface App {
+  metadata: AppMetadata
+  content: string
+  path: string
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `metadata` | `AppMetadata` | Parsed frontmatter |
+| `content` | `string` | Raw markdown body after the frontmatter |
+| `path` | `string` | Filesystem path to the distribution file |
+
+## Provider Bindings
+
+The `providers` field in the frontmatter maps each protocol domain's interfaces to concrete vendor implementations. Each domain (`system`, `context`, `actions`, `checks`) contains a record where each key is a specific interface name and each value is a `ProviderEntry`.
+
+```yaml
+providers:
+  system:
+    env:
+      provider: '@vercel/env'
+    sandbox:
+      provider: '@vercel/sandbox'
+      version: '^1.0.0'
+  context:
+    embeddings: { provider: '@upstash/vector' }
+  checks:
+    screenshot: { provider: 'playwright' }
+    judge: { provider: '@braintrust/judge' }
+```
+
+This declaration says: for the `system` domain, use `@vercel/env` for environment access and `@vercel/sandbox` for sandboxed execution; for `context`, use `@upstash/vector` for embeddings; for `checks`, use Playwright for screenshots and Braintrust for LLM-as-judge evaluation.
+
+Provider bindings are resolved at runtime by the OS Protocol host. Interfaces with no binding fall back to any default registered by the host environment.
+
+## Usage Examples
+
+### Load an app manifest
+
+```ts
+import { readFileSync } from 'fs'
+import matter from 'gray-matter'
+import type { App, AppMetadata } from '@osprotocol/schema/apps'
+
+function loadApp(filePath: string): App {
+  const raw = readFileSync(filePath, 'utf-8')
+  const { data, content } = matter(raw)
+  return {
+    metadata: data as AppMetadata,
+    content,
+    path: filePath,
+  }
+}
+
+const app = loadApp('./SYNER.md')
+console.log(app.metadata.name)    // '@synerops/syner-os'
+console.log(app.metadata.version) // '1.0.0'
+```
+
+### Validate provider bindings
+
+```ts
+import type { ProviderMap } from '@osprotocol/schema/apps'
+
+function getProviderForInterface(
+  providers: ProviderMap,
+  domain: keyof ProviderMap,
+  interfaceName: string
+): string | undefined {
+  return providers[domain]?.[interfaceName]?.provider
+}
+
+const sandboxProvider = getProviderForInterface(
+  app.metadata.providers ?? {},
+  'system',
+  'sandbox'
+)
+// '@vercel/sandbox'
+```
+
+### Compare two distributions
+
+```ts
+import type { App } from '@osprotocol/schema/apps'
+
+function diffProviders(a: App, b: App): string[] {
+  const differences: string[] = []
+  const domains = ['system', 'context', 'actions', 'checks'] as const
+
+  for (const domain of domains) {
+    const aBindings = a.metadata.providers?.[domain] ?? {}
+    const bBindings = b.metadata.providers?.[domain] ?? {}
+    const allInterfaces = new Set([...Object.keys(aBindings), ...Object.keys(bBindings)])
+
+    for (const iface of allInterfaces) {
+      const aProvider = aBindings[iface]?.provider
+      const bProvider = bBindings[iface]?.provider
+      if (aProvider !== bProvider) {
+        differences.push(`${domain}.${iface}: ${aProvider ?? 'none'} → ${bProvider ?? 'none'}`)
+      }
+    }
+  }
+
+  return differences
+}
+```
+
+## Cross-References
+
+The app manifest format is analogous to other ecosystem configuration files:
+
+| Format | Ecosystem | Defines |
+| --- | --- | --- |
+| `package.json` | Node.js / npm | Package dependencies and scripts |
+| `docker-compose.yml` | Docker | Service definitions and bindings |
+| `Chart.yaml` | Helm / Kubernetes | Chart metadata and dependencies |
+| `claude_desktop_config.json` | Claude Desktop | MCP server registrations |
+| `mcp.json` (Cursor) | Cursor | MCP server registrations for Cursor |
+| `.vscode/mcp.json` | VS Code | MCP server registrations for VS Code |
+| `vercel.json` | Vercel | Deployment configuration and routing |
+| App manifest (`*.md`) | OS Protocol | Agentic OS provider bindings and distribution metadata |
+
+The app manifest occupies the same role in the Agentic OS ecosystem that these files occupy in their respective ecosystems: a single source of truth for how a system is configured and what implements each capability.
+
+## Integration
+
+Provider bindings in an app manifest map to the following protocol domains:
+
+- [System](/docs/system) — environment, sandboxing, storage, file system interfaces
+- [Context](/docs/context) — memory, embeddings, and knowledge retrieval interfaces
+- [Actions](/docs/actions) — external integrations and side-effect interfaces
+- [Checks](/docs/checks) — validation, evaluation, and quality assurance interfaces

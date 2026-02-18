@@ -1,27 +1,129 @@
 ---
 title: Rules
-description: Behavioral constraints and guidelines for agents
+description: Declarative verification criteria that agent output must satisfy before being accepted
 ---
+
+<Callout type="warn">
+  Rules is an experimental interface. No implementation exists yet. The API
+  described here reflects the current design and is subject to change as the
+  protocol evolves.
+</Callout>
 
 ## Overview
 
-The rules module defines behavioral constraints and guidelines that agents must follow. It provides a framework for enforcing policies and ensuring consistent agent behavior.
+Rules define declarative verification criteria that agent output must satisfy before being accepted. They are composable: rules can be evaluated individually or as a complete set against any content. Provider analogues include ESLint Rules, GitHub Checks, Vercel Deployment Checks, and OpenAI Guardrails.
 
-## Features
+## Severity Levels
 
-- **Rule Definition**: Define behavioral rules and constraints
-- **Rule Enforcement**: Enforce rules during agent execution
-- **Rule Validation**: Validate agent actions against rules
-- **Rule Management**: Manage and update rules dynamically
+| Severity  | Meaning                                                                 |
+| --------- | ----------------------------------------------------------------------- |
+| `error`   | The rule failure blocks acceptance. Output must not proceed.            |
+| `warning`  | The rule failure is notable but does not block acceptance.              |
+| `info`    | The rule result is informational only. No action is required.           |
 
-## Usage
+## TypeScript API
 
-Rules ensure agents operate within defined boundaries and maintain consistent behavior across the system.
+```ts
+import type { RuleSeverity, RuleResult, Rule, Rules } from '@osprotocol/schema/checks/rules'
+```
+
+### RuleSeverity
+
+```ts
+type RuleSeverity = 'error' | 'warning' | 'info'
+```
+
+Indicates how a rule failure should be treated. An `error` blocks acceptance, a `warning` is surfaced without blocking, and `info` is purely observational.
+
+### RuleResult
+
+```ts
+interface RuleResult {
+  ruleName: string
+  passed: boolean
+  severity: RuleSeverity
+  message: string
+  metadata?: Record<string, unknown>
+}
+```
+
+The result returned after evaluating a single rule against content. `passed` indicates whether the rule was satisfied. `message` provides a human-readable explanation. `metadata` carries any structured diagnostic data the rule chooses to emit.
+
+### Rule
+
+```ts
+interface Rule {
+  name: string
+  description: string
+  severity: RuleSeverity
+  evaluate(content: unknown): Promise<RuleResult>
+  metadata?: Record<string, unknown>
+}
+```
+
+A single verifiable criterion. `evaluate` receives the content to check and returns a `RuleResult`. The `severity` on the `Rule` defines the default severity that should appear in results when the rule fails.
+
+### Rules
+
+```ts
+interface Rules {
+  get(name: string): Promise<Rule | null>
+  list(): Promise<Rule[]>
+  evaluate(content: unknown): Promise<RuleResult[]>
+}
+```
+
+A collection of rules. `list` enumerates all registered rules. `get` retrieves a specific rule by name. `evaluate` runs all rules against the provided content and returns a `RuleResult` for each one.
+
+## Usage Examples
+
+### Evaluate all rules against content
+
+```ts
+const results = await rules.evaluate(agentOutput)
+
+for (const result of results) {
+  if (!result.passed && result.severity === 'error') {
+    throw new Error(`Rule failed: ${result.ruleName} — ${result.message}`)
+  }
+}
+```
+
+### Get a specific rule by name
+
+```ts
+const rule = await rules.get('no-pii-in-output')
+
+if (rule) {
+  const result = await rule.evaluate(agentOutput)
+  console.log(result.passed, result.message)
+}
+```
+
+### Define a custom rule
+
+```ts
+const noPiiRule: Rule = {
+  name: 'no-pii-in-output',
+  description: 'Ensures agent output does not contain personally identifiable information',
+  severity: 'error',
+  async evaluate(content: unknown): Promise<RuleResult> {
+    const text = typeof content === 'string' ? content : JSON.stringify(content)
+    const hasPii = /\b\d{3}-\d{2}-\d{4}\b/.test(text) // SSN pattern example
+    return {
+      ruleName: 'no-pii-in-output',
+      passed: !hasPii,
+      severity: 'error',
+      message: hasPii ? 'Output contains potential PII' : 'No PII detected',
+    }
+  },
+}
+```
 
 ## Integration
 
-Rules integrate with:
-- **Audit**: Rules are checked during audit
-- **Judge**: Rules inform quality evaluation
-- **Executor**: Rules constrain agent actions
+Rule results produced by `Rules.evaluate` feed into other parts of the checks and runs pipeline:
 
+- [Judge](/docs/checks/judge) — uses rule results alongside other signals to produce a quality verdict
+- [Audit](/docs/checks/audit) — records rule results for traceability and post-hoc review
+- [Approval](/docs/runs/approval) — an `error`-severity failure can gate a run and trigger a human approval step

@@ -9,39 +9,18 @@ import { Orbit, Boxes, CircuitBoard, Server } from 'lucide-react';
 
 The Agentic OS Protocol (OSP) is a specification—a shared contract that defines the interfaces, behaviors, and data formats for orchestrating AI agents at scale.
 
-Think of it as the blueprint you implement: it tells you which modules exist (Skills, System, Context, Checks, Actions, Runs, Workflows), how they interact, and what "conformant" behavior looks like. It's not a runtime or framework—you build to it.
+Think of it as the blueprint you implement: it tells you which domains exist (System, Context, Actions, Checks, Workflows, Runs), how they interact, and what "conformant" behavior looks like. It's not a runtime or framework—you build to it.
 
-### Schema Validation
+### Protocol Domains
 
-OSP provides JSON Schemas for validating your agent definitions. Add the `$schema` directive to your YAML frontmatter:
-
-```yaml title="AGENT.md"
----
-# yaml-language-server: $schema=https://osprotocol.dev/v1/agent.md.json
-name: my-agent
-description: A sample agent
-tools:
-  - fs.read
-  - fs.write
-workflows:
-  - routing
-annotations:
-  whenToUse:
-    - When the user needs file operations
----
-
-You are a helpful assistant that can read and write files.
-```
-
-#### Available Schemas
-
-| Schema | URL |
-|--------|-----|
-| Index | `https://osprotocol.dev/v1/schema.json` |
-| Agent | `https://osprotocol.dev/v1/agent.md.json` |
-| Skill | `https://osprotocol.dev/v1/skill.md.json` |
-| Workflows | `https://osprotocol.dev/v1/workflows/*.json` |
-| Runs | `https://osprotocol.dev/v1/runs/*.json` |
+| Domain | Purpose |
+|--------|---------|
+| [System](/docs/system) | Infrastructure — registry, environment, filesystem, settings |
+| [Context](/docs/context) | Read-only facades — system context, embeddings, key-value |
+| [Actions](/docs/actions) | Write facades — system actions, tools, MCP servers |
+| [Checks](/docs/checks) | Quality assurance — rules, judge, audit, screenshot |
+| [Workflows](/docs/workflows) | Execution patterns — routing, parallelization, orchestrator-workers, evaluator-optimizer |
+| [Runs](/docs/runs) | Lifecycle control — timeout, retry, cancel, approval |
 
 ## Getting Started
 

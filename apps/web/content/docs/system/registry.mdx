@@ -1,34 +1,160 @@
 ---
 title: Registry
-description: Agent registration and discovery system
+description: Registration and discovery of resources in the system — the kernel interface for managing what is available and finding it by criteria.
 ---
+
+<Callout type="warn">
+  This interface is experimental — no production implementation exists yet.
+  The API surface may change.
+</Callout>
 
 ## Overview
 
-The registry manages agent registration and discovery within the protocol. It enables agents to register their capabilities and allows other agents to discover available services.
+Registry is the kernel's service directory: it registers and discovers any type of resource in the system. The interface is generic (`Registry<T>`) so it works uniformly for agents, skills, MCP servers, or any other resource type. The `RegistryContext`/`RegistryActions` split operates on **named registries** (e.g., `"agents"`, `"skills"`), allowing a single implementation to manage multiple resource namespaces. This pattern is analogous to Google A2A Agent Cards, Microsoft AutoGen Registry, AGENTS.md/AAIF Agent Discovery, and the npm Registry.
 
-## Features
+## TypeScript API
 
-- **Agent Registration**: Register agents with capabilities and constraints
-- **Service Discovery**: Discover available agents and services
-- **Capability Matching**: Match agents to task requirements
-- **Load Balancing**: Support load balancing across agents
+```ts
+import type {
+  RegistryEntry,
+  RegistryContext,
+  RegistryActions,
+  Registry,
+} from '@osprotocol/schema/system/registry'
+```
 
-## Usage
+### RegistryEntry
 
-The registry is the central directory for agents in the system, enabling dynamic service discovery and efficient agent selection.
+A single record stored in the registry.
+
+```ts
+interface RegistryEntry<T = unknown> {
+  name: string
+  description: string
+  resource: T
+  metadata?: Record<string, unknown>
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Unique identifier within its registry |
+| `description` | `string` | Human-readable summary |
+| `resource` | `T` | The actual resource payload (agent, skill, server, etc.) |
+| `metadata` | `Record<string, unknown>` | Optional arbitrary metadata |
+
+### RegistryContext
+
+Read-only access to named registries. Used during the **gather phase** to inspect what is available.
+
+```ts
+interface RegistryContext {
+  get<T = unknown>(registry: string, name: string): Promise<RegistryEntry<T> | null>
+  list<T = unknown>(registry: string): Promise<RegistryEntry<T>[]>
+}
+```
+
+| Method | Description |
+|---|---|
+| `get(registry, name)` | Fetch a single entry by name from a named registry |
+| `list(registry)` | List all entries in a named registry |
+
+### RegistryActions
+
+Write access to named registries. Used during the **act phase** to mutate what is registered.
+
+```ts
+interface RegistryActions {
+  register<T = unknown>(registry: string, entry: RegistryEntry<T>): Promise<void>
+  unregister(registry: string, name: string): Promise<boolean>
+}
+```
+
+| Method | Description |
+|---|---|
+| `register(registry, entry)` | Add or update an entry in a named registry |
+| `unregister(registry, name)` | Remove an entry; returns `true` if it existed |
+
+### Registry
+
+The full provider interface for a single typed registry. Combines all operations and adds `find` for criteria-based lookup — this method is only available at the provider level, not on `RegistryContext` or `RegistryActions`.
+
+```ts
+interface Registry<T = unknown> {
+  register(entry: RegistryEntry<T>): Promise<void>
+  unregister(name: string): Promise<boolean>
+  get(name: string): Promise<RegistryEntry<T> | null>
+  list(): Promise<RegistryEntry<T>[]>
+  find(criteria: Partial<T>): Promise<RegistryEntry<T>[]>
+}
+```
+
+| Method | Description |
+|---|---|
+| `register(entry)` | Add or update an entry |
+| `unregister(name)` | Remove an entry; returns `true` if it existed |
+| `get(name)` | Fetch a single entry by name |
+| `list()` | List all entries |
+| `find(criteria)` | Search entries by matching fields on the resource payload |
+
+## Named Registries
+
+`RegistryContext` and `RegistryActions` accept a `registry` string as the first parameter. This means one implementation can manage multiple independent namespaces:
+
+```ts
+// Same context, different namespaces
+const agent = await ctx.get('agents', 'summarizer-v2')
+const skill = await ctx.get('skills', 'web-search')
+const server = await ctx.get('mcp-servers', 'filesystem')
+```
+
+The full `Registry<T>` interface, by contrast, is typed per resource type and manages a single namespace — you would instantiate one `Registry<AgentDefinition>` for agents and a separate `Registry<SkillDefinition>` for skills.
+
+## Usage Examples
+
+### Register an agent
+
+```ts
+await actions.register('agents', {
+  name: 'summarizer-v2',
+  description: 'Summarizes long documents into structured output.',
+  resource: agentDefinition,
+  metadata: { version: '2.0.0', owner: 'platform-team' },
+})
+```
+
+### Discover resources by criteria
+
+Using a typed `Registry<AgentDefinition>`, find all agents that match a partial resource shape:
+
+```ts
+const agentRegistry: Registry<AgentDefinition> = getAgentRegistry()
+
+const matches = await agentRegistry.find({
+  domain: 'summarization',
+  supportsStreaming: true,
+})
+```
+
+### Use named registries to cross-reference resources
+
+```ts
+async function resolveSkillsForAgent(
+  ctx: RegistryContext,
+  agentName: string,
+): Promise<RegistryEntry[]> {
+  const agentEntry = await ctx.get('agents', agentName)
+  if (!agentEntry) return []
+
+  const requiredSkills: string[] = agentEntry.metadata?.skills as string[] ?? []
+  return Promise.all(
+    requiredSkills.map((skillName) => ctx.get('skills', skillName)),
+  ).then((results) => results.filter(Boolean) as RegistryEntry[])
+}
+```
 
 ## Integration
 
-Registry integrates with:
-- **Orchestrator**: Discovers agents for task distribution
-- **Planner**: Considers agent capabilities in planning
-- **System**: Manages system-wide agent registry
-
-## Agent Lifecycle
-
-The registry is central to the agent lifecycle:
-- **Registration**: Agents register with the registry
-- **Discovery**: Agents are discovered for tasks
-- **Execution**: Registry information guides task assignment
-
+- [Installer](/docs/system/installer) — installs capabilities that are then registered, making them available for discovery
+- [MCP Client](/docs/system/mcp-client) — discovers MCP servers through the registry before establishing connections
+- [Env](/docs/system/env) — environment-aware discovery uses registry lookups scoped to the current runtime context

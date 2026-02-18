@@ -1,27 +1,128 @@
 ---
 title: Tools
-description: Tool management and execution for AI agents
+description: Unified tool discovery and execution for AI agents across MCP servers, built-ins, and custom providers.
 ---
+
+<Callout type="warn">
+  This interface is experimental — no production implementation exists yet.
+  The API surface may change.
+</Callout>
 
 ## Overview
 
-Tools provide agents with the ability to interact with external systems and perform actions. The tools module manages tool registration, discovery, execution, and monitoring.
+`Tools` provides a unified surface for agent tool discovery and execution. Agents call tools without needing to know whether they originate from MCP servers, built-in capabilities, or custom providers — the implementation aggregates all sources transparently. Provider analogues include Anthropic MCP Tools, OpenAI Function Calling, Vercel AI SDK Tools, and LangChain Tools.
 
-## Features
+## TypeScript API
 
-- **Tool Registration**: Register and manage available tools for agents
-- **Tool Discovery**: Dynamic discovery of tools based on task requirements
-- **Tool Execution**: Execute tools with proper error handling and validation
-- **Tool Monitoring**: Monitor tool usage and performance
+```ts
+import type { Tool, ToolResult, Tools } from "@osprotocol/schema/actions/tools"
+```
 
-## Usage
+### Tool
 
-Tools are essential for agents to perform actions beyond their core capabilities. They enable integration with external APIs, file systems, databases, and other services.
+Represents a single callable tool with a name, description, parameter schema, and execute function.
+
+```ts
+interface Tool<TParams = unknown, TResult = unknown> {
+  name: string
+  description: string
+  parameters?: object
+  execute(params: TParams): Promise<TResult>
+  metadata?: Record<string, unknown>
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Unique tool identifier |
+| `description` | `string` | Human-readable description of what the tool does |
+| `parameters` | `object` | Optional JSON Schema describing accepted parameters |
+| `execute` | `(params: TParams) => Promise<TResult>` | Function that performs the tool action |
+| `metadata` | `Record<string, unknown>` | Optional extra data attached to the tool |
+
+### ToolResult
+
+Returned by `Tools.execute`. Wraps the result with success/error state.
+
+```ts
+interface ToolResult<T = unknown> {
+  toolName: string
+  result: T
+  success: boolean
+  error?: string
+  metadata?: Record<string, unknown>
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `toolName` | `string` | Name of the tool that was executed |
+| `result` | `T` | The value returned by the tool |
+| `success` | `boolean` | Whether execution completed without error |
+| `error` | `string` | Error message if `success` is `false` |
+| `metadata` | `Record<string, unknown>` | Optional extra data from the execution |
+
+### Tools
+
+The primary interface agents use to discover and invoke tools.
+
+```ts
+interface Tools {
+  get(name: string): Promise<Tool | null>
+  list(): Promise<Tool[]>
+  execute<T = unknown>(name: string, params?: unknown): Promise<ToolResult<T>>
+}
+```
+
+| Method | Returns | Description |
+|---|---|---|
+| `get(name)` | `Promise<Tool \| null>` | Retrieve a tool by name, or `null` if not found |
+| `list()` | `Promise<Tool[]>` | Return all available tools from all registered sources |
+| `execute(name, params?)` | `Promise<ToolResult<T>>` | Invoke a tool by name with optional parameters |
+
+## Usage Examples
+
+### Execute a tool
+
+```ts
+const result = await tools.execute("read_file", { path: "/data/config.json" })
+
+if (result.success) {
+  console.log(result.result)
+} else {
+  console.error(result.error)
+}
+```
+
+### List available tools and find one
+
+```ts
+const allTools = await tools.list()
+const searchTool = allTools.find((t) => t.name === "web_search")
+
+if (searchTool) {
+  console.log(searchTool.description)
+  console.log(searchTool.parameters)
+}
+```
+
+### Handle tool errors
+
+```ts
+const result = await tools.execute<string>("send_email", {
+  to: "user@example.com",
+  subject: "Hello",
+  body: "Message body",
+})
+
+if (!result.success) {
+  // Log the error and fall back gracefully
+  console.error(`Tool "${result.toolName}" failed: ${result.error}`)
+}
+```
 
 ## Integration
 
-Tools work closely with:
-- **Executor**: Executes tools as part of agent tasks
-- **Registry**: Manages tool registration and discovery
-- **MCP Servers**: Provides standardized tool interfaces
-
+- [MCP Servers](/docs/actions/mcp-servers) — tool sources exposed over the Model Context Protocol
+- [MCP Client](/docs/system/mcp-client) — connects to MCP servers and surfaces their tools
+- [SystemActions](/docs/actions/system) — built-in system-level actions available as tools

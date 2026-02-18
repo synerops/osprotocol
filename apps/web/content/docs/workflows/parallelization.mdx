@@ -1,31 +1,153 @@
 ---
 title: Parallelization
-description: Parallel task execution and workflow parallelization
+description: Split a task into independent subtasks, execute them concurrently, and merge the results.
 ---
+
+<Callout type="warn">
+  The Parallelization workflow pattern is part of the OS Protocol specification.
+  It is defined in `@osprotocol/schema/workflows/parallelization` and must be
+  implemented by agents that declare support for parallel execution.
+</Callout>
 
 ## Overview
 
-The parallelization module enables parallel task execution and workflow parallelization. It manages concurrent execution of independent tasks, improving overall system throughput.
+Parallelization splits an incoming prompt into independent subtasks, executes all of them concurrently, and merges their results into a single output. This pattern is best suited for throughput-sensitive workloads where subtasks do not depend on each other and the total work can be decomposed cleanly. It follows the parallelization building block described in Anthropic's "Building Effective Agents."
 
-## Features
+## Pattern
 
-- **Parallel Execution**: Execute tasks in parallel
-- **Dependency Management**: Manage task dependencies for parallel execution
-- **Resource Optimization**: Optimize resource usage for parallel tasks
-- **Concurrency Control**: Control concurrency levels
+```mermaid
+flowchart LR
+  A([Input]) --> B[split]
+  B --> C([Subtask\[\]])
+  C --> D[parallel]
+  D --> E([SubtaskResult\[\]])
+  E --> F[merge]
+  F --> G([Output])
+```
 
-## Usage
+## Failure Strategies
 
-Parallelization improves system performance by executing independent tasks concurrently, reducing overall execution time and improving resource utilization.
+The `failureStrategy` option in `ParallelizationConfig` controls how the workflow behaves when one or more subtasks fail.
+
+| Strategy | Behavior |
+|---|---|
+| `fail-fast` | Stops execution on the first failed subtask and rejects the run immediately. |
+| `collect-all` | Runs all subtasks regardless of failures and returns every result, including failures. |
+
+Use `fail-fast` when any single failure makes the merged output invalid. Use `collect-all` when partial results are still useful or when you want to surface all errors at once.
+
+## TypeScript API
+
+```ts
+import type {
+  Subtask,
+  SubtaskResult,
+  ParallelizationWorkflow,
+  ParallelizationConfig,
+} from "@osprotocol/schema/workflows/parallelization";
+```
+
+### Subtask
+
+```ts
+interface Subtask {
+  id: string
+  prompt: string
+  metadata?: Record<string, unknown>
+}
+```
+
+A single unit of work produced by `split()`. The `id` uniquely identifies the subtask and is echoed back in `SubtaskResult` so results can be correlated to their origin.
+
+### SubtaskResult
+
+```ts
+interface SubtaskResult<T = unknown> {
+  id: string
+  success: boolean
+  data?: T
+  error?: string
+  durationMs?: number
+}
+```
+
+The outcome of a single subtask. Results are returned in the same order as the input `Subtask[]` array. `durationMs` is available for performance monitoring.
+
+### ParallelizationWorkflow
+
+```ts
+interface ParallelizationWorkflow<Output> extends Workflow<Output> {
+  split(prompt: string): Promise<Subtask[]>
+  parallel(subtasks: Subtask[]): Promise<SubtaskResult[]>
+  merge(results: SubtaskResult[]): Promise<Output>
+}
+```
+
+The core workflow interface. Implementations must provide all three methods:
+
+- `split` — decomposes the incoming prompt into a list of independent subtasks.
+- `parallel` — executes all subtasks concurrently and returns their results in input order.
+- `merge` — combines `SubtaskResult[]` into the final typed output.
+
+### ParallelizationConfig
+
+```ts
+interface ParallelizationConfig {
+  maxConcurrency?: number
+  failureStrategy?: 'fail-fast' | 'collect-all'
+  includeFailures?: boolean
+}
+```
+
+| Field | Default | Description |
+|---|---|---|
+| `maxConcurrency` | unbounded | Maximum number of subtasks to run at the same time. |
+| `failureStrategy` | `'fail-fast'` | How to handle subtask failures (see Failure Strategies). |
+| `includeFailures` | `false` | When using `collect-all`, whether to pass failed results to `merge`. |
+
+## Usage Examples
+
+### Split and merge
+
+```ts
+const subtasks = await workflow.split(
+  "Summarize these five documents: doc1, doc2, doc3, doc4, doc5"
+);
+
+const results = await workflow.parallel(subtasks);
+const output = await workflow.merge(results);
+```
+
+### Configure concurrency
+
+```ts
+const run = await workflow.run(prompt, {
+  config: {
+    maxConcurrency: 3,
+    failureStrategy: "fail-fast",
+  },
+});
+```
+
+### Handle partial failures with collect-all
+
+```ts
+const run = await workflow.run(prompt, {
+  config: {
+    failureStrategy: "collect-all",
+    includeFailures: true,
+  },
+});
+
+const failed = run.output.results.filter((r) => !r.success);
+if (failed.length > 0) {
+  console.warn(`${failed.length} subtask(s) failed`, failed.map((r) => r.error));
+}
+```
 
 ## Integration
 
-Parallelization integrates with:
-- **Orchestrator**: Enables parallel orchestration
-- **Executor**: Executes tasks in parallel
-- **Routing**: Routes tasks for parallel execution
-
-## Workflow Orchestration
-
-Parallelization is a key component of workflow orchestration, enabling efficient execution of complex workflows with multiple independent tasks.
-
+- [Routing](/docs/workflows/routing) — classify and delegate to the right handler before parallelizing.
+- [Orchestrator-Workers](/docs/workflows/orchestrator-workers) — combine orchestration with parallel worker execution.
+- [Evaluator-Optimizer](/docs/workflows/evaluator-optimizer) — evaluate and refine merged results after parallelization.
+- [Runs](/docs/runs) — control timeout, retry, and cancellation for the overall parallel run.

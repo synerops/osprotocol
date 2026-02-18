@@ -58,23 +58,27 @@ protocol/
 │   ├── components/     # React components
 │   └── lib/            # Shared utilities (source.ts, metadata.ts)
 └── packages/schema/    # @osprotocol/schema - Protocol type definitions
-    ├── workflows/      # Workflow pattern types (routing, parallelization, etc.)
-    ├── runs/           # Run control types (timeout, retry, cancel, approval)
-    ├── system/data/    # System data types (Cache, Storage)
-    ├── agent.ts        # Agent schema (AGENT.md structure)
-    └── skill.ts        # Skill schema (SKILL.md structure)
+    ├── system/         # System interfaces (env, fs, sandbox, settings, preferences, registry, installer, mcp-client)
+    ├── context/        # Context facades (system context, embeddings, kv)
+    ├── actions/        # Action facades (system actions, tools, mcp-servers)
+    ├── checks/         # Verification (rules, judge, audit, screenshot)
+    ├── workflows/      # Workflow patterns (routing, orchestrator-workers, parallelization, evaluator-optimizer)
+    ├── runs/           # Run control (run, timeout, retry, cancel, approval)
+    └── apps/           # Distribution manifests (app schema, provider bindings)
 ```
 
 ### Schema Package Exports
 
-The `@osprotocol/schema` package provides TypeScript types for the protocol:
+The `@osprotocol/schema` package provides TypeScript types for the protocol. See `packages/schema/package.json` `exports` field for the full list. Key entry points:
 
-- `@osprotocol/schema` - Main exports (all types)
-- `@osprotocol/schema/workflows` - Workflow patterns (Routing, OrchestratorWorkers, Parallelization, EvaluatorOptimizer)
-- `@osprotocol/schema/runs` - Run control (Timeout, Retry, Cancel, Approval)
-- `@osprotocol/schema/agent` - Agent definition types
-- `@osprotocol/schema/skill` - Skill definition types
-- `@osprotocol/schema/system/data` - System data types (Cache, Storage)
+- `@osprotocol/schema` - Main barrel export
+- `@osprotocol/schema/workflows` - Workflow patterns
+- `@osprotocol/schema/runs` - Run control
+- `@osprotocol/schema/system/*` - System interfaces (env, fs, sandbox, settings, preferences, registry, installer, mcp-client)
+- `@osprotocol/schema/context/*` - Context facades (system, embeddings, kv)
+- `@osprotocol/schema/actions/*` - Action facades (system, tools, mcp-servers)
+- `@osprotocol/schema/checks/*` - Verification (rules, judge, audit, screenshot)
+- `@osprotocol/schema/apps/schema` - Distribution manifest types
 
 ### Documentation Site
 
@@ -85,12 +89,16 @@ The `@osprotocol/schema` package provides TypeScript types for the protocol:
 
 ### Key Concepts
 
-**Agents**: Primary actors defined in `AGENT.md` files with YAML frontmatter metadata. Agents have tools, workflows, and discovery annotations.
+**Protocol Domains**: The schema is organized into 6 domains:
+- **System** - Infrastructure interfaces (env, fs, sandbox, settings, preferences, registry, installer, mcp-client)
+- **Context** - Read-only facades for the agent loop's gather phase (SystemContext, Embeddings, KV)
+- **Actions** - Write facades for the agent loop's act phase (SystemActions, Tools, McpServers)
+- **Checks** - Verification interfaces (Rules, Judge, Audit, Screenshot)
+- **Workflows** - Execution patterns based on Anthropic's building blocks (Routing, Orchestrator-Workers, Parallelization, Evaluator-Optimizer)
+- **Runs** - Execution control (Run, Timeout, Retry, Cancel, Approval)
 
-**Skills**: Capabilities/APIs defined in `SKILL.md` files. Skills belong to protocol domains: `system`, `context`, `actions`, `checks`, `skills`, `workflows`, `runs`.
+**Apps**: Distribution manifests that declare which vendors implement which protocol interfaces. Defined in `apps/schema.ts`.
 
-**Workflows**: Execution patterns based on Anthropic's building blocks for agentic systems:
-- Routing - classify and delegate
-- Orchestrator-Workers - plan, delegate, synthesize
-- Parallelization - split, parallel execute, merge
-- Evaluator-Optimizer - generate, evaluate, refine
+**Context/Actions Split**: Each system interface has a read-only Context facade (gather phase) and a write Actions facade (act phase). SystemContext composes all Context interfaces; SystemActions composes all Actions interfaces.
+
+**Agent/Skill Definition**: Defining agents (AGENT.md) and skills (SKILL.md) is a platform concern, not standardized by the protocol. The protocol defines the interfaces that agents and skills interact with.

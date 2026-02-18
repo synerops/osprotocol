@@ -1,0 +1,116 @@
+---
+title: Key-Value Store
+description: Flat key-value persistence for structured agent data
+---
+
+<Callout type="warn">
+  This interface is experimental — no production implementation exists yet.
+  The API surface may change.
+</Callout>
+
+## Overview
+
+The key-value store provides flat, direct-access persistence for structured data. Agents use it to store and retrieve data by known keys — session state, user preferences, configuration, counters. Unlike `fs` (hierarchical, file-based) and `embeddings` (semantic search by meaning), `kv` is for exact key lookups.
+
+## TypeScript API
+
+```ts
+import type { Kv, KvEntry, KvContext, KvActions } from '@osprotocol/schema/context/kv'
+```
+
+### KvEntry
+
+A single key-value entry.
+
+```ts
+interface KvEntry<T = unknown> {
+  /** Entry key */
+  key: string
+  /** Entry value */
+  value: T
+  /** Extensible metadata for provider-specific data */
+  metadata?: Record<string, unknown>
+}
+```
+
+### Kv
+
+Full key-value store interface with read and write operations.
+
+```ts
+interface Kv {
+  get<T = unknown>(key: string): Promise<KvEntry<T> | null>
+  set<T = unknown>(key: string, value: T): Promise<KvEntry<T>>
+  remove(key: string): Promise<boolean>
+  list(prefix?: string): Promise<string[]>
+}
+```
+
+### KvContext
+
+Read-only view for the context phase of the agent loop.
+
+```ts
+interface KvContext {
+  get<T = unknown>(key: string): Promise<KvEntry<T> | null>
+  list(prefix?: string): Promise<string[]>
+}
+```
+
+### KvActions
+
+Write operations for the actions phase of the agent loop.
+
+```ts
+interface KvActions {
+  set<T = unknown>(key: string, value: T): Promise<KvEntry<T>>
+  remove(key: string): Promise<boolean>
+}
+```
+
+## Usage Examples
+
+### Store and retrieve session state
+
+```ts
+await kv.set('session:abc123', {
+  userId: 'user-42',
+  startedAt: Date.now(),
+  step: 'code-review',
+})
+
+const session = await kv.get<{ userId: string; step: string }>('session:abc123')
+// session.value.step → 'code-review'
+```
+
+### Enumerate keys by prefix
+
+```ts
+const keys = await kv.list('session:')
+// ['session:abc123', 'session:def456', ...]
+```
+
+### Remove expired data
+
+```ts
+const removed = await kv.remove('session:abc123')
+// true if the entry existed
+```
+
+## Agent Persistence Model
+
+The protocol provides three distinct persistence patterns:
+
+| Pattern | Interface | Access | Use Case |
+|---------|-----------|--------|----------|
+| **Hierarchical** | `system/fs` | Paths and directories | Files, configs, artifacts |
+| **Key-value** | `context/kv` | Direct key lookup | Session state, counters, structured data |
+| **Semantic** | `context/embeddings` | Similarity search by meaning | Knowledge retrieval, RAG |
+
+## Integration
+
+Key-Value Store integrates with:
+
+- **[Embeddings](/docs/context/embeddings)**: Complementary persistence — kv for exact lookups, embeddings for semantic search
+- **[Filesystem](/docs/system/fs)**: Complementary persistence — kv for flat data, fs for hierarchical files
+- **[System Context](/docs/context/system)**: KvContext is part of the read-only system context facade

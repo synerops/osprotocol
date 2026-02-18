@@ -42,8 +42,12 @@ Thumbs.db
 *.temp
 .cache/
 
-# Bun lockfile (opcional - si prefieres committearlo, elimina esta línea)
+# Bun lockfile
 bun.lockb
+
+# Claude Code (ignore everything except skills)
+.claude/*
+!.claude/skills/
 
 # Internal markdown files (plans, notes, etc.)
 # Only ignore .md files at project root, whitelist existing ones

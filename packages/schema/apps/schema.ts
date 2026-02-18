@@ -10,9 +10,7 @@
  *
  * An "app" is a distribution of the Agentic OS: it
  * declares which vendors implement which protocol
- * interfaces. Like AGENT.md defines an agent and
- * SKILL.md defines a skill, the app file defines
- * a complete agentic system configuration.
+ * interfaces — a complete agentic system configuration.
  *
  * The markdown body is free-form documentation —
  * instructions, architecture notes, onboarding guides.
@@ -94,8 +92,7 @@ export interface ProviderMap {
 /**
  * App metadata (YAML frontmatter in the distribution file)
  *
- * Follows the same pattern as AgentMetadata and
- * SkillMetadata — structured data in YAML frontmatter,
+ * Structured data in YAML frontmatter,
  * free-form markdown body.
  *
  * ```yaml
@@ -139,8 +136,7 @@ export interface AppMetadata {
 /**
  * Full App definition (metadata + content from distribution file)
  *
- * Follows the same pattern as Agent and Skill:
- * metadata from YAML frontmatter, content from
+ * Metadata from YAML frontmatter, content from
  * markdown body, path to the source file.
  */
 export interface App {

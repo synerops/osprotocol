@@ -1,27 +1,145 @@
 ---
 title: Embeddings
-description: Vector embeddings generation and management
+description: Vector similarity search and semantic indexing for agents
 ---
+
+<Callout type="warn">
+  This interface is experimental — no production implementation exists yet.
+  The API surface may change.
+</Callout>
 
 ## Overview
 
-The embeddings module generates and manages vector embeddings for semantic search and similarity matching. It enables agents to work with high-dimensional vector representations of data.
+Embeddings is the agent-facing interface for semantic search over indexed knowledge. Agents use it to find relevant content by meaning rather than exact keywords. The vector database infrastructure underneath is a system concern — providers like Pinecone, Upstash Vector, Weaviate, or OpenAI Embeddings handle storage and retrieval without the agent needing to know which one is in use.
 
-## Features
+## TypeScript API
 
-- **Embedding Generation**: Generate embeddings for text and data
-- **Embedding Storage**: Store embeddings efficiently
-- **Similarity Search**: Perform similarity searches using embeddings
-- **Embedding Management**: Manage embedding models and versions
+```ts
+import type { Embeddings, EmbeddingEntry, EmbeddingsContext, EmbeddingsActions } from '@osprotocol/schema/context/embeddings'
+```
 
-## Usage
+### EmbeddingEntry
 
-Embeddings enable semantic search and similarity matching, allowing agents to find relevant information based on meaning rather than exact matches.
+A single result returned from a search or get operation.
+
+```ts
+interface EmbeddingEntry<T = Record<string, unknown>> {
+  id: string
+  content: string
+  /** Similarity score, 0–1. Present only in search results. */
+  score?: number
+  metadata?: T
+}
+```
+
+### EmbeddingsContext
+
+Read-only interface for the context phase of the agent loop. Use this to find relevant entries by meaning or retrieve a known entry by ID.
+
+```ts
+interface EmbeddingsContext {
+  search<T = Record<string, unknown>>(
+    query: string,
+    topK: number,
+    filter?: Partial<T>
+  ): Promise<EmbeddingEntry<T>[]>
+
+  get<T = Record<string, unknown>>(id: string): Promise<EmbeddingEntry<T> | null>
+}
+```
+
+### EmbeddingsActions
+
+Write interface for the actions phase of the agent loop. Use this to index new content or remove stale entries.
+
+```ts
+interface EmbeddingsActions {
+  upsert<T = Record<string, unknown>>(
+    id: string,
+    content: string,
+    metadata?: T
+  ): Promise<EmbeddingEntry<T>>
+
+  remove(id: string): Promise<boolean>
+}
+```
+
+### Embeddings
+
+Full interface combining read and write operations.
+
+```ts
+interface Embeddings {
+  upsert<T = Record<string, unknown>>(
+    id: string,
+    content: string,
+    metadata?: T
+  ): Promise<EmbeddingEntry<T>>
+
+  search<T = Record<string, unknown>>(
+    query: string,
+    topK: number,
+    filter?: Partial<T>
+  ): Promise<EmbeddingEntry<T>[]>
+
+  get<T = Record<string, unknown>>(id: string): Promise<EmbeddingEntry<T> | null>
+
+  remove(id: string): Promise<boolean>
+}
+```
+
+## Usage Examples
+
+### Semantic search with metadata filter
+
+```ts
+type DocMeta = { source: string; language: string }
+
+const results = await embeddings.search<DocMeta>(
+  'how to handle authentication errors',
+  5,
+  { language: 'en' }
+)
+
+for (const entry of results) {
+  console.log(entry.score, entry.content)
+  // 0.91  "When a 401 is returned, refresh the token and retry..."
+}
+```
+
+### Upsert content into the index
+
+```ts
+await embeddings.upsert(
+  'doc:auth-errors',
+  'When a 401 is returned, refresh the token and retry the request.',
+  { source: 'runbook', language: 'en' }
+)
+```
+
+### RAG pattern — retrieve, then generate
+
+```ts
+const chunks = await embeddings.search(userQuestion, 3)
+
+const context = chunks.map((c) => c.content).join('\n\n')
+
+const answer = await llm.complete(`Answer using this context:\n\n${context}\n\nQuestion: ${userQuestion}`)
+```
+
+## Embeddings vs Key-Value
+
+| Concern | Embeddings | Key-Value (`context/kv`) |
+|---------|-----------|--------------------------|
+| Lookup by | Meaning / similarity | Exact key |
+| Returns | Ranked results with scores | Single entry or null |
+| Best for | Knowledge retrieval, RAG | Session state, config, counters |
+| Query type | Natural language query | Known key string |
 
 ## Integration
 
-Embeddings integrate with:
-- **Vector**: Store embeddings in vector databases
-- **Documents**: Generate embeddings for documents
-- **Memory**: Use embeddings for semantic memory retrieval
+Embeddings integrates with:
 
+- **[Key-Value Store](/docs/context/kv)**: Complementary persistence — embeddings for semantic search, kv for exact lookups
+- **[System Context](/docs/context/system)**: EmbeddingsContext is part of the read-only system context facade
+- **[Filesystem](/docs/system/fs)**: Source documents can be read from fs and indexed into embeddings

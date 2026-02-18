@@ -1,27 +1,107 @@
 ---
 title: Filesystem
-description: File system operations and management
+description: Platform-level file system operations for reading, writing, and navigating files in the host execution environment
 ---
+
+<Callout type="warn">
+  This interface is experimental — no production implementation exists yet.
+  The API surface may change.
+</Callout>
 
 ## Overview
 
-The filesystem module provides file system operations and management for agents. It enables agents to read, write, and manage files within the protocol environment.
+The filesystem interface provides platform-level access to the host execution environment's file system. Agents use it to read configurations, persist artifacts, and navigate directories across storage backends including local disk, S3, Vercel Blob, and Cloudflare R2. Sandbox environments manage their own internal filesystem independently — `system/fs` operates on the host, not inside isolated execution containers.
 
-## Features
+## TypeScript API
 
-- **File Operations**: Read, write, and manage files
-- **Directory Management**: Create and manage directories
-- **File Permissions**: Handle file permissions and access control
-- **File Monitoring**: Monitor file changes and events
+```ts
+import type { Fs, FsEntry, FsContext, FsActions } from '@osprotocol/schema/system/fs'
+```
 
-## Usage
+### FsEntry
 
-Filesystem operations enable agents to work with files, supporting data persistence, configuration management, and file-based workflows.
+Represents a file or directory in the filesystem.
+
+```ts
+interface FsEntry {
+  name: string
+  path: string
+  type: 'file' | 'directory'
+  size?: number
+  updatedAt?: number
+  metadata?: Record<string, unknown>
+}
+```
+
+### FsContext
+
+Read-only view for the context (gather) phase of the agent loop.
+
+```ts
+interface FsContext {
+  read(path: string): Promise<string | null>
+  list(path: string): Promise<FsEntry[]>
+  exists(path: string): Promise<boolean>
+}
+```
+
+### FsActions
+
+Write operations for the actions (act) phase of the agent loop.
+
+```ts
+interface FsActions {
+  write(path: string, content: string): Promise<FsEntry>
+  remove(path: string): Promise<boolean>
+}
+```
+
+### Fs
+
+Combined interface providing full read and write access. Used directly by providers that do not split context and actions phases.
+
+```ts
+interface Fs {
+  read(path: string): Promise<string | null>
+  write(path: string, content: string): Promise<FsEntry>
+  remove(path: string): Promise<boolean>
+  list(path: string): Promise<FsEntry[]>
+  exists(path: string): Promise<boolean>
+}
+```
+
+## Usage Examples
+
+### Read a configuration file
+
+```ts
+const content = await fs.read('/project/agent.yaml')
+if (content === null) {
+  throw new Error('agent.yaml not found')
+}
+const config = parseYaml(content)
+```
+
+### Persist an artifact and confirm the write
+
+```ts
+const report = generateReport(results)
+const entry = await fs.write('/output/report.md', report)
+console.log(`Wrote ${entry.size} bytes to ${entry.path}`)
+```
+
+### List a directory and filter by type
+
+```ts
+const entries = await fs.list('/output')
+const files = entries.filter((e) => e.type === 'file')
+console.log(`Found ${files.length} files in /output`)
+```
 
 ## Integration
 
 Filesystem integrates with:
-- **Persistence**: Persists data to files
-- **Documents**: Manages document files
-- **System**: Manages system configuration files
 
+- **[Sandbox](/docs/system/sandbox)**: Sandbox has its own isolated filesystem — use `system/fs` for host-level persistence before or after sandbox execution
+- **[KV](/docs/context/kv)**: KV stores short-lived key-value data; filesystem is for structured, durable file content
+- **[Environment](/docs/system/env)**: Environment variables may point to filesystem roots or provider credentials
