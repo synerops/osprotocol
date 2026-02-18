@@ -30,9 +30,8 @@ Four execution patterns based on Anthropic's building blocks for agentic systems
 Classify inputs and delegate to specialized agents. A single entry point fans out to the right handler.
 
 ```typescript
-interface RoutingWorkflow extends Workflow<unknown> {
-  routes: RouteConfig[]
-  classify(prompt: string): Promise<RouteConfig>
+interface RoutingWorkflow<Output> extends Workflow<Output> {
+  classify(prompt: string): Promise<string>  // returns route key
 }
 ```
 
@@ -43,7 +42,7 @@ Plan, delegate subtasks to workers, synthesize results. The orchestrator creates
 interface OrchestratorWorkersWorkflow<Output> extends Workflow<Output> {
   plan(prompt: string): Promise<Plan>
   delegate(step: PlanStep): Promise<WorkerResult>
-  synthesize(results: WorkerResult[]): Promise<Output>
+  synthesize(results: WorkerResult[], plan: Plan): Promise<Output>
 }
 ```
 
@@ -53,6 +52,7 @@ Split work into independent subtasks, execute in parallel, merge results.
 ```typescript
 interface ParallelizationWorkflow<Output> extends Workflow<Output> {
   split(prompt: string): Promise<Subtask[]>
+  parallel(subtasks: Subtask[]): Promise<SubtaskResult[]>
   merge(results: SubtaskResult[]): Promise<Output>
 }
 ```
@@ -62,8 +62,9 @@ Generate output, evaluate against criteria, refine iteratively until quality thr
 
 ```typescript
 interface EvaluatorOptimizerWorkflow<Output> extends Workflow<Output> {
-  evaluate(output: Output): Promise<Evaluation>
-  optimize(output: Output, evaluation: Evaluation): Promise<Output>
+  generate(prompt: string): Promise<Output>
+  evaluate(output: Output, prompt: string): Promise<Evaluation>
+  optimize(output: Output, evaluation: Evaluation, prompt: string): Promise<Output>
 }
 ```
 

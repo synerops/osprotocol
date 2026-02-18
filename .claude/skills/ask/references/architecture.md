@@ -83,15 +83,31 @@ System (kernel)
 
 ## Export Paths
 
+Each subpath is declared individually in `package.json` exports — no wildcards.
+
 ```
-@osprotocol/schema              # Everything
-@osprotocol/schema/workflows    # Workflow patterns
-@osprotocol/schema/runs         # Run control
-@osprotocol/schema/system/*     # env, fs, sandbox, settings, preferences, registry, mcp-client, installer
-@osprotocol/schema/context/*    # system, embeddings, kv
-@osprotocol/schema/actions/*    # system, tools, mcp-servers
-@osprotocol/schema/checks/*     # rules, judge, audit, screenshot
-@osprotocol/schema/apps/schema  # App distribution manifest
+@osprotocol/schema                   # Everything (barrel)
+@osprotocol/schema/workflows         # Workflow patterns
+@osprotocol/schema/runs              # Run control
+@osprotocol/schema/system/env        # Environment variables
+@osprotocol/schema/system/fs         # Filesystem
+@osprotocol/schema/system/sandbox    # Sandbox environments
+@osprotocol/schema/system/settings   # System-wide settings
+@osprotocol/schema/system/preferences # Scoped preferences
+@osprotocol/schema/system/registry   # Resource registry
+@osprotocol/schema/system/mcp-client # MCP client
+@osprotocol/schema/system/installer  # Package installer
+@osprotocol/schema/context/system    # Read-only system facade
+@osprotocol/schema/context/embeddings # Embeddings
+@osprotocol/schema/context/kv        # Key-value store
+@osprotocol/schema/actions/system    # Write system facade
+@osprotocol/schema/actions/tools     # Tool execution
+@osprotocol/schema/actions/mcp-servers # MCP server communication
+@osprotocol/schema/checks/rules      # Rules validation
+@osprotocol/schema/checks/judge      # LLM-as-judge
+@osprotocol/schema/checks/audit      # Audit trails
+@osprotocol/schema/checks/screenshot # Visual verification
+@osprotocol/schema/apps/schema       # App distribution manifest
 ```
 
 ## ProtocolDomain Type
