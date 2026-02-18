@@ -30,53 +30,69 @@ Where OSP contributes uniquely is in the **Operating System** abstraction—a la
 Just as traditional operating systems provide process management, memory management, and I/O interfaces, OSP's Operating System provides:
 
 - **Agent Registry**: Discovery and capability management
-- **System APIs**: Environment, Filesystem, Settings
-- **Context Management**: Memory, Documents, Persistence
-- **Quality Assurance**: Audit, Rules, Fallback
+- **System APIs**: Environment, Filesystem, Settings, Sandbox
+- **Context Facades**: System Context, Embeddings, Key-Value
+- **Quality Assurance**: Rules, Audit, Judge, Screenshot
 
 ## Architecture Layers
 
-The protocol architecture is organized into four core layers:
+The protocol architecture is organized into distinct domains:
 
-### 1. Skills Framework
-
-The foundation of agent capabilities, defining specialized roles that agents can assume:
-
-- **Orchestrator**: Coordinates multiple agents, manages task distribution, load balancing, and conflict resolution
-- **Planner**: Breaks down complex objectives into actionable tasks with dependency analysis
-- **Executor**: Handles the actual execution of agent tasks using tools, APIs, and scripts
-
-These skills work together: Orchestrators delegate to Planners for decomposition, which then assign tasks to Executors for implementation.
-
-### 2. Operating System (System Intelligence)
+### 1. System (Infrastructure)
 
 The OS layer provides infrastructure services that all agents depend on. Unlike traditional protocols that focus solely on agent-to-agent communication, OSP includes system-level intelligence:
 
 - **Registry**: Manages agent registration, discovery, and capability matching
 - **Environment**: Handles configuration and environment variable management
 - **Filesystem**: Provides standardized file system operation interfaces
-- **Settings**: Manages preferences, configurations, and user-defined parameters
+- **Sandbox**: Isolated execution environments for untrusted code
+- **Settings**: Manages system-level configurations
+- **Preferences**: User-level preferences and personalization
+- **Installer**: Package and dependency management
 - **MCP Client**: Integrates with Model Context Protocol for external tool access
 
-### 3. Context Management
+### 2. Context & Actions (Read/Write Facades)
 
-Context is what enables agents to maintain state, share information, and build upon previous interactions:
+OSP separates read-only information gathering from state-changing operations. This mirrors the Agent Loop phases: **gather** context, then **take** action.
 
-- **Memory**: Persistent storage for agent knowledge and experiences
-- **Documents**: Document processing, ingestion, and retrieval interfaces
-- **Embeddings**: Vector database integration for semantic search (optional)
-- **Apps**: Application-specific context isolation and sharing
-- **Persistence**: State management and checkpointing for long-running agents
+**Context** (read-only facades for the gather phase):
 
-### 4. Quality Assurance
+- **System Context**: Aggregated read-only view of system state (environment, settings, filesystem metadata)
+- **Embeddings**: Vector database integration for semantic search
+- **Key-Value**: Lightweight key-value storage for agent state
+
+**Actions** (write facades for the act phase):
+
+- **System Actions**: Aggregated write operations (filesystem writes, setting changes)
+- **Tools**: Tool registration and invocation interfaces
+- **MCP Servers**: External tool access through Model Context Protocol servers
+
+### 3. Checks (Quality Assurance)
 
 Built-in mechanisms for ensuring reliability, compliance, and quality:
 
-- **Audit**: Comprehensive monitoring and logging of agent behavior
-- **Judge**: LLM-based evaluation of agent outputs and decisions (optional)
 - **Rules**: Behavioral constraints and validation frameworks
-- **Screenshot**: Visual validation for UI-related tasks (optional)
-- **Fallback**: Error handling, retry logic, and recovery mechanisms
+- **Judge**: LLM-based evaluation of agent outputs and decisions
+- **Audit**: Comprehensive monitoring and logging of agent behavior
+- **Screenshot**: Visual validation for UI-related tasks
+
+### 4. Workflows (Execution Patterns)
+
+Composable patterns for agent coordination, based on [Anthropic's building blocks for agentic systems](https://www.anthropic.com/engineering/building-effective-agents):
+
+- **Routing**: Classify input and delegate to the appropriate handler
+- **Parallelization**: Split work across parallel branches and merge results
+- **Orchestrator-Workers**: Plan, delegate to workers, synthesize outputs
+- **Evaluator-Optimizer**: Generate, evaluate, refine in a loop
+
+### 5. Runs (Lifecycle Control)
+
+Every agent execution is a **Run** with a well-defined lifecycle and control mechanisms:
+
+- **Timeout**: Time-based execution limits
+- **Retry**: Automatic retry with configurable strategies
+- **Cancel**: Graceful cancellation with cleanup
+- **Approval**: Human-in-the-loop gates for sensitive operations
 
 ## Core Execution Model
 
@@ -138,13 +154,9 @@ OSP includes native support for the Model Context Protocol, allowing agents to a
 
 ### Workflow Orchestration
 
-The protocol defines workflow patterns that can be composed and combined:
-- **Task Workflows**: Routing, Prompt Chaining, Orchestrator-Workers, Parallelization, Evaluator-Optimizer
-- **Quality Workflows**: Rules Validation, Visual Feedback, LLM-as-Judge
-- **Recovery Workflows**: Retries, Fallback, Timeouts
-- **Human-in-the-Loop**: Approval Workflows, Manual Delegation
+The protocol defines workflow patterns that can be composed and combined. Workflows handle coordination; Runs handle lifecycle control (timeouts, retries, cancellation, approval).
 
-Learn more: [Workflow Taxonomy](/docs/concepts/workflows-taxonomy)
+Learn more: [Workflows](/docs/workflows) · [Runs](/docs/runs)
 
 ### Multi-Agent Coordination
 
@@ -157,14 +169,14 @@ The architecture prioritizes:
 - **Modularity**: Components can be used independently or together
 - **Extensibility**: New components and capabilities can be added without breaking existing implementations
 - **Interoperability**: Different implementations can work together through standardized contracts
-- **Reliability**: Built-in error handling, recovery mechanisms, and quality assurance
+- **Reliability**: Built-in quality assurance through Rules, Audit, and Judge
 - **Observability**: Comprehensive monitoring, auditing, and evaluation capabilities
 - **Scalability**: Designed to grow from single-agent systems to complex multi-agent environments
 
 ## Next Steps
 
-- Explore **[Skills](/docs/skills/orchestrator)** to understand agent capabilities
-- Learn about **[System Intelligence](/docs/system/registry)** for infrastructure services
-- Understand **[Context Management](/docs/context)** for state and persistence
-- Review **[Quality Assurance](/docs/checks/rules)** mechanisms
-- See the complete specification in [AGENTS.md Section 4](https://github.com/synerops/osprotocol/blob/main/AGENTS.md#4-protocol-architecture)
+- Learn about **[System](/docs/system)** for infrastructure services
+- Understand **[Context](/docs/context)** and **[Actions](/docs/actions)** for the read/write split
+- Review **[Checks](/docs/checks)** for quality assurance mechanisms
+- Explore **[Workflows](/docs/workflows)** for coordination patterns
+- See **[Runs](/docs/runs)** for lifecycle control

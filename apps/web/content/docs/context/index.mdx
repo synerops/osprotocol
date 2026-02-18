@@ -13,11 +13,9 @@ Context is one of the three pillars of the agent loop: **Gather Context** → Ta
 
 | API | Description |
 |-----|-------------|
-| [Apps](/docs/context/apps) | Application-specific context and configuration |
-| [Documents](/docs/context/documents) | Document processing and management |
+| [System Context](/docs/context/system) | Read-only composition of all system Context interfaces |
 | [Embeddings](/docs/context/embeddings) | Vector embeddings for semantic search |
-| [Memory](/docs/context/memory) | Persistent memory and knowledge storage |
-| [System](/docs/context/system) | System-level context information |
+| [Key-Value Store](/docs/context/kv) | Key-value persistence for the agent loop |
 
 ## Role in Agent Loop
 
@@ -26,9 +24,9 @@ Context provides the foundation for informed agent behavior:
 ```mermaid
 flowchart TD
     subgraph Context["Gather Context"]
-        Memory
-        Docs[Documents]
-        Apps
+        SC[System Context]
+        Emb[Embeddings]
+        KV[Key-Value]
     end
 
     Context --> Actions[Take Actions]
@@ -39,17 +37,7 @@ flowchart TD
 
 ## Usage
 
-Context is accessed through the `context` protocol domain:
-
-```yaml
-# In AGENT.md
-tools:
-  - context.memory
-  - context.documents
-  - context.embeddings
-```
-
-Agents query context to understand the current state, retrieve relevant information, and make informed decisions before taking actions.
+Context is accessed through the `context` protocol domain. `SystemContext` composes all system read interfaces into a single entry point. `Embeddings` and `KV` are agent-facing read/write interfaces for semantic search and key-value persistence respectively.
 
 ## Integration
 
