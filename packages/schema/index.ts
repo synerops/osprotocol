@@ -107,6 +107,8 @@ export type { SystemContext } from './context/system'
 export type {
   Embeddings,
   EmbeddingEntry,
+  EmbeddingsContext,
+  EmbeddingsActions,
 } from './context/embeddings'
 
 // ---------------------------------------------------------------------------
