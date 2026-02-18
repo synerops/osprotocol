@@ -22,27 +22,14 @@ This is **zero-trust by agent loop phase** — an agent in the context phase lit
 
 ### How It's Implemented
 
-Each system capability splits into two interfaces:
+Each system capability splits into a Context (read) and Actions (write) interface in the same file. The facades compose them:
 
-```typescript
-// context/system.ts — read-only facade
-interface SystemContext {
-  env: EnvContext      // get, list (no set, no remove)
-  fs: FsContext        // read, list, stat (no write, no delete)
-  // ... all read-only
-}
+- `SystemContext` (in `packages/schema/context/system.ts`) — composes all read interfaces (EnvContext, FsContext, etc.)
+- `SystemActions` (in `packages/schema/actions/system.ts`) — composes all write interfaces (EnvActions, FsActions, etc.)
 
-// actions/system.ts — write facade
-interface SystemActions {
-  env: EnvActions      // set, remove
-  fs: FsActions        // write, delete, mkdir
-  // ... all write operations
-}
-```
-
-Similarly for non-system capabilities:
-- `EmbeddingsContext` (search, get) vs `EmbeddingsActions` (upsert, remove)
-- `KvContext` (get, list) vs `KvActions` (set, remove)
+Non-system capabilities follow the same split:
+- `EmbeddingsContext` (search, get) vs `EmbeddingsActions` (upsert, remove) — in `packages/schema/context/embeddings.ts`
+- `KvContext` (get, list) vs `KvActions` (set, remove) — in `packages/schema/context/kv.ts`
 
 ## Context Domain
 

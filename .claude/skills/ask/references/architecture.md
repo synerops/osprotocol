@@ -83,37 +83,10 @@ System (kernel)
 
 ## Export Paths
 
-Each subpath is declared individually in `package.json` exports — no wildcards.
-
-```
-@osprotocol/schema                   # Everything (barrel)
-@osprotocol/schema/workflows         # Workflow patterns
-@osprotocol/schema/runs              # Run control
-@osprotocol/schema/system/env        # Environment variables
-@osprotocol/schema/system/fs         # Filesystem
-@osprotocol/schema/system/sandbox    # Sandbox environments
-@osprotocol/schema/system/settings   # System-wide settings
-@osprotocol/schema/system/preferences # Scoped preferences
-@osprotocol/schema/system/registry   # Resource registry
-@osprotocol/schema/system/mcp-client # MCP client
-@osprotocol/schema/system/installer  # Package installer
-@osprotocol/schema/context/system    # Read-only system facade
-@osprotocol/schema/context/embeddings # Embeddings
-@osprotocol/schema/context/kv        # Key-value store
-@osprotocol/schema/actions/system    # Write system facade
-@osprotocol/schema/actions/tools     # Tool execution
-@osprotocol/schema/actions/mcp-servers # MCP server communication
-@osprotocol/schema/checks/rules      # Rules validation
-@osprotocol/schema/checks/judge      # LLM-as-judge
-@osprotocol/schema/checks/audit      # Audit trails
-@osprotocol/schema/checks/screenshot # Visual verification
-@osprotocol/schema/apps/schema       # App distribution manifest
-```
+Each interface has its own export path declared individually in `packages/schema/package.json` — no wildcards. The barrel export `@osprotocol/schema` re-exports everything. For the full list of paths, read the `exports` field in `packages/schema/package.json`.
 
 ## ProtocolDomain Type
 
-```typescript
-type ProtocolDomain = 'system' | 'context' | 'actions' | 'checks' | 'workflows' | 'runs'
-```
+Six runtime domains. Apps is a distribution concern, not a runtime domain — there is no `'skills'` or `'apps'` in the type.
 
-Six domains. Note: there is no `'skills'` or `'apps'` domain in the type. Apps is a distribution concern, not a runtime domain.
+Source: `packages/schema/index.ts` — `ProtocolDomain`, `ProtocolReference`

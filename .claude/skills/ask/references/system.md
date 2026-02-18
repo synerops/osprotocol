@@ -29,17 +29,9 @@ Host/platform filesystem. Hierarchical, path-based access. Distinct from Sandbox
 Isolated execution environments for running agent workloads. Lifecycle management (create, stop), command execution, internal filesystem, networking, timeout. Cross-referenced from Vercel Sandbox SDK and E2B SDK.
 
 ### Registry
-Generic `Registry<T>` — not agent-specific. Providers extend it for agents, skills, MCP servers, or any resource type. Compatible with A2A discovery patterns.
+Generic `Registry<T>` — not agent-specific. Providers extend it for agents, skills, MCP servers, or any resource type. Compatible with A2A discovery patterns. CRUD operations: register, unregister, get, list, find.
 
-```typescript
-interface Registry<T = unknown> {
-  register(entry: RegistryEntry<T>): Promise<void>
-  unregister(name: string): Promise<boolean>
-  get(name: string): Promise<RegistryEntry<T> | null>
-  list(): Promise<RegistryEntry<T>[]>
-  find(criteria: Partial<T>): Promise<RegistryEntry<T>[]>
-}
-```
+Source: `packages/schema/system/registry.ts`
 
 ### McpClient
 Infrastructure-level MCP support. Manages MCP server connections from the system side. Distinct from `actions/mcp-servers.ts` which is the agent-facing communication interface.
