@@ -1,5 +1,11 @@
 # @osprotocol/schema
 
+## 0.2.2
+
+### Patch Changes
+
+- 6e9d2dc: Fix release workflow to skip unnecessary build steps
+
 ## 0.2.1
 
 ### Patch Changes
