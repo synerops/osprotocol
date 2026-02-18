@@ -11,6 +11,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 
   return createMetadata({
+    alternates: {
+      canonical: 'https://osprotocol.dev',
+    },
     openGraph: {
       url: '/',
       images: [image],
