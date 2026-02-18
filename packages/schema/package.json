@@ -21,6 +21,7 @@
     "./system/installer": "./system/installer.ts",
     "./context/system": "./context/system.ts",
     "./context/embeddings": "./context/embeddings.ts",
+    "./context/kv": "./context/kv.ts",
     "./actions/system": "./actions/system.ts",
     "./actions/tools": "./actions/tools.ts",
     "./actions/mcp-servers": "./actions/mcp-servers.ts",

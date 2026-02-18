@@ -107,6 +107,12 @@ export type {
   EmbeddingsContext,
   EmbeddingsActions,
 } from './context/embeddings'
+export type {
+  Kv,
+  KvEntry,
+  KvContext,
+  KvActions,
+} from './context/kv'
 
 // ---------------------------------------------------------------------------
 // Actions interfaces (@experimental)

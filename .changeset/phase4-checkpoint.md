@@ -31,6 +31,9 @@ Phase 4 checkpoint: breaking changes and new exports
 - `./checks/screenshot` — Visual capture and comparison
 - `./apps/schema` — App distribution manifest
 
+**New interface:**
+- `./context/kv` — Key-value persistence for structured data (Cloudflare KV, Vercel KV, Deno KV, Upstash Redis). Distinct from fs (hierarchical) and embeddings (semantic). Includes KvContext (read) + KvActions (write) split.
+
 **Removed from protocol:**
 - `system/data/` (Cache, Storage, Data) — these are infrastructure concerns, not agentic capabilities. Extensions use them internally but the protocol should not define how implementations cache or persist data. Interfaces relocated to SDK as shared utilities.
 - Export path `./system/data` removed
