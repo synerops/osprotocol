@@ -1,5 +1,11 @@
 # @osprotocol/schema
 
+## 0.2.1
+
+### Patch Changes
+
+- 05bc44e: Fix changesets workflow to automatically publish and create GitHub releases
+
 ## 0.2.0
 
 ### Minor Changes
