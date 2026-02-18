@@ -27,12 +27,74 @@ export interface EmbeddingEntry<T = Record<string, unknown>> {
 }
 
 /**
+ * Read-only embeddings context for the agent loop
+ *
+ * Provides semantic search and retrieval. Agents use
+ * this to find relevant context by meaning, not just
+ * keywords.
+ */
+export interface EmbeddingsContext {
+  /**
+   * Search for similar content
+   *
+   * @template T - The type of associated metadata
+   * @param query - Text to search for
+   * @param topK - Maximum number of results to return
+   * @param filter - Metadata filter criteria
+   * @returns Array of entries sorted by similarity (highest first)
+   */
+  search<T = Record<string, unknown>>(
+    query: string,
+    topK: number,
+    filter?: Partial<T>
+  ): Promise<EmbeddingEntry<T>[]>
+
+  /**
+   * Get an entry by ID
+   *
+   * @template T - The type of associated metadata
+   * @param id - Entry identifier
+   * @returns The entry, or null if not found
+   */
+  get<T = Record<string, unknown>>(id: string): Promise<EmbeddingEntry<T> | null>
+}
+
+/**
+ * Embeddings write operations for the agent loop
+ *
+ * Provides indexing and removal of embedded content.
+ */
+export interface EmbeddingsActions {
+  /**
+   * Upsert content by generating and storing its embedding
+   *
+   * @template T - The type of associated metadata
+   * @param id - Entry identifier
+   * @param content - Text content to embed and store
+   * @param metadata - Optional metadata for filtering
+   * @returns The stored entry
+   */
+  upsert<T = Record<string, unknown>>(
+    id: string,
+    content: string,
+    metadata?: T
+  ): Promise<EmbeddingEntry<T>>
+
+  /**
+   * Remove an entry
+   *
+   * @param id - Entry identifier
+   * @returns true if the entry existed
+   */
+  remove(id: string): Promise<boolean>
+}
+
+/**
  * Embeddings capability interface
  *
  * Provides semantic indexing and similarity search.
- * Agents use this to find relevant context by meaning,
- * not just keywords. Implementations map to vector
- * databases and embedding model providers.
+ * Implementations map to vector databases and
+ * embedding model providers.
  */
 export interface Embeddings {
   /**

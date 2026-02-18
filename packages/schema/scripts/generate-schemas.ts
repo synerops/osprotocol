@@ -35,15 +35,6 @@ const schemas: SchemaDefinition[] = [
     description: 'JSON Schema for AGENT.md frontmatter metadata',
   },
 
-  // Skill schema (SKILL.md)
-  {
-    source: 'skill.ts',
-    type: 'SkillMetadata',
-    output: 'skill.md.json',
-    title: 'SKILL.md Schema',
-    description: 'JSON Schema for SKILL.md frontmatter metadata',
-  },
-
   // Workflows
   {
     source: 'workflows/routing.ts',
@@ -221,7 +212,6 @@ function generateIndexSchema() {
     type: 'object',
     $defs: {
       Agent: { $ref: 'agent.md.json' },
-      Skill: { $ref: 'skill.md.json' },
       Workflows: {
         type: 'object',
         properties: {
