@@ -5,6 +5,7 @@
  * Executions provide runtime control over an active run.
  */
 
+import type { Workflow } from '../workflows/workflow'
 import type { Timeout } from './timeout'
 import type { Retry } from './retry'
 import type { Cancel } from './cancel'
@@ -51,6 +52,8 @@ export interface Run<Output> {
   id: string
   /** Current status of the run */
   status: RunStatus
+  /** The workflow this run was prepared from */
+  workflow: Workflow<Output>
   /** Run options */
   options: RunOptions<Output>
   /** Start the run and return an Execution handle */
