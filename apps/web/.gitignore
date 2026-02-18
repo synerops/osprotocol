@@ -50,6 +50,9 @@ Thumbs.db
 *.temp
 .cache/
 
+# Generated JSON Schemas (rebuilt on every build)
+public/v1/
+
 # Turbo
 .turbo/
 
