@@ -1,5 +1,5 @@
 ---
-title: Parallelization Workflow
+title: Parallelization
 description: Split a task into independent subtasks, execute them concurrently, and merge the results.
 ---
 
@@ -18,9 +18,9 @@ Parallelization splits an incoming prompt into independent subtasks, executes al
 ```mermaid
 flowchart LR
   A([Input]) --> B[split]
-  B --> C([Subtask\[\]])
+  B --> C(["Subtask[]"])
   C --> D[parallel]
-  D --> E([SubtaskResult\[\]])
+  D --> E(["SubtaskResult[]"])
   E --> F[merge]
   F --> G([Output])
 ```
