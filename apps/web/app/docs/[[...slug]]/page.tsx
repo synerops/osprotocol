@@ -112,17 +112,25 @@ export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): P
     height: 630,
   };
 
+  const title = page.data.title;
+  const description = page.data.description || siteConfig.description;
+  const ogTitle = `${title} | ${siteConfig.name}`;
+
   return createMetadata({
-    title: page.data.title,
-    description: page.data.description || siteConfig.description,
+    title,
+    description,
     alternates: {
       canonical: `https://osprotocol.dev/docs/${page.slugs.join('/')}`,
     },
     openGraph: {
+      title: ogTitle,
+      description,
       url: `https://osprotocol.dev/docs/${page.slugs.join('/')}`,
       images: [image],
     },
     twitter: {
+      title: ogTitle,
+      description,
       images: [image],
     },
   });
