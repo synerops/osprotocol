@@ -1,27 +1,148 @@
 ---
 title: Settings
-description: System and agent settings management
+description: Global configuration that affects platform behavior across all agents and workflows.
 ---
+
+<Callout type="warn">
+  This interface is experimental — no production implementation exists yet.
+  The API surface may change.
+</Callout>
 
 ## Overview
 
-The settings module manages system and agent settings. It provides a centralized way to configure system behavior and agent parameters.
+Settings is the kernel interface for managing system-wide configuration that applies to all agents and workflows running on the platform. Unlike [Preferences](/docs/system/preferences), which are scoped to individual agents or users, Settings entries are global — changing a setting affects every agent and workflow in the system. Analogous to Vercel Project Settings, Cloudflare Zone Settings, or AWS SSM Parameter Store.
 
-## Features
+## TypeScript API
 
-- **Settings Storage**: Store system and agent settings
-- **Settings Management**: Manage and update settings
-- **Settings Validation**: Validate setting values
-- **Settings Persistence**: Persist settings across sessions
+```ts
+import type {
+  SettingsEntry,
+  SettingsContext,
+  SettingsActions,
+  Settings,
+} from '@osprotocol/schema/system/settings'
+```
 
-## Usage
+### SettingsEntry
 
-Settings provide centralized configuration management, enabling consistent behavior across the system and easy configuration updates.
+A single configuration entry stored in the system.
+
+```ts
+interface SettingsEntry<T = unknown> {
+  key: string
+  value: T
+  description?: string
+  readOnly?: boolean
+  metadata?: Record<string, unknown>
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `key` | `string` | Unique identifier for the setting |
+| `value` | `T` | The stored value (generic, defaults to `unknown`) |
+| `description` | `string?` | Human-readable explanation of the setting |
+| `readOnly` | `boolean?` | When `true`, the entry cannot be modified at runtime |
+| `metadata` | `Record<string, unknown>?` | Arbitrary additional data (e.g. source, last modified) |
+
+### SettingsContext
+
+Read-only interface used during the gather phase. Lets agents inspect system configuration without mutation rights.
+
+```ts
+interface SettingsContext {
+  get<T = unknown>(key: string): Promise<SettingsEntry<T> | null>
+  list(): Promise<SettingsEntry[]>
+}
+```
+
+### SettingsActions
+
+Write interface used during the act phase. Restricts callers to mutation operations only.
+
+```ts
+interface SettingsActions {
+  set<T = unknown>(key: string, value: T): Promise<SettingsEntry<T>>
+  remove(key: string): Promise<boolean>
+}
+```
+
+### Settings
+
+Full interface combining read and write operations. Intended for privileged system-level callers.
+
+```ts
+interface Settings {
+  get<T = unknown>(key: string): Promise<SettingsEntry<T> | null>
+  set<T = unknown>(key: string, value: T): Promise<SettingsEntry<T>>
+  remove(key: string): Promise<boolean>
+  list(): Promise<SettingsEntry[]>
+}
+```
+
+## Usage Examples
+
+### Reading a setting
+
+```ts
+import type { Settings } from '@osprotocol/schema/system/settings'
+
+async function getMaxConcurrency(settings: Settings) {
+  const entry = await settings.get<number>('workflow.max_concurrency')
+
+  if (entry === null) {
+    return 4 // default
+  }
+
+  return entry.value
+}
+```
+
+### Handling read-only settings
+
+Some entries are marked `readOnly` and must not be modified at runtime. Check the flag before attempting a write.
+
+```ts
+async function updateSetting(settings: Settings, key: string, value: unknown) {
+  const existing = await settings.get(key)
+
+  if (existing?.readOnly) {
+    throw new Error(`Setting "${key}" is read-only and cannot be modified.`)
+  }
+
+  return settings.set(key, value)
+}
+```
+
+### Typed settings with metadata
+
+```ts
+import type { Settings, SettingsEntry } from '@osprotocol/schema/system/settings'
+
+interface RateLimitConfig {
+  requestsPerMinute: number
+  burstAllowance: number
+}
+
+async function configureRateLimit(settings: Settings): Promise<SettingsEntry<RateLimitConfig>> {
+  return settings.set<RateLimitConfig>('agent.rate_limit', {
+    requestsPerMinute: 60,
+    burstAllowance: 10,
+  })
+}
+```
+
+## Settings vs Preferences
+
+| | Settings | Preferences |
+|---|---|---|
+| **Scope** | System-wide | Per-agent or per-user |
+| **Applies to** | All agents and workflows | A specific agent or user |
+| **Who manages it** | Platform operators | Individual agents or users |
+| **Typical values** | Concurrency limits, feature flags, rate limits | Language, persona, output format |
+| **Change impact** | Platform-wide | Isolated to the scope |
 
 ## Integration
 
-Settings integrate with:
-- **Environment**: Uses environment-specific settings
-- **Preferences**: Applies user preferences as settings
-- **System**: Configures system components
-
+- [Preferences](/docs/system/preferences) — per-agent or per-user configuration, scoped rather than global
+- [Environment](/docs/system/env) — platform-level variables; settings govern higher-level behavioral configuration

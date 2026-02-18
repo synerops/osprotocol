@@ -46,8 +46,8 @@ Learn more: [Agentic OS Concept](/docs/concepts/agentic-os) | [Architecture](/do
   <Card icon={<User />} href="/docs/system/preferences" title="Preferences">
     Agent preferences and user settings for customization and personalization.
   </Card>
-  <Card icon={<Database />} href="/docs/system/data" title="Data">
-    State infrastructure with durable storage and temporary cache capabilities.
+  <Card icon={<Server />} href="/docs/system/sandbox" title="Sandbox">
+    Isolated execution environments for running agent workloads with their own filesystem and commands.
   </Card>
 </Cards>
 
@@ -67,10 +67,10 @@ These components work together to provide the resource abstraction, process isol
 
 System Intelligence integrates with:
 
-- **[Skills Framework](/docs/skills/orchestrator)**: Orchestrators use Registry for agent discovery
-- **[Context Management](/docs/context)**: Filesystem and Environment provide context storage
-- **[Quality Assurance](/docs/checks/audit)**: Settings and Preferences configure audit behavior
-- **[Actions](/docs/actions/tools)**: MCP Client enables standardized tool access
+- **[Context](/docs/context)**: Filesystem and Environment provide context storage
+- **[Actions](/docs/actions)**: MCP Client enables standardized tool access
+- **[Checks](/docs/checks)**: Settings and Preferences configure check behavior
+- **[Workflows](/docs/workflows)**: Registry enables agent discovery for orchestration patterns
 
 ## Next Steps
 

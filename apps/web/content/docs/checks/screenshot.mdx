@@ -1,27 +1,168 @@
 ---
 title: Screenshot
-description: Visual validation and monitoring capabilities
+description: Visual capture and baseline comparison for visual regression detection in agent checks.
 ---
+
+<Callout type="warn">
+  This interface is experimental. No implementation exists yet.
+  The API shape may change before stabilization.
+</Callout>
 
 ## Overview
 
-The screenshot module provides visual validation and monitoring capabilities for agents. It enables visual verification of agent actions and outcomes.
+Screenshot provides visual capture and baseline comparison for visual regression detection within the checks phase. Providers include Playwright, Puppeteer, Browserbase, and ScreenshotOne. Comparison results feed into the audit trail alongside rule and judge results, giving a complete picture of agent output quality.
 
-## Features
+## Capture and compare flow
 
-- **Visual Capture**: Capture screenshots of agent interactions
-- **Visual Validation**: Validate visual outcomes
-- **Visual Monitoring**: Monitor visual state changes
-- **Visual Comparison**: Compare visual states over time
+```mermaid
+flowchart LR
+  A[capture options] --> B[ScreenshotEntry]
+  B --> C{compare actual vs baseline}
+  C --> D[ComparisonResult]
+  D --> E{passed?}
+  E -->|yes| F[Continue]
+  E -->|no| G[Flag / block]
+```
 
-## Usage
+## TypeScript API
 
-Screenshots provide visual evidence of agent actions and enable visual validation of outcomes, particularly useful for UI automation and visual testing.
+```ts
+import type {
+  ImageFormat,
+  ScreenshotOptions,
+  ScreenshotEntry,
+  ComparisonResult,
+  Screenshot,
+} from '@osprotocol/schema/checks/screenshot'
+```
+
+### ImageFormat
+
+```ts
+type ImageFormat = 'png' | 'jpeg' | 'webp'
+```
+
+PNG is lossless and best suited for pixel diffing. JPEG and WebP produce smaller payloads when exact pixel fidelity is not required.
+
+### ScreenshotOptions
+
+```ts
+interface ScreenshotOptions {
+  url?: string
+  fullPage?: boolean
+  clip?: {
+    x: number
+    y: number
+    width: number
+    height: number
+  }
+  selector?: string
+  format?: ImageFormat
+  quality?: number
+  scale?: number
+  omitBackground?: boolean
+  metadata?: Record<string, unknown>
+}
+```
+
+| Field | Description |
+|---|---|
+| `url` | Page URL to navigate to before capturing |
+| `fullPage` | Capture the full scrollable page instead of the viewport |
+| `clip` | Restrict capture to a bounding box in pixels |
+| `selector` | CSS selector — captures only the matching element |
+| `format` | Output image format (`png`, `jpeg`, `webp`) |
+| `quality` | Compression quality for JPEG and WebP (0–100) |
+| `scale` | Device pixel ratio multiplier |
+| `omitBackground` | Make the background transparent (PNG only) |
+| `metadata` | Arbitrary key-value pairs attached to the entry |
+
+### ScreenshotEntry
+
+```ts
+interface ScreenshotEntry {
+  id: string
+  data: string
+  format: ImageFormat
+  width: number
+  height: number
+  createdAt: number
+  metadata?: Record<string, unknown>
+}
+```
+
+`data` is a base64-encoded image string. `createdAt` is a Unix timestamp in milliseconds.
+
+### ComparisonResult
+
+```ts
+interface ComparisonResult {
+  passed: boolean
+  message: string
+  diffPixels: number
+  diffRatio: number
+  diffImage?: string
+  metadata?: Record<string, unknown>
+}
+```
+
+`passed` and `message` follow the same convention as `RuleResult`, so comparison results compose naturally into the checks audit trail. `diffImage` is an optional base64-encoded visualization of the pixel diff.
+
+### Screenshot
+
+```ts
+interface Screenshot {
+  capture(options?: ScreenshotOptions): Promise<ScreenshotEntry>
+  compare(
+    actual: ScreenshotEntry,
+    baseline: ScreenshotEntry,
+    threshold?: number,
+  ): Promise<ComparisonResult>
+}
+```
+
+`capture` maps to provider-native methods: `page.screenshot` in Playwright and Puppeteer, `Page.captureScreenshot` via CDP in Browserbase, and `GET /take?url=...` in ScreenshotOne. `compare` uses pixel diffing — only Playwright has this built in via `toHaveScreenshot` (Pixelmatch). For all other providers the adapter handles comparison externally.
+
+`threshold` is a ratio between 0 and 1 representing the maximum acceptable pixel difference before `passed` becomes `false`.
+
+## Usage examples
+
+### Capture a full-page screenshot
+
+```ts
+const entry = await screenshot.capture({
+  url: 'https://example.com',
+  fullPage: true,
+  format: 'png',
+})
+```
+
+### Visual regression test against a baseline
+
+```ts
+const actual = await screenshot.capture({ url: 'https://example.com' })
+
+const result = await screenshot.compare(actual, baseline, 0.01)
+
+if (!result.passed) {
+  console.log(result.message)
+  console.log(`Diff: ${result.diffPixels} pixels (${result.diffRatio * 100}%)`)
+}
+```
+
+### Capture a specific element
+
+```ts
+const entry = await screenshot.capture({
+  url: 'https://example.com/dashboard',
+  selector: '#revenue-chart',
+  format: 'png',
+  omitBackground: true,
+})
+```
 
 ## Integration
 
-Screenshot integrates with:
-- **Audit**: Visual evidence for audit logs
-- **Judge**: Visual validation for quality assessment
-- **Executor**: Visual verification of task completion
-
+- [Audit](/docs/checks/audit) — screenshot entries and comparison results are attached to the audit trail
+- [Sandbox](/docs/system/sandbox) — browser-based captures run inside isolated sandbox environments
+- [Rules](/docs/checks/rules) — rule results and screenshot comparison results compose into a unified checks report
