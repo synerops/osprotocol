@@ -18,7 +18,7 @@ This is the core criterion for what belongs in the protocol and what doesn't. It
 
 ### What Doesn't Belong
 
-- **Infrastructure concerns**: caching, CDN, load balancing, connection pooling, rate limiting. These are transport/infrastructure optimization, not agentic capabilities.
+- **Infrastructure concerns**: caching, CDN, load balancing, connection pooling, rate limiting, durable storage backends. These are transport/infrastructure optimization, not agentic capabilities. Example: an HTTP cache using ETags for GitHub API responses is system→user optimization — the agent doesn't think about caching, the infrastructure handles it. The protocol had `Cache` and `Storage` interfaces that were removed for this reason.
 - **Platform implementation details**: how a provider stores data internally, what database they use, their deployment architecture.
 - **Agent definition**: how an agent declares itself (name, capabilities, metadata). This is a platform concern — each platform defines its own agent format. The protocol provides `Registry<T>` for discovery, but the `T` is up to the platform.
 - **Skill definition**: how capabilities are packaged. This is also a platform concern. The protocol provides `Tools` and `McpServers` for capability execution, but skill packaging is implementation-specific.

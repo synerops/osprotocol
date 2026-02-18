@@ -49,9 +49,24 @@ The scheduler. How work gets planned and run.
 
 ### 4. Apps
 
-Distribution manifests. An "app" is a distribution of the Agentic OS — a `.md` file with YAML frontmatter declaring identity and provider bindings per protocol interface.
+Distribution manifests. An "app" is a distribution of the Agentic OS — a `.md` file with YAML frontmatter declaring identity and provider bindings per protocol interface. Think of it as `package.json` or `docker-compose.yml` for an agentic system.
 
-- **apps/** — App schema: `App`, `AppMetadata`, `ProviderEntry`, `ProviderMap`.
+- **apps/** — `App`, `AppMetadata`, `ProviderEntry`, `ProviderMap`. Import from `@osprotocol/schema/apps/schema`.
+
+`ProviderMap` maps each protocol interface to a concrete vendor:
+
+```yaml
+providers:
+  system:
+    env: { provider: '@vercel/env' }
+    sandbox: { provider: '@vercel/sandbox' }
+  context:
+    embeddings: { provider: '@upstash/vector' }
+  checks:
+    screenshot: { provider: 'playwright' }
+```
+
+Granularity is per individual interface, not per domain. A platform can mix vendors freely.
 
 ## Domain Layering
 

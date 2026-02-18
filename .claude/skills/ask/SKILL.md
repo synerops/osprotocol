@@ -40,6 +40,7 @@ Consult these based on the question topic. Read only what's needed.
 | 8 system interfaces, persistence model | [system.md](references/system.md) |
 | CRUD shape, @experimental, metadata, facades | [interfaces.md](references/interfaces.md) |
 | Protocol scope, what belongs and what doesn't | [principles.md](references/principles.md) |
+| Apps, provider bindings, distribution manifests | [architecture.md](references/architecture.md) (section 4) |
 
 ## When In Doubt
 

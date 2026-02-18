@@ -113,6 +113,19 @@ Available components (imported automatically):
 
 Use `<Cards>` for domain index pages. Use `<Callout>` sparingly — only for @experimental warnings or important caveats.
 
+## Navigation Menu (meta.json)
+
+`apps/web/content/docs/meta.json` controls the sidebar navigation for the entire documentation site. It defines page order, section separators (`---Section Name---`), and external links.
+
+**After every structural change** (adding, removing, or moving pages), update `meta.json`:
+
+- **Removing a page**: Delete its entry from the `pages` array. If a whole section becomes empty, remove the section separator too.
+- **Adding a page**: Insert its entry in the correct section and logical order.
+- **Renaming/moving a page**: Update the path in `meta.json` to match.
+- **Section separators**: Use `---Section Name---` format. Review that section names still make sense after changes.
+
+This is a **mandatory step** — skipping it leaves broken links in the sidebar or hides new pages from navigation.
+
 ## Links
 
 - Internal links use relative paths: `/docs/runs/timeout`

@@ -6,7 +6,7 @@ OS Protocol (OSP) is an open-source specification for orchestrating, managing, a
 
 OSP occupies the **orchestration and lifecycle layer** for AI agents — the gap between:
 
-- **Agent Definition** (AGENTS.md ecosystem — how agents declare themselves)
+- **Agent Definition** (how agents declare themselves — platform-specific, not standardized)
 - **Agent Communication** (Google A2A — how agents talk to each other)
 - **Agent Tooling** (MCP by Anthropic — how agents use tools)
 

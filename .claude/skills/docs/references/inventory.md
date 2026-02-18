@@ -2,6 +2,10 @@
 
 How to assess the current state of documentation. Always run these steps fresh — never rely on cached knowledge.
 
+## Source of Truth for "What Pages Exist"
+
+`apps/web/content/docs/meta.json` is the canonical list of pages in the documentation site. It controls the sidebar navigation and defines the section structure. When in doubt about what exists, start here.
+
 ## Step 1: List all doc pages
 
 ```bash
@@ -27,7 +31,7 @@ For each doc page, check if a corresponding `.ts` file exists in `packages/schem
 - `runs/timeout.mdx` → check `packages/schema/runs/timeout.ts`
 
 A doc page **has schema backing** if its corresponding `.ts` file exists and exports types.
-A doc page **has no schema backing** if there is no corresponding `.ts` file — it's a candidate for deprecation or roadmap.
+A doc page **has no schema backing** if there is no corresponding `.ts` file — it's a candidate for elimination (see below).
 
 Also check the reverse: schema files with no doc page are **missing documentation**.
 
@@ -72,8 +76,26 @@ Then verify each linked path has a corresponding `.mdx` file.
 
 When assessing a page, ask these questions in order:
 
-1. **Does the corresponding schema file exist?** If no → page has no backing → deprecate or roadmap.
+1. **Does the corresponding schema file exist?** If no → page has no backing → eliminate (see below).
 2. **Does the page contain real TypeScript types?** If no → it's a placeholder → needs rewrite.
 3. **Do the import paths and type names match the current schema?** If no → it's stale → needs update.
 4. **Are the examples and explanations accurate?** If no → needs review.
 5. **All checks pass?** → Page is complete.
+
+## When to Eliminate a Page
+
+A doc page should be **deleted** (not rewritten, not left as placeholder) when:
+
+1. **No schema backing and not a concept page.** If there is no `.ts` file in `packages/schema/` and the page is not a concept/overview page (like `concepts/agent-loop.mdx`), the page documents something that doesn't exist in the protocol. Delete it.
+
+2. **The concept was removed from the protocol.** If a schema file was previously deleted because it was reclassified (platform concern, infrastructure concern, eliminated during drafting), the doc page must go too. Examples: agent definition, skill definition, caching, storage.
+
+3. **The page duplicates another page.** If the content is covered by an existing page (e.g., "memory" is covered by embeddings + kv), delete the duplicate.
+
+After deleting a page:
+- Remove its entry from `meta.json`
+- Remove the section separator from `meta.json` if the section becomes empty
+- Delete empty directories
+- Check other pages for internal links that pointed to the deleted page
+
+**Do not rewrite a page that should be eliminated.** The instinct to "preserve content" leads to documenting things that aren't part of the protocol. If the schema doesn't back it, it doesn't belong.

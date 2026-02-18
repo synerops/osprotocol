@@ -22,7 +22,7 @@ Before writing any doc page, read the corresponding TypeScript file in `packages
 - Domain index page → read the domain's `index.ts` barrel file
 - Concept page → read relevant schema files + consult `/ask` skill references
 
-If there is no corresponding `.ts` file, the page has no schema backing and should be flagged for deprecation or roadmap status.
+If there is no corresponding `.ts` file, the page has no schema backing. Unless it's a concept page, it should be **eliminated** — not rewritten. See [inventory.md](references/inventory.md#when-to-eliminate-a-page) for elimination criteria.
 
 ### 2. Choose the right template
 
@@ -41,19 +41,24 @@ Read [conventions.md](references/conventions.md) for the full style guide. Key r
 - Mermaid diagrams when they clarify flow or state, not for decoration
 - No "Coming soon", no generic bullet lists, no marketing language
 
-### 4. Validate
+### 4. Update navigation
+
+After any structural change (add, remove, move pages), update `apps/web/content/docs/meta.json`. See [conventions.md](references/conventions.md#navigation-menu-metajson) for rules.
+
+### 5. Validate
 
 After writing, verify:
 - The import path exists in `packages/schema/package.json` exports
 - All type names match the schema exactly
 - Links to other pages use correct paths
 - Frontmatter has title and description
+- `meta.json` reflects the current page structure
 
 ## Reference Files
 
 | Task | File |
 |------|------|
-| Current state of all 48 doc pages | [inventory.md](references/inventory.md) |
+| Inventory procedure, elimination criteria | [inventory.md](references/inventory.md) |
 | Writing style, structure, frontmatter | [conventions.md](references/conventions.md) |
 | Templates for interface and index pages | [templates.md](references/templates.md) |
 | Why runs/timeout.mdx works as a model | [gold-standard.md](references/gold-standard.md) |
