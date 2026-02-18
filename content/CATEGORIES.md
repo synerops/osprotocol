@@ -20,9 +20,9 @@ context → actions → checks (verification)
 
 | Domain | Directory | Description |
 |---|---|---|
-| context | `context/` | Memory, documents, embeddings — what the agent knows |
-| actions | `actions/` | Tools, ops, MCP servers — what the agent can do |
-| checks | `checks/` | Rules, audit, judge — how the agent verifies its work |
+| context | `context/` | Embeddings, key-value persistence — what the agent knows |
+| actions | `actions/` | Tools, MCP servers — what the agent can do |
+| checks | `checks/` | Rules, audit, judge, screenshot — how the agent verifies its work |
 
 ## 2. System
 
@@ -34,14 +34,14 @@ Provides the low-level capabilities that Context and Execution build on top of. 
 
 | Domain | Directory | Description |
 |---|---|---|
-| system | `system/` | Environment, filesystem, registry, data (cache/storage), MCP client |
+| system | `system/` | Environment, filesystem, sandbox, settings, preferences, registry, MCP client, installer |
 
 ## 3. Execution
 
 The scheduler. How work gets planned and run.
 
 - **Workflows** define patterns (routing, orchestrator-workers, parallelization, evaluator-optimizer).
-- **Runs** execute them. `Workflow.prepare()` + `Run.start()` → `Execution`. (Q2)
+- **Runs** execute them. `Workflow.run()` returns `Run<Output>`. (Q2, P4)
 - Human-in-the-loop lives here (approval, cancel, timeout, retry).
 
 ### Domains
@@ -51,25 +51,35 @@ The scheduler. How work gets planned and run.
 | workflows | `workflows/` | 4 execution patterns based on Anthropic's building blocks |
 | runs | `runs/` | Run lifecycle, timeout, retry, cancel, approval |
 
-## 4. Definition
+## 4. Apps
 
-The actors. How agents and skills are defined and discovered.
+Distribution manifests. How agentic OS distributions are defined.
 
-- **Agent** — Primary actor, defined in `AGENT.md` files with YAML frontmatter.
-- **Skill** — Capabilities/APIs, defined in `SKILL.md` files.
+An "app" is a distribution of the Agentic OS — a `.md` file with YAML frontmatter declaring identity and provider bindings per protocol interface.
 
 ### Files
 
 | File | Description |
 |---|---|
-| `agent.ts` | Agent, AgentMetadata, AgentAnnotations, AgentRegistryEntry |
-| `skill.ts` | Skill, SkillMetadata, Tool, ProtocolDomain, LoadedSkill |
+| `apps/schema.ts` | App, AppMetadata, ProviderEntry, ProviderMap |
+
+---
+
+## Removed from protocol
+
+| File | Reason | Phase |
+|---|---|---|
+| `agent.ts` | Platform concern, not protocol. `Registry<T>` covers discovery. | P5 |
+| `skill.ts` | Platform concern. `Tool` canonical in `actions/tools.ts`. | P4 |
+| `system/data/` (cache, storage) | Infrastructure concern, not agentic capability. | P4 |
+| `skills/` (orchestrator, planner, executor) | Implementation concern (Syner OS). | P2 |
+| `system/agents.json` | Deprecated by `apps/schema.ts`. | P5 |
 
 ---
 
 ## Tracking
 
-- **TBD files** (agent.ts, skill.ts, scripts/): issue #36
-- **Extension files** (13 interface drafts): issue #38
-- **Aspirational files** (9 decisions): issue #39
-- **Noise files**: all deleted
+- All Noise files removed (Phases 2–5)
+- 18 @experimental interfaces drafted (Phase 3, issue #38)
+- All pending decisions applied (Phase 4, issue #42)
+- Structure review complete (Phase 5, issue #45)
