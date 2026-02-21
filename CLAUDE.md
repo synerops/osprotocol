@@ -102,3 +102,5 @@ The `@osprotocol/schema` package provides TypeScript types for the protocol. See
 **Context/Actions Split**: Each system interface has a read-only Context facade (gather phase) and a write Actions facade (act phase). SystemContext composes all Context interfaces; SystemActions composes all Actions interfaces.
 
 **Agent/Skill Definition**: Defining agents (AGENT.md) and skills (SKILL.md) is a platform concern, not standardized by the protocol. The protocol defines the interfaces that agents and skills interact with.
+
+**SYNER.md**: Protocol reference for Syner agents. Use when validating claims about protocol structure (e.g., "is audit a workflow?").
