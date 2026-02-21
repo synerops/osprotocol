@@ -2,7 +2,6 @@
  * Execution interfaces
  *
  * Executions provide runtime control over an active workflow run.
- * Creating a run IS starting it — there is no separate "pending" state.
  *
  * @see https://agentcommunicationprotocol.dev/core-concepts/agent-run-lifecycle
  */
@@ -16,6 +15,7 @@ import type { Approval } from './approval'
  * Status of a workflow execution
  */
 export type RunStatus =
+  | 'pending'
   | 'in-progress'
   | 'awaiting'
   | 'completed'

@@ -21,7 +21,6 @@ const result = await exec.result
 
 Changes:
 - Remove `Run` interface from public exports
-- Remove `pending` status from `RunStatus` (execution starts immediately)
 - `Workflow.run()` returns `Execution` directly
 - Aligns with [ACP Run Lifecycle](https://agentcommunicationprotocol.dev/core-concepts/agent-run-lifecycle)
 
