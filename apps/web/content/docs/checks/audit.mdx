@@ -1,43 +1,67 @@
 ---
 title: Audit
-description: Verification audit trail for recording check results across rules, judge, and screenshot comparisons.
+description: Verification audit trail aligned with ISO 27001 and ISACA/ITAF standards.
 ---
-
-<Callout type="warn">
-  This interface is experimental. No stable implementation exists yet.
-  The API may change without notice in future versions of OS Protocol.
-</Callout>
 
 ## Overview
 
-The audit trail records every verification result produced during agent execution. Every check — rules evaluation, judge scoring, screenshot comparison — is logged as an `AuditEntry` with its outcome. This gives operators a complete, retrievable record for compliance, debugging, and trust scoring. Provider analogues: GitHub Audit Log, Datadog, Braintrust Logs, LangSmith Traces.
+Agents generate formal audit reports as markdown files with YAML frontmatter. The frontmatter conforms to the `AuditEntry` schema, enabling machine-parseable compliance records.
+
+The schema is aligned with **ISO 27001** audit reporting and **ISACA/ITAF** expression of opinion standards.
+
+**Implementation patterns:** gray-matter, Contentlayer, Fumadocs.
+**Consumers:** Drata, Scytale (compliance automation), LangSmith, Langfuse (agent observability).
 
 ## Audit Flow
 
 ```mermaid
 flowchart TD
-  R[Rules check] --> RL[RuleResult]
-  J[Judge evaluation] --> JL[JudgeResult]
-  S[Screenshot comparison] --> SL[ScreenshotResult]
-
-  RL --> LOG["Audit.log()"]
-  JL --> LOG
-  SL --> LOG
-
-  LOG --> ENTRY[AuditEntry stored]
-  ENTRY --> GET["Audit.get(id)"]
-  ENTRY --> LIST["Audit.list(executionId)"]
+  P[Audit prompt] --> A[Agent analyzes]
+  A --> F[Generates file]
+  F --> Y[YAML frontmatter]
+  F --> B[Markdown body]
+  Y --> Q[Machine queries]
 ```
 
-## TypeScript API
+## Schema
 
 ```ts
-import type { AuditEntry, Audit } from '@osprotocol/schema/checks/audit'
+import type {
+  AuditEntry,
+  AuditOpinion,
+  AuditFindings,
+  AuditQuery,
+  Audit,
+} from '@osprotocol/schema/checks/audit'
+```
+
+### AuditOpinion
+
+ISACA expression of opinion.
+
+```ts
+type AuditOpinion =
+  | 'unqualified'  // No significant issues, full compliance
+  | 'qualified'    // Minor issues that don't affect overall compliance
+  | 'adverse'      // Significant issues, non-compliant
+  | 'disclaimer'   // Unable to form opinion (insufficient evidence)
+```
+
+### AuditFindings
+
+Finding severity counts aligned with ISO 27001 non-conformity classification.
+
+```ts
+interface AuditFindings {
+  critical: number  // Immediate action required
+  major: number     // Should be addressed soon
+  minor: number     // Low risk, normal course
+}
 ```
 
 ### AuditEntry
 
-A single record of a verification event. Created automatically by `Audit.log()` with a generated `id` and `createdAt` timestamp.
+Schema for the YAML frontmatter in audit report files.
 
 ```ts
 interface AuditEntry {
@@ -45,75 +69,142 @@ interface AuditEntry {
   createdAt: number
   agentId?: string
   executionId?: string
+
+  // ISO 27001 / ISACA fields
+  objectives: string        // What the audit aims to determine
+  scope: string[]           // Files, systems, or processes audited
+  opinion: AuditOpinion     // Expression of opinion
+  findings: AuditFindings   // Counts by severity
+
+  // Detailed results (optional)
   ruleResults?: RuleResult[]
   judgeResult?: JudgeResult
-  passed: boolean
   metadata?: Record<string, unknown>
 }
 ```
 
-`ruleResults` and `judgeResult` reference types from the [Rules](/docs/checks/rules) and [Judge](/docs/checks/judge) interfaces respectively.
+### AuditQuery
+
+Filter criteria for querying audit entries.
+
+```ts
+interface AuditQuery {
+  opinion?: AuditOpinion | AuditOpinion[]
+  minCritical?: number
+  minMajor?: number
+  agentId?: string
+  executionId?: string
+  since?: number  // Unix ms
+  until?: number  // Unix ms
+}
+```
 
 ### Audit
 
-The interface for logging and retrieving audit entries. Implementations are provided by the observability layer (e.g., Datadog, Braintrust, a custom database).
+Operations for parsing, writing, and querying audit entries.
 
 ```ts
 interface Audit {
-  log(entry: Omit<AuditEntry, 'id' | 'createdAt'>): Promise<AuditEntry>
-  get(id: string): Promise<AuditEntry | null>
-  list(executionId: string): Promise<AuditEntry[]>
+  parse(content: string): AuditEntry
+  write(entry: Omit<AuditEntry, 'id' | 'createdAt'>, body: string): string
+  query(query: AuditQuery): Promise<AuditEntry[]>
 }
 ```
 
-- `log` — Records a verification result and returns the stored `AuditEntry` with generated `id` and `createdAt`.
-- `get` — Retrieves a single entry by its `id`. Returns `null` if not found.
-- `list` — Returns all entries associated with a given `executionId`, ordered by creation time.
+- `parse` — Extract `AuditEntry` from file content with YAML frontmatter
+- `write` — Generate file content from entry and markdown body
+- `query` — Find entries matching filter criteria
 
-## Usage Examples
+## Agentic Usage
 
-### Log a verification result
+### Prompt
 
-```ts
-const entry = await audit.log({
-  agentId: 'agent-42',
-  executionId: 'exec-7f3a',
-  ruleResults: [
-    { ruleId: 'no-pii', passed: true },
-    { ruleId: 'response-length', passed: false, reason: 'Exceeded 500 tokens' },
-  ],
-  passed: false,
-  metadata: { model: 'claude-opus-4-6', latencyMs: 312 },
-})
-
-console.log(entry.id, entry.createdAt)
+```
+Audit the production configuration files
 ```
 
-### Retrieve the audit trail for an execution
+### Output
 
-```ts
-const entries = await audit.list('exec-7f3a')
+File: `audits/2026-02-21-config-review.md`
 
-for (const entry of entries) {
-  console.log(`[${entry.id}] passed=${entry.passed}`)
-}
+```yaml
+---
+type: audit
+date: 2026-02-21
+agent: reviewer
+objectives: "Verify configuration files follow security best practices"
+scope:
+  - config/production.yaml
+  - config/staging.yaml
+status: complete
+opinion: qualified
+findings:
+  critical: 0
+  major: 1
+  minor: 2
+---
+
+## Criteria
+
+- Security best practices
+- Secret management
+- Environment isolation
+
+## Findings
+
+### Major
+
+**M1: Hardcoded API endpoint**
+Production config contains hardcoded URL instead of environment variable...
+
+### Minor
+
+**m1: Missing timeout configuration**
+...
+
+## Recommendations
+
+**M1**: Use environment variable for API endpoint
+...
+
+## Conclusion
+
+Configuration is mostly secure but contains one hardcoded value that
+should be externalized. Qualified opinion issued.
 ```
 
-### Check if all entries in an execution passed
+### Querying Audits
+
+The frontmatter is machine-parseable:
+
+```bash
+# Find audits with critical findings
+grep -l "critical: [1-9]" audits/*.md
+
+# Find adverse opinions
+grep -l "opinion: adverse" audits/*.md
+```
+
+Or programmatically via the `Audit` interface:
 
 ```ts
-const entries = await audit.list('exec-7f3a')
-const allPassed = entries.every((e) => e.passed)
-
-if (!allPassed) {
-  const failed = entries.filter((e) => !e.passed)
-  console.warn(`${failed.length} verification(s) failed in this execution`)
-}
+const critical = await audit.query({ minCritical: 1 })
+const adverse = await audit.query({ opinion: 'adverse' })
 ```
+
+## Standards Mapping
+
+| AuditEntry Field | ISO 27001 | ISACA/ITAF |
+|------------------|-----------|------------|
+| `objectives` | Scope and Objectives | Objectives of the Audit |
+| `scope` | Scope and Objectives | Scope of Engagement |
+| `opinion` | Audit Conclusion | Expression of Opinion |
+| `findings` | Non-Conformities | Findings with Severity |
+| `ruleResults` | Evidence | Supporting Data |
+| `judgeResult` | Evaluation | Quality Assessment |
 
 ## Integration
 
-- [Rules](/docs/checks/rules) — Produces `RuleResult[]` entries that get logged via `Audit.log()`.
-- [Judge](/docs/checks/judge) — Produces `JudgeResult` entries that get logged via `Audit.log()`.
-- [Screenshot](/docs/checks/screenshot) — Visual comparison results can be included in audit entries.
-- [Approval](/docs/runs/approval) — Approval decisions may reference audit entries when determining whether to proceed.
+- [Rules](/docs/checks/rules) — `RuleResult[]` can be included in audit entries as evidence.
+- [Judge](/docs/checks/judge) — `JudgeResult` can be included for quality assessment.
+- [Screenshot](/docs/checks/screenshot) — Visual comparison results can support findings.
