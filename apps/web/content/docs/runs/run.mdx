@@ -5,14 +5,16 @@ description: "Run lifecycle — states, transitions, and execution tracking for 
 
 ## Overview
 
-Runs represent a single execution of a workflow with full lifecycle control. The run system provides status tracking, progress monitoring, and execution control through pause, resume, and cancel operations.
+Executions represent an active workflow run with full lifecycle control. The run system provides status tracking, progress monitoring, and execution control through pause, resume, and cancel operations.
+
+Creating a run IS starting it — `workflow.run()` returns an active `Execution` handle directly. This aligns with the [Agent Communication Protocol (ACP)](https://agentcommunicationprotocol.dev/core-concepts/agent-run-lifecycle).
 
 ## Lifecycle
 
 ```mermaid
 stateDiagram-v2
-    [*] --> pending
-    pending --> in_progress: start()
+    [*] --> pending: workflow.run()
+    pending --> in_progress: execution begins
     in_progress --> awaiting: waitForApproval()
     awaiting --> in_progress: approved
     in_progress --> completed: success
@@ -28,26 +30,25 @@ stateDiagram-v2
 
 ```ts
 import type {
-  Run,
   RunOptions,
   RunStatus,
   Execution,
   ExecutionProgress
-} from '@osprotocol/schema/runs/run'
+} from '@osprotocol/schema/runs'
 ```
 
 ### RunStatus
 
-The possible states of a workflow run.
+The possible states of a workflow execution.
 
 ```ts
 type RunStatus =
-  | 'pending'      // Run is configured but not started
-  | 'in-progress'  // Run is actively executing
-  | 'awaiting'     // Run is waiting for human input/approval
-  | 'completed'    // Run finished successfully
-  | 'failed'       // Run encountered an error
-  | 'cancelled'    // Run was cancelled
+  | 'pending'      // Execution is queued/initializing
+  | 'in-progress'  // Execution is actively running
+  | 'awaiting'     // Execution is waiting for human input/approval
+  | 'completed'    // Execution finished successfully
+  | 'failed'       // Execution encountered an error
+  | 'cancelled'    // Execution was cancelled
 ```
 
 ### RunOptions
@@ -68,23 +69,6 @@ interface RunOptions<Output> {
   onFailed?: (error: Error) => void
   /** Callback on each status change */
   onStatusChange?: (status: RunStatus) => void
-}
-```
-
-### Run
-
-A configured workflow run that has not yet started.
-
-```ts
-interface Run<Output> {
-  /** Unique identifier for this run */
-  id: string
-  /** Current status of the run */
-  status: RunStatus
-  /** Run options */
-  options: RunOptions<Output>
-  /** Start the run and return an Execution handle */
-  start(): Promise<Execution<Output>>
 }
 ```
 
@@ -141,14 +125,12 @@ interface ExecutionProgress {
 ## Usage Example
 
 ```ts
-// Create and start a run
-const run: Run<string> = workflow.createRun({
+// Run a workflow and get an active execution
+const execution = await workflow.run(prompt, {
   timeout: { ms: 30000 },
   retry: { attempts: 3, delayMs: 1000 },
   onStatusChange: (status) => console.log('Status:', status)
 })
-
-const execution = await run.start()
 
 // Monitor progress
 console.log(`Progress: ${execution.progress.current}/${execution.progress.total}`)
@@ -159,7 +141,7 @@ const result = await execution.result
 
 ## Integration
 
-Run integrates with:
+Execution integrates with:
 
 - **Timeout**: Enforce time limits on execution
 - **Retry**: Automatically retry on failure
