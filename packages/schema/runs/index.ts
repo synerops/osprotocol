@@ -8,9 +8,8 @@
  * - Human-in-the-loop approval
  */
 
-// Core run types
+// Core execution types
 export type {
-  Run,
   RunOptions,
   RunStatus,
   Execution,

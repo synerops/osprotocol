@@ -4,11 +4,12 @@
  * Workflows define execution patterns for agent tasks.
  * All workflow types extend this base interface.
  *
- * Workflows do not execute directly — instead, prepare()
- * creates a Run, and Run.start() begins execution (Q2).
+ * Creating a run IS starting it — workflow.run() returns an active
+ * Execution handle directly. This aligns with ACP (Agent Communication
+ * Protocol) where creating a resource activates it immediately.
  */
 
-import type { Run, RunOptions } from '../runs/run'
+import type { Execution, RunOptions } from '../runs/run'
 
 /**
  * Base workflow interface that all workflow patterns must implement
@@ -17,16 +18,16 @@ import type { Run, RunOptions } from '../runs/run'
  */
 export interface Workflow<Output> {
   /**
-   * Create a run for this workflow
+   * Run a workflow and return an active execution
    *
-   * Returns a configured Run that can be started, inspected,
-   * or further configured before execution begins.
+   * Creating a run IS starting it. The execution begins immediately
+   * and the returned Execution handle provides runtime control.
    *
    * @param prompt - The input prompt/task to process
    * @param options - Optional run configuration (timeout, retry, cancel, etc.)
-   * @returns Promise resolving to a configured Run
+   * @returns Promise resolving to an active Execution
    */
-  run(prompt: string, options?: RunOptions<Output>): Promise<Run<Output>>
+  run(prompt: string, options?: RunOptions<Output>): Promise<Execution<Output>>
 }
 
 /**
