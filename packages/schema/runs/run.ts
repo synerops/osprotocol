@@ -1,21 +1,21 @@
 /**
- * Run and Execution interfaces
+ * Execution interfaces
  *
- * Runs represent a single execution of a workflow with lifecycle control.
- * Executions provide runtime control over an active run.
+ * Executions provide runtime control over an active workflow run.
+ * Creating a run IS starting it — there is no separate "pending" state.
+ *
+ * @see https://agentcommunicationprotocol.dev/core-concepts/agent-run-lifecycle
  */
 
-import type { Workflow } from '../workflows/workflow'
 import type { Timeout } from './timeout'
 import type { Retry } from './retry'
 import type { Cancel } from './cancel'
 import type { Approval } from './approval'
 
 /**
- * Status of a workflow run
+ * Status of a workflow execution
  */
 export type RunStatus =
-  | 'pending'
   | 'in-progress'
   | 'awaiting'
   | 'completed'
@@ -40,24 +40,6 @@ export interface RunOptions<Output> {
   onFailed?: (error: Error) => void
   /** Callback on each status change */
   onStatusChange?: (status: RunStatus) => void
-}
-
-/**
- * A configured workflow run (not yet started)
- *
- * @template Output - The type of result produced by the workflow
- */
-export interface Run<Output> {
-  /** Unique identifier for this run */
-  id: string
-  /** Current status of the run */
-  status: RunStatus
-  /** The workflow this run was prepared from */
-  workflow: Workflow<Output>
-  /** Run options */
-  options: RunOptions<Output>
-  /** Start the run and return an Execution handle */
-  start(): Promise<Execution<Output>>
 }
 
 /**
