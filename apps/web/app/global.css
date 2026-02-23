@@ -120,6 +120,28 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Icon hover animations - semantic to each icon */
+.icon-build {
+  transition: transform 200ms ease-out;
+}
+.group:hover .icon-build {
+  transform: translateY(-2px);
+}
+
+.icon-think {
+  transition: transform 200ms ease-out;
+}
+.group:hover .icon-think {
+  transform: rotate(180deg);
+}
+
+.icon-focus {
+  transition: transform 200ms ease-out;
+}
+.group:hover .icon-focus {
+  transform: scale(0.85);
+}
+
 @layer base {
   /* * {
     @apply border-border outline-ring/50;
