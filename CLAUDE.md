@@ -2,6 +2,22 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## When to Use osprotocol-guide
+
+**IMPORTANT**: For conceptual questions about the protocol, use the `osprotocol-guide` subagent instead of answering from this file.
+
+Use `osprotocol-guide` for:
+- "What is X?" / "Why does Y work this way?"
+- Architecture and design decisions
+- Domain boundaries (e.g., "is audit a workflow?")
+- Protocol semantics and concepts
+
+Use this CLAUDE.md for:
+- How to run commands
+- Where files are located
+- Release workflow
+- Implementation tasks
+
 ## Project Overview
 
 OS Protocol (Operating System Protocol) is an open-source specification for orchestrating, managing, and executing AI agents in distributed environments. The project consists of:
@@ -87,20 +103,10 @@ The `@osprotocol/schema` package provides TypeScript types for the protocol. See
 - Mermaid diagrams enabled via `remarkMdxMermaid` plugin
 - LLM-friendly endpoints at `/llms.txt` and `/llms-full.txt`
 
-### Key Concepts
+### Protocol Concepts
 
-**Protocol Domains**: The schema is organized into 6 domains:
-- **System** - Infrastructure interfaces (env, fs, sandbox, settings, preferences, registry, installer, mcp-client)
-- **Context** - Read-only facades for the agent loop's gather phase (SystemContext, Embeddings, KV)
-- **Actions** - Write facades for the agent loop's act phase (SystemActions, Tools, McpServers)
-- **Checks** - Verification interfaces (Rules, Judge, Audit, Screenshot)
-- **Workflows** - Execution patterns based on Anthropic's building blocks (Routing, Orchestrator-Workers, Parallelization, Evaluator-Optimizer)
-- **Runs** - Execution control (Run, Timeout, Retry, Cancel, Approval)
+For questions about protocol architecture, concepts, design decisions, or domain boundaries, use the `osprotocol-guide` subagent. Do NOT answer conceptual questions from memory or from this file.
 
-**Apps**: Distribution manifests that declare which vendors implement which protocol interfaces. Defined in `apps/schema.ts`.
-
-**Context/Actions Split**: Each system interface has a read-only Context facade (gather phase) and a write Actions facade (act phase). SystemContext composes all Context interfaces; SystemActions composes all Actions interfaces.
-
-**Agent/Skill Definition**: Defining agents (AGENT.md) and skills (SKILL.md) is a platform concern, not standardized by the protocol. The protocol defines the interfaces that agents and skills interact with.
-
-**SYNER.md**: Protocol reference for Syner agents. Use when validating claims about protocol structure (e.g., "is audit a workflow?").
+**Quick reference** (for navigation only, not for answering conceptual questions):
+- 6 domains: System, Context, Actions, Checks, Workflows, Runs
+- Apps: Distribution manifests in `apps/schema.ts`

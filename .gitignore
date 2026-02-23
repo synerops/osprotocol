@@ -45,9 +45,10 @@ Thumbs.db
 # Bun lockfile
 bun.lockb
 
-# Claude Code (ignore everything except skills)
+# Claude Code (ignore everything except skills and agents)
 .claude/*
 !.claude/skills/
+!.claude/agents/
 
 # Internal markdown files (plans, notes, etc.)
 # Only ignore .md files at project root, whitelist existing ones
