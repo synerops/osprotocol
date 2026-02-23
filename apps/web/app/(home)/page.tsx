@@ -32,6 +32,7 @@ const domains = [
     subtitle: 'System',
     description: 'What do agents need?',
     href: '/docs/system',
+    iconClass: 'icon-build',
   },
   {
     icon: RefreshCw,
@@ -39,6 +40,7 @@ const domains = [
     subtitle: 'Agent Loop',
     description: 'How do they think?',
     href: '/docs/concepts/agent-loop',
+    iconClass: 'icon-think',
   },
   {
     icon: Target,
@@ -46,6 +48,7 @@ const domains = [
     subtitle: 'Workflows',
     description: 'How do they work together?',
     href: '/docs/workflows',
+    iconClass: 'icon-focus',
   },
 ];
 
@@ -88,10 +91,10 @@ export default function HomePage() {
               href={domain.href}
               className="group flex flex-col items-center text-center p-6 rounded-lg border border-border/50 bg-background/50 backdrop-blur-sm hover:border-border hover:bg-background/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              <domain.icon className="w-8 h-8 mb-4 text-muted-foreground group-hover:text-foreground transition-colors" strokeWidth={1.5} aria-hidden="true" />
+              <domain.icon className={`w-8 h-8 mb-4 text-muted-foreground group-hover:text-foreground transition-colors ${domain.iconClass}`} strokeWidth={1.5} aria-hidden="true" />
               <h2 className="text-lg font-semibold text-foreground mb-0.5">{domain.title}</h2>
               <p className="text-xs text-muted-foreground/60 uppercase tracking-wider mb-3">{domain.subtitle}</p>
-              <p className="text-sm text-muted-foreground">{domain.description}</p>
+              <p className="text-sm text-muted-foreground italic">"{domain.description}"</p>
             </Link>
           ))}
         </div>
@@ -99,7 +102,7 @@ export default function HomePage() {
         {/* CTA */}
         <Link
           href="/docs"
-          className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium border border-border rounded-md bg-transparent hover:bg-accent hover:text-accent-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium border border-border rounded-md bg-transparent hover:bg-accent hover:text-accent-foreground transition-colors active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           View Documentation →
         </Link>
