@@ -1,5 +1,5 @@
 ---
-name: docs
+name: osprotocol-docwriter
 description: >
   Write, edit, review, and triage documentation pages for the OS Protocol website
   (apps/web/content/docs/). Use when creating new doc pages, rewriting placeholders,
@@ -8,7 +8,7 @@ description: >
   rewrite page, update docs, content/docs.
 ---
 
-# /docs — OS Protocol Documentation Writer
+# /osprotocol-docwriter — OS Protocol Documentation Writer
 
 Guide for writing and maintaining documentation pages in `apps/web/content/docs/`.
 
@@ -20,7 +20,7 @@ Before writing any doc page, read the corresponding TypeScript file in `packages
 
 - Interface page → read the `.ts` file (e.g., `packages/schema/system/env.ts` for `system/env.mdx`)
 - Domain index page → read the domain's `index.ts` barrel file
-- Concept page → read relevant schema files + consult `/ask` skill references
+- Concept page → read relevant schema files + consult `osprotocol-guide` agent
 
 If there is no corresponding `.ts` file, the page has no schema backing. Unless it's a concept page, it should be **eliminated** — not rewritten. See [inventory.md](references/inventory.md#when-to-eliminate-a-page) for elimination criteria.
 
@@ -65,6 +65,6 @@ After writing, verify:
 
 ## What This Skill Is NOT
 
-- Not for answering protocol questions → use `/ask`
+- Not for answering protocol questions → use `osprotocol-guide` agent
 - Not for implementing protocol interfaces → use `/develop` (planned)
 - Not for writing non-documentation content (blog posts, marketing)
