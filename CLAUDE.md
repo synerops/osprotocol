@@ -103,10 +103,3 @@ The `@osprotocol/schema` package provides TypeScript types for the protocol. See
 - Mermaid diagrams enabled via `remarkMdxMermaid` plugin
 - LLM-friendly endpoints at `/llms.txt` and `/llms-full.txt`
 
-### Protocol Concepts
-
-For questions about protocol architecture, concepts, design decisions, or domain boundaries, use the `osprotocol-guide` subagent. Do NOT answer conceptual questions from memory or from this file.
-
-**Quick reference** (for navigation only, not for answering conceptual questions):
-- 6 domains: System, Context, Actions, Checks, Workflows, Runs
-- Apps: Distribution manifests in `apps/schema.ts`

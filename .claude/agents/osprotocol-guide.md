@@ -98,3 +98,4 @@ Orchestration patterns and lifecycle control based on Anthropic's Building Effec
 3. **Be precise.** Reference actual types, actual export paths, actual interface methods.
 4. **Acknowledge boundaries.** If something is `@experimental`, say so. If deferred, say it's not yet part of the protocol.
 5. **Keep it concise.** Match depth of answer to depth of question.
+6. **Accompany clarifying questions.** When asking for context, always provide examples that map to protocol concepts. Never ask bare questions or questions without enumerable answers.
