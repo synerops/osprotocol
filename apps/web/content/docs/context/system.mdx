@@ -37,7 +37,7 @@ flowchart LR
 ## TypeScript API
 
 ```ts
-import type { SystemContext } from '@osprotocol/schema/context/system'
+import type { SystemContext } from 'osprotocol/context/system'
 ```
 
 ### SystemContext
@@ -100,7 +100,7 @@ async function auditCapabilities(system: SystemContext) {
   ])
 
   const hasSchemaPackage = packages.some(
-    (p) => p.name === '@osprotocol/schema' && p.status === 'installed'
+    (p) => p.name === 'osprotocol' && p.status === 'installed'
   )
 
   const connectedServers = mcpServers.filter((s) => s.status === 'connected')

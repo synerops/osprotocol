@@ -19,7 +19,7 @@ description: [One sentence: what it does and where it fits]
 ## TypeScript API
 
 \`\`\`ts
-import type { [Types] } from '@osprotocol/schema/[domain]/[file]'
+import type { [Types] } from 'osprotocol/[domain]/[file]'
 \`\`\`
 
 ### [TypeName]

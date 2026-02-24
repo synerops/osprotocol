@@ -17,8 +17,8 @@
     "incremental": true,
     "paths": {
       "@/*": ["./*"],
-      "@osprotocol/schema": ["../../packages/schema"],
-      "@osprotocol/schema/*": ["../../packages/schema/*"],
+      "osprotocol": ["../../packages/schema"],
+      "osprotocol/*": ["../../packages/schema/*"],
       "fumadocs-mdx:collections/*": [".source/*"]
     },
     "plugins": [

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Building, RefreshCw, Target } from 'lucide-react';
 import { createMetadata } from '@/lib/metadata';
 import WorldMap from '@/components/world-map';
+import { InstallButton } from '@/components/install-button';
 
 export async function generateMetadata(): Promise<Metadata> {
   const image = {
@@ -83,8 +84,19 @@ export default function HomePage() {
           <span className="text-foreground">REST</span> for APIs—but for AI agents.
         </p>
 
+        {/* CTAs */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 mb-12 md:mb-16">
+          <Link
+            href="/docs"
+            className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            Get Started
+          </Link>
+          <InstallButton />
+        </div>
+
         {/* Three Domains */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 w-full max-w-4xl mb-12 md:mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 w-full max-w-4xl">
           {domains.map((domain) => (
             <Link
               key={domain.title}
@@ -98,14 +110,6 @@ export default function HomePage() {
             </Link>
           ))}
         </div>
-
-        {/* CTA */}
-        <Link
-          href="/docs"
-          className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium border border-border rounded-md bg-transparent hover:bg-accent hover:text-accent-foreground transition-colors active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          View Documentation →
-        </Link>
       </div>
     </div>
   );

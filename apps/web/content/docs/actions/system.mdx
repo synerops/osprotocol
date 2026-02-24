@@ -30,7 +30,7 @@ flowchart LR
 ## TypeScript API
 
 ```ts
-import type { SystemActions } from '@osprotocol/schema/actions/system'
+import type { SystemActions } from 'osprotocol/actions/system'
 ```
 
 ### SystemActions
@@ -70,7 +70,7 @@ import type {
   SandboxActions,
   InstallerActions,
   McpActions,
-} from '@osprotocol/schema/actions/system'
+} from 'osprotocol/actions/system'
 ```
 
 ## Usage Examples
@@ -85,7 +85,7 @@ await system.env.set({ key: 'DATABASE_URL', value: 'postgres://...' })
 const sandbox = await system.sandbox.create({ runtime: 'node24', timeout: 60000 })
 
 // Install a dependency
-await system.installer.install({ name: '@osprotocol/schema', version: '^0.2.0' })
+await system.installer.install({ name: 'osprotocol', version: '^0.2.0' })
 ```
 
 ### Use individual Actions interfaces directly

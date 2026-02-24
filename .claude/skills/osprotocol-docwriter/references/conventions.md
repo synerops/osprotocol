@@ -50,7 +50,7 @@ No strict template. Follow conventions for tone and structure, but organize cont
 Always show the real import path first:
 
 ```ts
-import type { Timeout, TimeoutAction } from '@osprotocol/schema/runs/timeout'
+import type { Timeout, TimeoutAction } from 'osprotocol/runs/timeout'
 ```
 
 Verify the import path exists in `packages/schema/package.json` exports. If it doesn't, the path is wrong.
