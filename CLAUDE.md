@@ -60,7 +60,7 @@ This project uses [Changesets](https://github.com/changesets/changesets) for ver
 5. On merge to `main`, GitHub Actions creates a "Version Packages" PR
 6. On merge of that PR, GitHub Actions publishes to npm automatically
 
-The `@osprotocol/schema` package is published as a **types-only package** (`.ts` files directly, no compiled `.d.ts`). The `apps/web` package is excluded from publishing.
+The `osprotocol` package is published as a **types-only package** (`.ts` files directly, no compiled `.d.ts`). The `apps/web` package is excluded from publishing.
 
 ## Architecture
 
@@ -73,7 +73,7 @@ protocol/
 │   ├── content/docs/   # MDX documentation files
 │   ├── components/     # React components
 │   └── lib/            # Shared utilities (source.ts, metadata.ts)
-└── packages/schema/    # @osprotocol/schema - Protocol type definitions
+└── packages/schema/    # osprotocol - Protocol type definitions
     ├── system/         # System interfaces (env, fs, sandbox, settings, preferences, registry, installer, mcp-client)
     ├── context/        # Context facades (system context, embeddings, kv)
     ├── actions/        # Action facades (system actions, tools, mcp-servers)
@@ -85,16 +85,16 @@ protocol/
 
 ### Schema Package Exports
 
-The `@osprotocol/schema` package provides TypeScript types for the protocol. See `packages/schema/package.json` `exports` field for the full list. Key entry points:
+The `osprotocol` package provides TypeScript types for the protocol. See `packages/schema/package.json` `exports` field for the full list. Key entry points:
 
-- `@osprotocol/schema` - Main barrel export
-- `@osprotocol/schema/workflows` - Workflow patterns
-- `@osprotocol/schema/runs` - Run control
-- `@osprotocol/schema/system/*` - System interfaces (env, fs, sandbox, settings, preferences, registry, installer, mcp-client)
-- `@osprotocol/schema/context/*` - Context facades (system, embeddings, kv)
-- `@osprotocol/schema/actions/*` - Action facades (system, tools, mcp-servers)
-- `@osprotocol/schema/checks/*` - Verification (rules, judge, audit, screenshot)
-- `@osprotocol/schema/apps/schema` - Distribution manifest types
+- `osprotocol` - Main barrel export
+- `osprotocol/workflows` - Workflow patterns
+- `osprotocol/runs` - Run control
+- `osprotocol/system/*` - System interfaces (env, fs, sandbox, settings, preferences, registry, installer, mcp-client)
+- `osprotocol/context/*` - Context facades (system, embeddings, kv)
+- `osprotocol/actions/*` - Action facades (system, tools, mcp-servers)
+- `osprotocol/checks/*` - Verification (rules, judge, audit, screenshot)
+- `osprotocol/apps/schema` - Distribution manifest types
 
 ### Documentation Site
 

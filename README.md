@@ -14,7 +14,7 @@
 <p align="center">
   <a href="https://osprotocol.dev/docs">Documentation</a> |
   <a href="https://osprotocol.dev/docs/architecture">Architecture</a> |
-  <a href="https://www.npmjs.com/package/@osprotocol/schema">npm</a>
+  <a href="https://www.npmjs.com/package/osprotocol">npm</a>
 </p>
 
 #### About

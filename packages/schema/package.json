@@ -1,6 +1,6 @@
 {
-  "name": "@osprotocol/schema",
-  "version": "0.2.4",
+  "name": "osprotocol",
+  "version": "0.1.0",
   "description": "TypeScript type definitions for the Agentic OS Protocol",
   "license": "MIT",
   "type": "module",

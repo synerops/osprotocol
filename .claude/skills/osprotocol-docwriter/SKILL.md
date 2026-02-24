@@ -36,7 +36,7 @@ If there is no corresponding `.ts` file, the page has no schema backing. Unless 
 
 Read [conventions.md](references/conventions.md) for the full style guide. Key rules:
 
-- Import paths must be real and verifiable (`@osprotocol/schema/system/env`)
+- Import paths must be real and verifiable (`osprotocol/system/env`)
 - TypeScript interfaces must match the schema exactly — copy from source, don't paraphrase
 - Mermaid diagrams when they clarify flow or state, not for decoration
 - No "Coming soon", no generic bullet lists, no marketing language

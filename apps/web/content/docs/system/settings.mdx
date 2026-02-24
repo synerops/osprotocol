@@ -20,7 +20,7 @@ import type {
   SettingsContext,
   SettingsActions,
   Settings,
-} from '@osprotocol/schema/system/settings'
+} from 'osprotocol/system/settings'
 ```
 
 ### SettingsEntry
@@ -85,7 +85,7 @@ interface Settings {
 ### Reading a setting
 
 ```ts
-import type { Settings } from '@osprotocol/schema/system/settings'
+import type { Settings } from 'osprotocol/system/settings'
 
 async function getMaxConcurrency(settings: Settings) {
   const entry = await settings.get<number>('workflow.max_concurrency')
@@ -117,7 +117,7 @@ async function updateSetting(settings: Settings, key: string, value: unknown) {
 ### Typed settings with metadata
 
 ```ts
-import type { Settings, SettingsEntry } from '@osprotocol/schema/system/settings'
+import type { Settings, SettingsEntry } from 'osprotocol/system/settings'
 
 interface RateLimitConfig {
   requestsPerMinute: number

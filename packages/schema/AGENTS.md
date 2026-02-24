@@ -1,4 +1,4 @@
-# @osprotocol/schema
+# osprotocol
 
 TypeScript type definitions for the OS Protocol. Published to npm as `.ts` files directly (no compiled `.d.ts`).
 
@@ -35,5 +35,5 @@ These are pure composition — they don't add methods, they aggregate existing f
 - All post-initial interfaces are tagged `@experimental` in JSDoc.
 - Generic types (`Registry<T>`, `EnvEntry<T>`) enable typed provider implementations.
 - `metadata?: Record<string, unknown>` appears on every Entry type — never remove it.
-- Import paths match directory structure: `@osprotocol/schema/system/env`, `@osprotocol/schema/checks/rules`, etc.
+- Import paths match directory structure: `osprotocol/system/env`, `osprotocol/checks/rules`, etc.
 - See `package.json` `exports` field for the complete list of public entry points.

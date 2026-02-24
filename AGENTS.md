@@ -40,5 +40,5 @@ A specification for orchestrating AI agents. OSP defines TypeScript interfaces �
 
 This is a monorepo managed with Turborepo and Bun:
 
-- `packages/schema/` — `@osprotocol/schema` TypeScript types (published to npm as `.ts` files)
+- `packages/schema/` — `osprotocol` TypeScript types (published to npm as `.ts` files)
 - `apps/web/` — Documentation site (Next.js + Fumadocs)

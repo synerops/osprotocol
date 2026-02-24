@@ -1,4 +1,24 @@
-# @osprotocol/schema
+# osprotocol
+
+## 0.1.0
+
+### Minor Changes
+
+- Package renamed from `@osprotocol/schema` to `osprotocol`. Version reset to 0.1.0.
+
+  Update your imports:
+
+  ```typescript
+  // Before
+  import type { Workflow } from '@osprotocol/schema/workflows'
+
+  // After
+  import type { Workflow } from 'osprotocol/workflows'
+  ```
+
+---
+
+# @osprotocol/schema (archived)
 
 ## 0.2.4
 

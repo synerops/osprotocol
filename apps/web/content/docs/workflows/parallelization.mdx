@@ -5,7 +5,7 @@ description: Split a task into independent subtasks, execute them concurrently, 
 
 <Callout type="warn">
   The Parallelization workflow pattern is part of the OS Protocol specification.
-  It is defined in `@osprotocol/schema/workflows/parallelization` and must be
+  It is defined in `osprotocol/workflows/parallelization` and must be
   implemented by agents that declare support for parallel execution.
 </Callout>
 
@@ -44,7 +44,7 @@ import type {
   SubtaskResult,
   ParallelizationWorkflow,
   ParallelizationConfig,
-} from "@osprotocol/schema/workflows/parallelization";
+} from "osprotocol/workflows/parallelization";
 ```
 
 ### Subtask

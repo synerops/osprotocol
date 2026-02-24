@@ -59,7 +59,7 @@ Or check specific paths:
 grep -r "exports" packages/schema/package.json
 ```
 
-If a page shows `import type { X } from '@osprotocol/schema/foo/bar'` but that export path doesn't exist in `package.json`, the page is **stale**.
+If a page shows `import type { X } from 'osprotocol/foo/bar'` but that export path doesn't exist in `package.json`, the page is **stale**.
 
 ## Step 6: Check for broken links
 

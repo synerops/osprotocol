@@ -41,10 +41,10 @@ The frontmatter declares the distribution metadata and provider bindings. The ma
 
 ## TypeScript API
 
-Import types from `@osprotocol/schema/apps`:
+Import types from `osprotocol/apps`:
 
 ```ts
-import type { App, AppMetadata, ProviderMap, ProviderEntry } from '@osprotocol/schema/apps'
+import type { App, AppMetadata, ProviderMap, ProviderEntry } from 'osprotocol/apps'
 ```
 
 ### ProviderEntry
@@ -154,7 +154,7 @@ Provider bindings are resolved at runtime by the OS Protocol host. Interfaces wi
 ```ts
 import { readFileSync } from 'fs'
 import matter from 'gray-matter'
-import type { App, AppMetadata } from '@osprotocol/schema/apps'
+import type { App, AppMetadata } from 'osprotocol/apps'
 
 function loadApp(filePath: string): App {
   const raw = readFileSync(filePath, 'utf-8')
@@ -174,7 +174,7 @@ console.log(app.metadata.version) // '1.0.0'
 ### Validate provider bindings
 
 ```ts
-import type { ProviderMap } from '@osprotocol/schema/apps'
+import type { ProviderMap } from 'osprotocol/apps'
 
 function getProviderForInterface(
   providers: ProviderMap,
@@ -195,7 +195,7 @@ const sandboxProvider = getProviderForInterface(
 ### Compare two distributions
 
 ```ts
-import type { App } from '@osprotocol/schema/apps'
+import type { App } from 'osprotocol/apps'
 
 function diffProviders(a: App, b: App): string[] {
   const differences: string[] = []

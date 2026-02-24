@@ -29,7 +29,7 @@ The flowchart shows the actual decision path: start → timer → running → ti
 ### 3. TypeScript API section is verifiable
 
 ```ts
-import type { Timeout, TimeoutAction } from '@osprotocol/schema/runs/timeout'
+import type { Timeout, TimeoutAction } from 'osprotocol/runs/timeout'
 ```
 
 Real import path. The types that follow are exact copies from the schema source — not summaries, not paraphrases. A developer can copy-paste this into their code.

@@ -19,7 +19,7 @@ Workflows define execution patterns for agent tasks. All workflow types extend t
 ## TypeScript API
 
 ```ts
-import type { Workflow, InferWorkflowOutput } from '@osprotocol/schema/workflows'
+import type { Workflow, InferWorkflowOutput } from 'osprotocol/workflows'
 ```
 
 ### Workflow
@@ -52,7 +52,7 @@ type InferWorkflowOutput<T> = T extends Workflow<infer Output>
 ## Usage Example
 
 ```ts
-import type { Workflow, RunOptions } from '@osprotocol/schema/workflows'
+import type { Workflow, RunOptions } from 'osprotocol/workflows'
 
 // Define a custom workflow
 const myWorkflow: Workflow<string> = {
