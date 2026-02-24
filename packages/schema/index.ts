@@ -7,36 +7,6 @@
  */
 
 // ---------------------------------------------------------------------------
-// Protocol taxonomy
-// ---------------------------------------------------------------------------
-
-/**
- * Protocol domain categories
- *
- * The protocol is organized into 4 categories (Q4):
- * - Agent Loop: context, actions, checks
- * - System: system
- * - Execution: workflows, runs
- */
-export type ProtocolDomain =
-  | 'system'
-  | 'context'
-  | 'actions'
-  | 'checks'
-  | 'workflows'
-  | 'runs'
-
-/**
- * Protocol reference (domain + API)
- */
-export interface ProtocolReference {
-  /** The protocol domain */
-  domain: ProtocolDomain
-  /** The API name within the domain */
-  api: string
-}
-
-// ---------------------------------------------------------------------------
 // Core domains
 // ---------------------------------------------------------------------------
 
