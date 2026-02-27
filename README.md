@@ -12,6 +12,12 @@
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/status-experimental-orange" alt="Experimental" />
+</p>
+
+> **⚠️ Experimental:** This project is still in active development. Interfaces and APIs may change without notice.
+
+<p align="center">
   <a href="https://osprotocol.dev/docs">Documentation</a> |
   <a href="https://osprotocol.dev/docs/architecture">Architecture</a> |
   <a href="https://www.npmjs.com/package/osprotocol">npm</a>
